@@ -10,7 +10,7 @@ namespace Sm4shFileExplorer.Globals
         public const string CAPTION_ERROR_LOADING_GAME_FOLDER = "Error loading game folder";
         public const string ERROR_LOADING_GAME_FOLDER = "It seems that the game folder is missing a few important element. The following files must exist:\r\n{0}\r\n{1}\r\n{2}";
         public const string ERROR_LOADING_GAME_PATCH_FOLDER = "Warning. It seems that the game folder selected does not contain a patch folder.";
-        public const string ERROR_LOADING_GAME_LOAD_FOLDER = "Error, the path '{0}' can't be found anymore. Please modify the config file sm4shmod.xml to fix this.";
+        public const string ERROR_LOADING_GAME_LOAD_FOLDER = "Error, the game path can't be found anymore. Please modify the 'GamePath' value in sm4shmod.xml to fix this.";
 
         public const string CAPTION_CREATE_PROJECT = "Create project";
         public const string CREATE_PROJECT_SUCCESS = "Project created!";
