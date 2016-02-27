@@ -26,9 +26,9 @@ namespace Sm4shProjectManager.Globals
     {
         public static bool IsItSmashFolder(string folder)
         {
-            if (!File.Exists(PathHelper.GetPath(folder, PathHelperEnum.FILE_LS)) ||
-                    !File.Exists(PathHelper.GetPath(folder, PathHelperEnum.FILE_META)) ||
-                    !File.Exists(PathHelper.GetPath(folder, PathHelperEnum.FILE_RPX)))
+            if (!File.Exists(PathHelper.GetPath(folder, PathHelperEnum.FILE_LS)))// ||
+                    //!File.Exists(PathHelper.GetPath(folder, PathHelperEnum.FILE_META)) ||
+                    //!File.Exists(PathHelper.GetPath(folder, PathHelperEnum.FILE_RPX)))
                 return false;
             return true;
         }

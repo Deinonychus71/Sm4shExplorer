@@ -14,7 +14,7 @@ namespace Sm4shFileExplorer.Globals
 
         public const string CAPTION_CREATE_PROJECT = "Create project";
         public const string CREATE_PROJECT_SUCCESS = "Project created!";
-        public const string CREATE_PROJECT_FIND_FOLDER = "First, please indicate the folder where Sm4shExplorer can find the latest version of the game. This folder must contain the folders 'code', 'content' and 'meta'.\r\n\r\nThis folder will not be modified by this program.";
+        public const string CREATE_PROJECT_FIND_FOLDER = "First, please indicate the folder where Sm4shExplorer can find the latest version of the game. This folder must contain the folder 'content'. If you want some info about the game to be loaded, you will also need the folder 'meta'.\r\n\r\nThis folder will not be modified by this program.";
 
         public const string CAPTION_PACK_FOLDER = "Packing folder";
         public const string WARNING_PACK_FOLDER = "Warning! This is a highly experimental feature that should not be used on original content! Proceed?";

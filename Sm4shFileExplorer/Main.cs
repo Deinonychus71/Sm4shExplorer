@@ -653,7 +653,7 @@ namespace Sm4shFileExplorer
         {
             if (AppConfig.Sm4shProject == null)
             {
-                MessageBox.Show(string.Format(Strings.ERROR_LOADING_GAME_LOAD_FOLDER, Strings.CAPTION_ERROR_LOADING_GAME_FOLDER));
+                MessageBox.Show(string.Format(Strings.ERROR_LOADING_GAME_LOAD_FOLDER, AppConfig.Sm4shProject.GamePath), Strings.CAPTION_ERROR_LOADING_GAME_FOLDER);
                 Application.Exit();
                 return;
             }

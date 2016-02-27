@@ -45,3 +45,7 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+Sm4shFileExplorer/bin/*
+Sm4shFileExplorer/obj/*
+Sm4shProjectManager/bin/*
+Sm4shProjectManager/obj/*
