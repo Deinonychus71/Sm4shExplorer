@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace Sm4shFileExplorer.Globals
 {
-    public class ConsoleRedirProgress : TextWriter
+    internal class ConsoleRedirProgress : TextWriter
     {
         BackgroundWorker _output = null;
 
@@ -22,7 +22,7 @@ namespace Sm4shFileExplorer.Globals
             base.WriteLine(value);
             _output.ReportProgress(0, value.ToString());
         }
- 
+
         public override Encoding Encoding
         {
             get { return System.Text.Encoding.UTF8; }

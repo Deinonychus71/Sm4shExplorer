@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shFileExplorer", "Sm4shFileExplorer\Sm4shFileExplorer.csproj", "{69340763-B033-4AA4-8A0F-608C2437667B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shProjectManager", "Sm4shProjectManager\Sm4shProjectManager.csproj", "{3419C920-8F0C-4703-A64F-933C4396C39B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{915852C1-1C12-4859-89BC-7F6160FF4859}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shSound", "Plugins\Sm4shSound\Sm4shSound.csproj", "{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shParamEditor", "Plugins\Sm4shParamEditor\Sm4shParamEditor.csproj", "{0456C2C2-3C1C-4524-BA56-23D2133E1443}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,12 +21,20 @@ Global
 		{69340763-B033-4AA4-8A0F-608C2437667B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69340763-B033-4AA4-8A0F-608C2437667B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69340763-B033-4AA4-8A0F-608C2437667B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3419C920-8F0C-4703-A64F-933C4396C39B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3419C920-8F0C-4703-A64F-933C4396C39B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3419C920-8F0C-4703-A64F-933C4396C39B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3419C920-8F0C-4703-A64F-933C4396C39B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0456C2C2-3C1C-4524-BA56-23D2133E1443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0456C2C2-3C1C-4524-BA56-23D2133E1443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0456C2C2-3C1C-4524-BA56-23D2133E1443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0456C2C2-3C1C-4524-BA56-23D2133E1443}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F} = {915852C1-1C12-4859-89BC-7F6160FF4859}
+		{0456C2C2-3C1C-4524-BA56-23D2133E1443} = {915852C1-1C12-4859-89BC-7F6160FF4859}
 	EndGlobalSection
 EndGlobal

@@ -6,11 +6,8 @@ using System.Text;
 
 namespace Sm4shFileExplorer.Globals
 {
-    public class UIConstants
+    internal class UIConstants
     {
-        //Utils
-        public const string FOLDER_SEPARATOR = "\\";
-
         //Configuration
         public const string CONFIG_FILE = "sm4shmod.xml";
 
@@ -26,5 +23,6 @@ namespace Sm4shFileExplorer.Globals
         public static Color NODE_PATCH = Color.Blue;
         public static Color NODE_MOD = Color.Green;
         public static Color NODE_MOD_UNLOCALIZED = Color.Red;
+        public static Color NODE_MOD_DELETED = Color.Gray;
     }
 }

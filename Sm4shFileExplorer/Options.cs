@@ -1,21 +1,18 @@
 ﻿using Sm4shFileExplorer.Globals;
-using Sm4shProjectManager.Globals;
+using Sm4shFileExplorer.Objects;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Sm4shFileExplorer
 {
-    public partial class Options : Form
+    internal partial class Options : Form
     {
-        public Options()
+        private Sm4shMod _Project;
+
+        public Options(Sm4shMod project)
         {
-            InitializeComponent(); 
+            InitializeComponent();
+            _Project = project;
         }
 
         #region Browse buttons
@@ -56,21 +53,21 @@ namespace Sm4shFileExplorer
         {
             if (this.Visible)
             {
-                txtDirHexEditor.Text = AppConfig.Sm4shProject.ProjectHexEditorPath;
+                txtDirHexEditor.Text = _Project.ProjectHexEditorFile;
 
-                txtDirTempFolder.Text = PathHelper.GetProjectTempFolder();
-                txtDirExtractionFolder.Text = PathHelper.GetProjectExtractFolder();
-                txtDirWorkplaceFolder.Text = PathHelper.GetProjectWorkplaceFolder();
-                txtDirExportFolder.Text = PathHelper.GetProjectExportFolder();
+                txtDirTempFolder.Text = PathHelper.FolderTemp;
+                txtDirExtractionFolder.Text = PathHelper.FolderExtract;
+                txtDirWorkplaceFolder.Text = PathHelper.FolderWorkplace;
+                txtDirExportFolder.Text = PathHelper.FolderExport;
 
-                chkDebug.Checked = AppConfig.Sm4shProject.Debug;
-                chkForceOriginalFlags.Checked = AppConfig.Sm4shProject.KeepOriginalFlags;
-                chkSkipJunkEntries.Checked = AppConfig.Sm4shProject.SkipJunkEntries;
-                chkSeeExportResults.Checked = AppConfig.Sm4shProject.ExportCSVList;
-                chkCSVExportIgnoreCompSize.Checked = AppConfig.Sm4shProject.ExportCSVIgnoreCompSize;
-                chkCSVExportIgnoreFlags.Checked = AppConfig.Sm4shProject.ExportCSVIgnoreFlags;
-                chkCSVExportIgnoreOffsetInPack.Checked = AppConfig.Sm4shProject.ExportCSVIgnorePackOffsets;
-                chkExportAddDate.Checked = AppConfig.Sm4shProject.ExportWithDateFolder;
+                chkDebug.Checked = _Project.Debug;
+                chkForceOriginalFlags.Checked = _Project.KeepOriginalFlags;
+                chkSkipJunkEntries.Checked = _Project.SkipJunkEntries;
+                chkSeeExportResults.Checked = _Project.ExportCSVList;
+                chkCSVExportIgnoreCompSize.Checked = _Project.ExportCSVIgnoreCompSize;
+                chkCSVExportIgnoreFlags.Checked = _Project.ExportCSVIgnoreFlags;
+                chkCSVExportIgnoreOffsetInPack.Checked = _Project.ExportCSVIgnorePackOffsets;
+                chkExportAddDate.Checked = _Project.ExportWithDateFolder;
             }
         }
     }

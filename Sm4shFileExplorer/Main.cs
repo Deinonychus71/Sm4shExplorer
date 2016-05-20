@@ -1,36 +1,31 @@
 ﻿using DamienG.Security.Cryptography;
 using Sm4shFileExplorer.Globals;
-using Sm4shProjectManager;
-using Sm4shProjectManager.Globals;
-using Sm4shProjectManager.Objects;
+using Sm4shFileExplorer.Objects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Sm4shFileExplorer
 {
-    public partial class Main : Form
+    internal partial class Main : Form
     {
         #region Members
         ConsoleRedirText _ConsoleText = null;
         ConsoleRedirProgress _ConsoleProgress = null;
         bool _MainLoaded = false;
-        LoadingWindow _LoadingWindow;
         Sm4shProject _ProjectManager = null;
-        Options _Options = new Options();
+        Options _Options;
         About _About = new About();
+        ReorderPlugins _ReorderPlugins;
         #endregion
 
         #region Properties
-        public bool MainLoaded { get { return _MainLoaded; } }
+        internal bool MainLoaded { get { return _MainLoaded; } }
         #endregion
 
         #region Constructors
@@ -54,12 +49,6 @@ namespace Sm4shFileExplorer
                 }
             }
 
-            //Treeview setup
-            treeView.ImageList = new ImageList();
-            treeView.ImageList.Images.Add(UIConstants.ICON_FOLDER, Resource.icon_folder);
-            treeView.ImageList.Images.Add(UIConstants.ICON_FILE, Resource.icon_file);
-            treeView.ImageList.Images.Add(UIConstants.ICON_PACKED, Resource.icon_packed);
-
             //Console Redirection
             _ConsoleText = new ConsoleRedirText(textConsole);
             _ConsoleProgress = new ConsoleRedirProgress(backgroundWorker);
@@ -69,15 +58,69 @@ namespace Sm4shFileExplorer
         #endregion
 
         #region EventHandlers
+        #region directory menu
+        private void openExtractDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(PathHelper.FolderExtract))
+                Directory.CreateDirectory(PathHelper.FolderExtract);
+            Process.Start("explorer.exe", PathHelper.FolderExtract);
+        }
+
+        private void openWorkspaceDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(PathHelper.FolderWorkplace))
+                Directory.CreateDirectory(PathHelper.FolderWorkplace);
+            Process.Start("explorer.exe", PathHelper.FolderWorkplace);
+        }
+
+        private void openExportDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(PathHelper.FolderExport))
+                Directory.CreateDirectory(PathHelper.FolderExport);
+            Process.Start("explorer.exe", PathHelper.FolderExport);
+        }
+
+        private void openSm4shexplorerDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer.exe", Directory.GetCurrentDirectory());
+        }
+
+        private void openTempDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!Directory.Exists(PathHelper.FolderTemp))
+                Directory.CreateDirectory(PathHelper.FolderTemp);
+            Process.Start("explorer.exe", PathHelper.FolderTemp);
+        }
+
+        private void openGameDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Directory.Exists(_ProjectManager.CurrentProject.GamePath))
+                Process.Start("explorer.exe", _ProjectManager.CurrentProject.GamePath);
+        }
+        #endregion
+
         private void menuBuild_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(string.Format(Strings.INFO_PACK_REBUILD, AppConfig.Sm4shProject.ProjectExportPath), Strings.CAPTION_PACK_REBUILD);
+            MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
             _ProjectManager.RebuildRFAndPatchlist();
+        }
+
+        private void plugin_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem pluginMenuItem = sender as ToolStripMenuItem;
+            if (pluginMenuItem != null)
+            {
+                Sm4shBasePlugin plugin = pluginMenuItem.Tag as Sm4shBasePlugin;
+                if (plugin != null)
+                {
+                    plugin.InternalOpenPluginMenu();
+                }
+            }
         }
 
         private void menuBuildDebug_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(string.Format(Strings.INFO_PACK_REBUILD, AppConfig.Sm4shProject.ProjectExportPath), Strings.CAPTION_PACK_REBUILD);
+            MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
             _ProjectManager.RebuildRFAndPatchlist(false);
         }
 
@@ -90,15 +133,21 @@ namespace Sm4shFileExplorer
         private void contextMenuTreeView_Opening(object sender, CancelEventArgs e)
         {
             TreeNode selNode = (TreeNode)treeView.GetNodeAt(treeView.PointToClient(Cursor.Position));
+            if(selNode.Parent == null)
+            {
+                e.Cancel = true;
+                return;
+            }
+
             extractToolStripMenuItem.Enabled = true;
             removeModToolStripMenuItem.Enabled = false;
             unlocalizeToolStripMenuItem.Enabled = false;
             removeUnlocalizeToolStripMenuItem.Enabled = false;
             packThisFolderToolStripMenuItem.Enabled = false;
+            removeResourceToolStripMenuItem.Enabled = false;
+            reintroduceResourceToolStripMenuItem.Enabled = false;
             if (selNode != null)
             {
-                ResourceCollection resCol = GetResourceCollectionFromNode(selNode);
-
                 //Mod File
                 string filePath = GetWorkspaceFileFromNode(selNode);
                 if (File.Exists(filePath))
@@ -115,18 +164,23 @@ namespace Sm4shFileExplorer
                     return;
                 }
 
-                ResourceItem rItem = GetResourceFromNode(selNode);
+                ResourceItem rItem = _ProjectManager.GetResource(selNode.Name);
                 if (rItem != null)
                 {
-                    if (!string.IsNullOrEmpty(resCol.Region) && rItem.OffInPack == 0)
+                    if (rItem.ResourceCollection.IsRegion && rItem.OffInPack == 0)
                     {
-                        if (!AppConfig.Sm4shProject.IsUnlocalized(resCol.Region, rItem.Path))
+                        if (!_ProjectManager.CurrentProject.IsUnlocalized(rItem.ResourceCollection.PartitionName, rItem.RelativePath))
                             unlocalizeToolStripMenuItem.Enabled = true;
                         else
                             removeUnlocalizeToolStripMenuItem.Enabled = true;
                     }
+                    if (!_ProjectManager.CurrentProject.IsResourceRemoved(rItem.ResourceCollection.PartitionName, rItem.RelativePath))
+                        removeResourceToolStripMenuItem.Enabled = true;
+                    else
+                        reintroduceResourceToolStripMenuItem.Enabled = true;
                     //if (rItem.IsFolder && rItem.OffInPack == 0 && !rItem.IsAPackage)
                     //    packThisFolderToolStripMenuItem.Enabled = true;
+                    //TODO
                     return;
                 }
             }
@@ -138,10 +192,10 @@ namespace Sm4shFileExplorer
             TreeNode node = treeView.SelectedNode;
             if (node != null)
             {
-                ResourceItem rootItem = GetResourceFromNode(node);
+                ResourceItem rootItem = _ProjectManager.GetResource(node.Name);
                 if (rootItem != null)
                 {
-                    _ProjectManager.UnlocalizeResources(rootItem.ResourceCollection, rootItem.Path);
+                    _ProjectManager.UnlocalizePath(rootItem.ResourceCollection, rootItem.RelativePath);
                     if (node.TreeView != null)
                         RefreshTreeNodeStyle(node, true);
                 }
@@ -153,10 +207,40 @@ namespace Sm4shFileExplorer
             TreeNode node = treeView.SelectedNode;
             if (node != null)
             {
-                ResourceItem rootItem = GetResourceFromNode(node);
+                ResourceItem rootItem = _ProjectManager.GetResource(node.Name);
                 if (rootItem != null)
                 {
-                    _ProjectManager.RemoveUnlocalized(rootItem.ResourceCollection, rootItem.Path);
+                    _ProjectManager.RemoveUnlocalized(rootItem.ResourceCollection, rootItem.RelativePath);
+                    if (node.TreeView != null)
+                        RefreshTreeNodeStyle(node, true);
+                }
+            }
+        }
+
+        private void removeResourceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode node = treeView.SelectedNode;
+            if (node != null)
+            {
+                ResourceItem rootItem = _ProjectManager.GetResource(node.Name);
+                if (rootItem != null)
+                {
+                    _ProjectManager.RemoveOriginalResource(rootItem.ResourceCollection, rootItem.RelativePath);
+                    if (node.TreeView != null)
+                        RefreshTreeNodeStyle(node, true);
+                }
+            }
+        }
+
+        private void reintroduceResourceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TreeNode node = treeView.SelectedNode;
+            if (node != null)
+            {
+                ResourceItem rootItem = _ProjectManager.GetResource(node.Name);
+                if (rootItem != null)
+                {
+                    _ProjectManager.ReintroduceOriginalResource(rootItem.ResourceCollection, rootItem.RelativePath);
                     if (node.TreeView != null)
                         RefreshTreeNodeStyle(node, true);
                 }
@@ -196,28 +280,47 @@ namespace Sm4shFileExplorer
         private void treeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             TreeNode node = e.Node;
-            if (node != null && node.SelectedImageKey != UIConstants.ICON_FOLDER && node.SelectedImageKey != UIConstants.ICON_PACKED)
+            if (node != null && node.Parent != null && node.SelectedImageKey != UIConstants.ICON_FOLDER && node.SelectedImageKey != UIConstants.ICON_PACKED)
             {
-                if (string.IsNullOrEmpty(AppConfig.Sm4shProject.ProjectHexEditorPath))
-                {
-                    MessageBox.Show(Strings.INFO_FILE_HEX, Strings.CAPTION_FILE_HEX);
-                    return;
-                }
-                ResourceCollection resCol = GetResourceCollectionFromNode(node);
-                string path = GetFullPathOfNode(node);
-                if (string.IsNullOrEmpty(path))
+                string absolutePath = node.Name;
+                if (string.IsNullOrEmpty(absolutePath))
                     return;
                     
                 //Extract
-                string fullpath = _ProjectManager.ExtractFile(resCol, path, PathHelper.GetProjectExtractFolder());
-                uint crcFile = Crc32.Compute(File.ReadAllBytes(fullpath));
-                Process process = Process.Start(AppConfig.Sm4shProject.ProjectHexEditorPath, "\"" + fullpath + "\"");
-                process.WaitForExit();
-                uint compareCrcFile = Crc32.Compute(File.ReadAllBytes(fullpath));
+                string fullExtractedFile = _ProjectManager.ExtractResource(absolutePath);
+                uint crcFile = Crc32.Compute(File.ReadAllBytes(fullExtractedFile));
+
+                //Plugin ResourceSelected hooks
+                bool pluginUsed = false;
+                string relativePath = _ProjectManager.GetRelativePath(absolutePath);
+                ResourceCollection resCol = GetFirstLevelNode(node).Tag as ResourceCollection;
+                foreach (Sm4shBasePlugin plugin in _ProjectManager.Plugins)
+                {
+                    if (plugin.InternalResourceSelected(resCol, relativePath, fullExtractedFile))
+                    {
+                        pluginUsed = true;
+                        break;
+                    }
+                }
+
+                //If no plugin used, try hexeditor
+                if (!pluginUsed)
+                {
+                    if (string.IsNullOrEmpty(_ProjectManager.CurrentProject.ProjectHexEditorFile))
+                    {
+                        LogHelper.Info(UIStrings.INFO_FILE_HEX);
+                        return;
+                    }
+                    Process process = Process.Start(_ProjectManager.CurrentProject.ProjectHexEditorFile, "\"" + fullExtractedFile + "\"");
+                    process.WaitForExit();
+                }
+
+                //Check extract file, if changed, ask to add in workspace
+                uint compareCrcFile = Crc32.Compute(File.ReadAllBytes(fullExtractedFile));
                 if (crcFile != compareCrcFile)
                 {
-                    if (MessageBox.Show(string.Format(Strings.INFO_FILE_MODIFIED, path), Strings.CAPTION_FILE_MODIFIED, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                        AddOrReplaceFiles(treeView.SelectedNode.Parent, new string[] {fullpath});
+                    if (MessageBox.Show(string.Format(UIStrings.INFO_FILE_MODIFIED, absolutePath), UIStrings.CAPTION_FILE_MODIFIED, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                        AddOrReplaceFiles(treeView.SelectedNode.Parent, new string[] { fullExtractedFile });
                 }
             }
         }
@@ -226,14 +329,7 @@ namespace Sm4shFileExplorer
         {
             TreeNode node = treeView.SelectedNode;
             if (node != null)
-            {
-                ResourceCollection resCol = GetResourceCollectionFromNode(node);
-                string path = GetFullPathOfNode(node);
-                if (node.Text.Contains("."))
-                    _ProjectManager.ExtractFile(resCol, path, PathHelper.GetProjectExtractFolder());
-                else
-                    _ProjectManager.ExtractFolder(resCol, path, PathHelper.GetProjectExtractFolder());
-            }
+                _ProjectManager.ExtractResource(node.Name);
         }
 
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -241,10 +337,9 @@ namespace Sm4shFileExplorer
             TreeNode node = treeView.SelectedNode;
             if (node != null)
             {
-                ResourceCollection resCol = GetResourceCollectionFromNode(node);
-                string path = GetFullPathOfNode(node);
-                RemovePathFromTreeView(resCol, node);
-                _ProjectManager.RemoveFilesFromWorkspace(resCol, path);
+                string path = node.Name;
+                RemovePathFromTreeView(node);
+                _ProjectManager.RemoveFileFromWorkspace(path);
                 if(node.TreeView != null)
                     RefreshTreeNodeStyle(node, true);
             }
@@ -255,12 +350,12 @@ namespace Sm4shFileExplorer
             TreeNode node = treeView.SelectedNode;
             if (node != null)
             {
-                ResourceItem rItem = GetResourceFromNode(node);
+                ResourceItem rItem = _ProjectManager.GetResource(node.Name);
                 if (rItem != null)
                 {
-                    if (MessageBox.Show(Strings.WARNING_PACK_FOLDER, Strings.CAPTION_PACK_FOLDER, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    if (MessageBox.Show(UIStrings.WARNING_PACK_FOLDER, UIStrings.CAPTION_PACK_FOLDER, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                     {
-                        _ProjectManager.PackFolder(rItem.ResourceCollection, rItem.Path);
+                        _ProjectManager.PackFolder(rItem.ResourceCollection, rItem.AbsolutePath);
                         if (node.TreeView != null)
                             RefreshTreeNodeStyle(node, true);
                     }
@@ -271,26 +366,36 @@ namespace Sm4shFileExplorer
         private void refreshTreeviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             treeView.Nodes.Clear();
-            PopulateTreeView(_ProjectManager.ResourceData);
+            PopulateTreeView(_ProjectManager.ResourceDataCollection);
         }
 
         private void menuOptions_Click(object sender, EventArgs e)
         {
             _Options.ShowDialog(this);
-            AppConfig.Sm4shProject.ProjectHexEditorPath = _Options.txtDirHexEditor.Text;
-            AppConfig.Sm4shProject.ProjectExtractPath = _Options.txtDirExtractionFolder.Text;
-            AppConfig.Sm4shProject.ProjectExportPath = _Options.txtDirExportFolder.Text;
-            AppConfig.Sm4shProject.ProjectTempPath = _Options.txtDirTempFolder.Text;
-            AppConfig.Sm4shProject.ProjectWorkplacePath = _Options.txtDirWorkplaceFolder.Text;
-            AppConfig.Sm4shProject.Debug = _Options.chkDebug.Checked;
-            AppConfig.Sm4shProject.SkipJunkEntries = _Options.chkSkipJunkEntries.Checked;
-            AppConfig.Sm4shProject.KeepOriginalFlags = _Options.chkForceOriginalFlags.Checked;
-            AppConfig.Sm4shProject.ExportCSVList = _Options.chkSeeExportResults.Checked;
-            AppConfig.Sm4shProject.ExportCSVIgnoreCompSize = _Options.chkCSVExportIgnoreCompSize.Checked;
-            AppConfig.Sm4shProject.ExportCSVIgnoreFlags = _Options.chkCSVExportIgnoreFlags.Checked;
-            AppConfig.Sm4shProject.ExportCSVIgnorePackOffsets = _Options.chkCSVExportIgnoreOffsetInPack.Checked;
-            AppConfig.Sm4shProject.ExportWithDateFolder = _Options.chkExportAddDate.Checked;
+            _ProjectManager.CurrentProject.ProjectHexEditorFile = _Options.txtDirHexEditor.Text;
+            _ProjectManager.CurrentProject.ProjectExtractFolder = _Options.txtDirExtractionFolder.Text;
+            _ProjectManager.CurrentProject.ProjectExportFolder = _Options.txtDirExportFolder.Text;
+            _ProjectManager.CurrentProject.ProjectTempFolder = _Options.txtDirTempFolder.Text;
+            _ProjectManager.CurrentProject.ProjectWorkplaceFolder = _Options.txtDirWorkplaceFolder.Text;
+            _ProjectManager.CurrentProject.Debug = _Options.chkDebug.Checked;
+            _ProjectManager.CurrentProject.SkipJunkEntries = _Options.chkSkipJunkEntries.Checked;
+            _ProjectManager.CurrentProject.KeepOriginalFlags = _Options.chkForceOriginalFlags.Checked;
+            _ProjectManager.CurrentProject.ExportCSVList = _Options.chkSeeExportResults.Checked;
+            _ProjectManager.CurrentProject.ExportCSVIgnoreCompSize = _Options.chkCSVExportIgnoreCompSize.Checked;
+            _ProjectManager.CurrentProject.ExportCSVIgnoreFlags = _Options.chkCSVExportIgnoreFlags.Checked;
+            _ProjectManager.CurrentProject.ExportCSVIgnorePackOffsets = _Options.chkCSVExportIgnoreOffsetInPack.Checked;
+            _ProjectManager.CurrentProject.ExportWithDateFolder = _Options.chkExportAddDate.Checked;
             _ProjectManager.SaveProject();
+        }
+
+        private void orderPluginsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_ReorderPlugins == null)
+            {
+                _ReorderPlugins = new ReorderPlugins(_ProjectManager);
+                _ReorderPlugins.LoadGridView();
+            }
+            _ReorderPlugins.ShowDialog(this);
         }
 
         private void thanksToolStripMenuItem_Click(object sender, EventArgs e)
@@ -302,62 +407,97 @@ namespace Sm4shFileExplorer
         {
             this.Close();
         }
+
+        #region Loading
+        private void Main_Shown(object sender, EventArgs e)
+        {
+            this.Enabled = false;
+            Console.SetOut(_ConsoleProgress);
+
+            backgroundWorker.RunWorkerAsync();
+        }
+
+        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            LoadConfig();
+        }
+
+        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            textConsole.AppendText(e.UserState.ToString()  + Environment.NewLine);
+        }
+
+        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            LoadConfigCompleted();
+        }
+
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_ProjectManager != null)
+                _ProjectManager.CleanTempFolder();
+        }
+        #endregion
         #endregion
 
         #region Methods
         #region TreeView
         private void PopulateTreeView(ResourceCollection[] resourceData)
         {
-            treeView.Nodes.Clear();
-            Console.WriteLine("Populating Treeview...");
-            treeView.Sort();
-            foreach (ResourceCollection resourceCollection in resourceData)
-                PopulateTreeView(resourceCollection);
-            Console.WriteLine("Done.");
-        }
-
-        private void PopulateTreeView(ResourceCollection resourceCollection)
-        {
-            TreeNode currentnode;
-            char[] cachedpathseparator = "/".ToCharArray();
-            TreeNode rootNode = new TreeNode("data" + resourceCollection.Region, 0, 0);
-            rootNode.Name = resourceCollection.Region;
-            rootNode.Tag = resourceCollection;
-            string[] paths = resourceCollection.GetFilteredResources().Keys.ToArray();
-            foreach (string path in paths)
+            if (resourceData == null || resourceData.Length == 0)
             {
-                currentnode = rootNode;
-                foreach (string subPath in path.Split(cachedpathseparator, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    if (null == currentnode.Nodes[subPath])
-                        currentnode = currentnode.Nodes.Add(subPath, subPath);
-                    else
-                        currentnode = currentnode.Nodes[subPath];
-                }
-            }
-            PopulateTreeViewIncremental(rootNode);
-            treeView.Nodes.Add(rootNode);
-        }
-
-        private void PopulateTreeViewIncremental(TreeNode treenode)
-        {
-            ResourceCollection resCol = GetResourceCollectionFromNode(treenode);
-            if (resCol == null)
+                LogHelper.Error("No data was found.");
                 return;
-            Console.WriteLine(string.Format("Refreshing Treeview mod files for data{0}...", resCol.Region));
+            }
+
+            treeView.BeginUpdate();
+            LogHelper.Info("Populating Treeview...");
+            treeView.Sort();
+            treeView.Nodes.Clear();
+            foreach (ResourceCollection resourceCollection in resourceData)
+            {
+                TreeNode rootNode = new TreeNode(resourceCollection.PartitionName, 0, 0);
+                rootNode.Name = resourceCollection.PartitionName + "/";
+                rootNode.Tag = resourceCollection;
+                PopulateTreeViewResources(rootNode, resourceCollection.Nodes, resourceCollection.IsRegion);
+                PopulateTreeViewWorkspace(rootNode);
+                treeView.Nodes.Add(rootNode);
+            }
+
+            treeView.EndUpdate();
+            LogHelper.Info("Done.");
+        }
+
+        private void PopulateTreeViewResources(TreeNode currentNode, List<ResourceItem> resourceCollection, bool isRegion)
+        {
+            foreach (ResourceItem resource in resourceCollection)
+            {
+                if (isRegion && resource.Source == FileSource.NotFound)
+                    continue;
+                string nodeName = resource.Filename;
+                if (nodeName.EndsWith("/"))
+                    nodeName = nodeName.Substring(0, nodeName.Length - 1);
+                TreeNode subNode = new TreeNode(nodeName);
+                subNode.Name = resource.AbsolutePath;
+                //PopulateTreeViewResources(subNode, resource.Nodes, isRegion); //LAZY LOADING
+                currentNode.Nodes.Add(subNode);
+            }
+        }
+
+        private void PopulateTreeViewWorkspace(TreeNode currentNode)
+        {
+            TreeNode rootNode = GetFirstLevelNode(currentNode);
             char[] cachedpathseparator = "/".ToCharArray();
-            string[] paths = _ProjectManager.GetAllModPaths("data" + resCol.Region);
-            TreeNode currentnode;
+            string[] paths = _ProjectManager.GetAllWorkplaceRelativePaths(currentNode.Name, false);
 
             foreach (string path in paths)
             {
-                currentnode = treenode;
-                foreach (string subPath in path.Split(cachedpathseparator, StringSplitOptions.RemoveEmptyEntries))
+                if (null == currentNode.Nodes[currentNode.Name + path])
                 {
-                    if (null == currentnode.Nodes[subPath])
-                        currentnode = currentnode.Nodes.Add(subPath, subPath);
-                    else
-                        currentnode = currentnode.Nodes[subPath];
+                    string nodeName = path;
+                    if (nodeName.EndsWith("/"))
+                        nodeName = nodeName.Substring(0, nodeName.Length - 1);
+                    currentNode.Nodes.Add(currentNode.Name + path, nodeName);
                 }
             }
         }
@@ -367,7 +507,12 @@ namespace Sm4shFileExplorer
             if (node == null)
                 return;
 
-            ResourceItem rItem = GetResourceFromNode(node);
+            ResourceItem rItem = _ProjectManager.GetResource(node.Name);
+
+            //See for subnodes
+            if (rItem != null && node.Nodes.Count == 0 && rItem.Nodes.Count != 0)
+                PopulateTreeViewResources(node, rItem.Nodes, rItem.ResourceCollection.IsRegion);
+            PopulateTreeViewWorkspace(node);
 
             //Checking if file is in workspace (mod)
             string modPath = GetWorkspaceFileFromNode(node);
@@ -385,12 +530,19 @@ namespace Sm4shFileExplorer
             }
             else if (rItem != null)
             {
-                if (AppConfig.Sm4shProject.IsUnlocalized(rItem.ResourceCollection.Region, rItem.Path))
+                if (_ProjectManager.CurrentProject.IsResourceRemoved(rItem.ResourceCollection.PartitionName, rItem.RelativePath))
+                    node.ForeColor = UIConstants.NODE_MOD_DELETED;
+                else if (_ProjectManager.CurrentProject.IsUnlocalized(rItem.ResourceCollection.PartitionName, rItem.RelativePath))
                     node.ForeColor = UIConstants.NODE_MOD_UNLOCALIZED;
                 else if (rItem.Source == FileSource.Patch)
                     node.ForeColor = UIConstants.NODE_PATCH;
                 else if (rItem.Source == FileSource.LS || rItem.Source == FileSource.NotFound)
                     node.ForeColor = UIConstants.NODE_LS;
+            }
+            else
+            {
+                LogHelper.Warning(string.Format("The node '{0}' could not be found and has been removed.", node.Name));
+                node.Remove();
             }
             if (rItem != null)
             {
@@ -414,81 +566,42 @@ namespace Sm4shFileExplorer
                 }
             }
 
+            //Plugins
+            ResourceCollection resCol = _ProjectManager.GetResourceCollection(node.Name);
+            foreach (Sm4shBasePlugin plugin in _ProjectManager.Plugins)
+            {
+                if (plugin.Icons == null)
+                    continue;
+
+                int result = plugin.InternalCanResourceBeLoaded(resCol, _ProjectManager.GetRelativePath(node.Name));
+                if (result > -1 && result < plugin.Icons.Length)
+                {
+                    node.SelectedImageKey = plugin.Name + result.ToString();
+                    node.ImageKey = plugin.Name + result.ToString();
+                    break;
+                }
+            }
+
             if (recursive && node.IsExpanded) 
                 foreach (TreeNode childNode in node.Nodes)
                     RefreshTreeNodeStyle(childNode, recursive);
         }
 
-        private void RemovePathFromTreeView(ResourceCollection resCol, TreeNode node)
+        private void RemovePathFromTreeView(TreeNode node)
         {
-            ResourceItem rItem = GetResourceFromNode(node);
+            ResourceItem rItem = _ProjectManager.GetResource(node.Name);
             if (rItem != null)
             {
                 for (int i = node.Nodes.Count - 1; i >= 0; i--)
-                    RemovePathFromTreeView(resCol, node.Nodes[i]);
+                    RemovePathFromTreeView(node.Nodes[i]);
                 return;
             }
             node.Remove();
         }
 
-        private ResourceItem GetResourceFromNode(TreeNode selectedNode)
-        {
-            ResourceItem rItem = null;
-            TreeNode currentNode = selectedNode;
-
-            if (currentNode == null || currentNode.Parent == null)
-                return null;
-
-            if (currentNode.Tag == null)
-            {
-                string fullpath = GetFullPathOfNode(currentNode);
-                ResourceCollection resCol = GetResourceCollectionFromNode(currentNode);
-                if (resCol.Resources.ContainsKey(fullpath))
-                {
-                    rItem = resCol.Resources[fullpath];
-                    selectedNode.Tag = rItem;
-                }
-            }
-            else if (selectedNode.Parent != null)
-                rItem = ((ResourceItem)(currentNode.Tag));
-
-            return rItem;
-        }
-
-        private ResourceCollection GetResourceCollectionFromNode(TreeNode node)
-        {
-            TreeNode rootNode = GetFirstLevelNode(node);
-            if (rootNode != null)
-                return rootNode.Tag as ResourceCollection;
-
-            return null;
-        }
-
-        private string GetFullPathOfNodeWithRegion(TreeNode node)
-        {
-            TreeNode currentNode = node;
-            string path = node.Text;
-            while (currentNode.Parent != null)
-            {
-                currentNode = currentNode.Parent;
-                path = currentNode.Text + "/" + path;
-            }
-            if ((path.Contains("/") && !path.Substring(path.LastIndexOf("/")).Contains(".")) || !path.Contains("/"))
-                path += "/";
-
-            return path;
-        }
-
-        private string GetFullPathOfNode(TreeNode node)
-        {
-            string path = GetFullPathOfNodeWithRegion(node);
-            return path.Substring(path.IndexOf("/") + 1);
-        }
-
         private string GetWorkspaceFileFromNode(TreeNode node)
         {
-            string path = GetFullPathOfNodeWithRegion(node);
-            return PathHelper.GetProjectWorkplaceFolder() + path.Replace("/", GlobalConstants.FOLDER_SEPARATOR);
+            return PathHelper.GetWorkplaceFolder(PathHelperEnum.FOLDER_PATCH) + node.FullPath.Replace('/', Path.DirectorySeparatorChar);
         }
 
         private TreeNode GetFirstLevelNode(TreeNode node)
@@ -506,37 +619,51 @@ namespace Sm4shFileExplorer
             if (node.Parent == null && node.Tag is ResourceCollection)
             {
                 ResourceCollection resCol = (ResourceCollection)node.Tag;
-                dataGridView.Rows.Add("Name", "data" + resCol.Region);
+                dataGridView.Rows.Add("Name", resCol.PartitionName);
+                dataGridView.Rows.Add("Path", node.Name);
                 dataGridView.Rows.Add("Nbr Resources", resCol.Resources.Count);
                 return;
             }
 
+            ResourceItem rItem = null;
+
             //File
             string filePath = GetWorkspaceFileFromNode(node);
-            if (File.Exists(filePath))
+            if (File.Exists(filePath) || Directory.Exists(filePath))
             {
                 dataGridView.Rows.Add("Name", Path.GetFileName(filePath));
+                dataGridView.Rows.Add("Path", node.Name);
                 dataGridView.Rows.Add("Source", "Mod");
-                return;
+            }
+            else
+            {
+                //Original Resource
+                rItem = _ProjectManager.GetResource(node.Name);
+                if (rItem != null)
+                {
+                    dataGridView.Rows.Add("Name", rItem.Filename);
+                    dataGridView.Rows.Add("Path", rItem.AbsolutePath);
+                    dataGridView.Rows.Add("Compressed size", rItem.CmpSize);
+                    dataGridView.Rows.Add("Decompressed size", rItem.DecSize);
+                    dataGridView.Rows.Add("Flags", rItem.Flags);
+                    dataGridView.Rows.Add("Package", rItem.IsAPackage ? "Yes" : "No");
+                    string source = rItem.Source.ToString();
+                    if (source == "NotFound")
+                        source = "Folder";
+                    dataGridView.Rows.Add("Source", source);
+                    dataGridView.Rows.Add("Partition", rItem.ResourceCollection.PartitionName);
+                    if (rItem.OffInPack != 0)
+                        dataGridView.Rows.Add("Offset in pack", String.Format("0x{0:X8}", rItem.OffInPack));
+                }
             }
 
-            //Original Resource
-            ResourceItem rItem = GetResourceFromNode(node);
-            if(rItem != null)
+            ResourceCollection rootCol = GetFirstLevelNode(node).Tag as ResourceCollection;
+            foreach (Sm4shBasePlugin plugin in _ProjectManager.Plugins)
             {
-                dataGridView.Rows.Add("Name", rItem.Filename);
-                dataGridView.Rows.Add("Compressed size", rItem.CmpSize);
-                dataGridView.Rows.Add("Decompressed size", rItem.DecSize);
-                dataGridView.Rows.Add("Flags", rItem.Flags);
-                dataGridView.Rows.Add("Package", rItem.IsAPackage ? "Yes" : "No");
-                string source = rItem.Source.ToString();
-                if (source == "NotFound")
-                    source = "Folder";
-                dataGridView.Rows.Add("Source", source);
-                dataGridView.Rows.Add("Region", rItem.ResourceCollection.Region);
-                if (rItem.OffInPack != 0)
-                    dataGridView.Rows.Add("Offset in pack", String.Format("0x{0:X8}", rItem.OffInPack));
-                return;
+                Dictionary<string, string> dict = plugin.InternalGridViewPopulated(rootCol, node.Name, filePath);
+                if(dict != null)
+                    foreach(string key in dict.Keys)
+                        dataGridView.Rows.Add(key, dict[key]);
             }
         }
         #endregion
@@ -548,17 +675,17 @@ namespace Sm4shFileExplorer
                 return;
 
             TreeNode rootNode = GetFirstLevelNode(node);
-            ResourceCollection resCol = GetResourceCollectionFromNode(node);
-            string nodePath = GetFullPathOfNode(node);
-            if (!string.IsNullOrEmpty(nodePath))
+            if (!string.IsNullOrEmpty(node.Name))
             {
-                _ProjectManager.AddFilesToWorkspace(resCol, files, nodePath);
+                foreach (string file in files)
+                    _ProjectManager.AddFileToWorkspace(file, node.Name);
+
 
                 //Update Treeview
-                PopulateTreeViewIncremental(rootNode);
+                PopulateTreeViewWorkspace(node);
 
                 //Update Style
-                RefreshTreeNodeStyle(GetFirstLevelNode(node), true);
+                RefreshTreeNodeStyle(rootNode, true);
             }
         }
         #endregion
@@ -566,27 +693,28 @@ namespace Sm4shFileExplorer
         #region Save/Load
         public bool CreateConfig()
         {
-            MessageBox.Show(this, Strings.CREATE_PROJECT_FIND_FOLDER, Strings.CAPTION_CREATE_PROJECT);
+            MessageBox.Show(this, UIStrings.CREATE_PROJECT_FIND_FOLDER, UIStrings.CAPTION_CREATE_PROJECT);
             while (true)
             {
                 DialogResult result = folderBrowserDialog.ShowDialog(this);
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
-                    string gamePath = folderBrowserDialog.SelectedPath + UIConstants.FOLDER_SEPARATOR;
-                    if (!PathHelper.IsItSmashFolder(gamePath))
+                    string gameFolder = folderBrowserDialog.SelectedPath + Path.DirectorySeparatorChar;
+                    if (!PathHelper.IsItSmashFolder(gameFolder))
                     {
-                        MessageBox.Show(this, string.Format(Strings.ERROR_LOADING_GAME_FOLDER, PathHelper.GetPath(gamePath, PathHelperEnum.FILE_LS), PathHelper.GetPath(gamePath, PathHelperEnum.FILE_META), PathHelper.GetPath(gamePath, PathHelperEnum.FILE_RPX), Strings.CAPTION_ERROR_LOADING_GAME_FOLDER));
+                        MessageBox.Show(this, UIStrings.ERROR_LOADING_GAME_FOLDER, UIStrings.CAPTION_ERROR_LOADING_GAME_FOLDER);
                         continue;
                     }
-                    if (!PathHelper.DoesItHavePatchFolder(gamePath))
+                    if (!PathHelper.DoesItHavePatchFolder(gameFolder))
                     {
-                        MessageBox.Show(this, Strings.ERROR_LOADING_GAME_PATCH_FOLDER, Strings.CAPTION_ERROR_LOADING_GAME_FOLDER);
+                        MessageBox.Show(this, UIStrings.ERROR_LOADING_GAME_PATCH_FOLDER, UIStrings.CAPTION_ERROR_LOADING_GAME_FOLDER);
                         continue;
                     }
 
-                    Console.WriteLine("Creating configuration file...");
-                    Sm4shMod newProject = _ProjectManager.CreateNewProject(UIConstants.CONFIG_FILE, gamePath);
-                    MessageBox.Show(this, Strings.CREATE_PROJECT_SUCCESS, Strings.CAPTION_CREATE_PROJECT);
+                    LogHelper.Info("Creating configuration file...");
+                    Sm4shMod newProject = _ProjectManager.CreateNewProject(UIConstants.CONFIG_FILE, gameFolder);
+                    new CreationProjectInfo(newProject, _ProjectManager).ShowDialog(this);
+                    MessageBox.Show(this, UIStrings.CREATE_PROJECT_SUCCESS, UIStrings.CAPTION_CREATE_PROJECT);
 
                     return true;
                 }
@@ -597,78 +725,67 @@ namespace Sm4shFileExplorer
 
         public void LoadConfig()
         {
-            Sm4shMod loadedProject = _ProjectManager.LoadProject(UIConstants.CONFIG_FILE);
-            if (loadedProject == null)
+            _ProjectManager.LoadProject(UIConstants.CONFIG_FILE);
+            if (_ProjectManager.CurrentProject == null)
+            {
+                MessageBox.Show(this, UIStrings.ERROR_LOADING_PROJECT, UIStrings.CAPTION_ERROR_LOADING_GAME_FOLDER);
+                Application.Exit();
                 return;
-            AppConfig.Sm4shProject = loadedProject;
-        }
-
-        private void Main_Shown(object sender, EventArgs e)
-        {
-            this.Enabled = false;
-            _LoadingWindow = new LoadingWindow();
-            _LoadingWindow.Show();
-            _LoadingWindow.Left = Screen.PrimaryScreen.Bounds.Width / 2 - _LoadingWindow.Size.Width / 2;
-            _LoadingWindow.Top = Screen.PrimaryScreen.Bounds.Height / 2 - _LoadingWindow.Size.Height / 2;
-            _LoadingWindow.BringToFront();
-            Console.SetOut(_ConsoleProgress);
-
-            backgroundWorker.RunWorkerAsync();
-        }
-
-        private void backgroundWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            LoadConfig();
-        }
-
-        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            _LoadingWindow.LabelProgress.Text = e.UserState.ToString();
-            string progress = Regex.Match(_LoadingWindow.LabelProgress.Text, @"(\d+)/(\d+)").Value;
-            if (progress.Contains("/"))
-            {
-                string[] progressValues = progress.Split("/".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-                if (progressValues.Length == 2)
-                {
-                    int totalValue = -1;
-                    int currentValue = -1;
-                    Int32.TryParse(progressValues[0], out currentValue);
-                    Int32.TryParse(progressValues[1], out totalValue);
-                    if (totalValue >= 0 && currentValue >= 0)
-                    {
-                        _LoadingWindow.ProgressBar.Maximum = totalValue;
-                        _LoadingWindow.ProgressBar.Value = currentValue - 1;
-                    }
-                }
             }
-            else
-            {
-                if(_LoadingWindow.ProgressBar.Maximum > _LoadingWindow.ProgressBar.Value)
-                    _LoadingWindow.ProgressBar.Value++;
-            }
-            textConsole.AppendText(_LoadingWindow.LabelProgress.Text + "\r\n");
+            _Options = new Options(_ProjectManager.CurrentProject);
         }
 
-        private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        public void LoadConfigCompleted()
         {
-            if (AppConfig.Sm4shProject == null)
+            if (_ProjectManager.CurrentProject == null)
             {
-                MessageBox.Show(Strings.ERROR_LOADING_GAME_LOAD_FOLDER, Strings.CAPTION_ERROR_LOADING_GAME_FOLDER);
+                MessageBox.Show(UIStrings.ERROR_LOADING_GAME_LOAD_FOLDER, UIStrings.CAPTION_ERROR_LOADING_GAME_FOLDER);
                 Application.Exit();
                 return;
             }
 
             this.Enabled = true;
-            _LoadingWindow.Close();
             Console.SetOut(_ConsoleText);
-            lblGameIDValue.Text = AppConfig.Sm4shProject.GameID;
-            lblRegionValue.Text = AppConfig.Sm4shProject.GameRegion;
-            lblVersionValue.Text = AppConfig.Sm4shProject.GameVersion;
+            lblGameIDValue.Text = _ProjectManager.CurrentProject.GameID;
+            lblRegionValue.Text = _ProjectManager.CurrentProject.GameRegion;
+            lblVersionValue.Text = _ProjectManager.CurrentProject.GameVersion.ToString();
+
+            //Treeview setup
+            treeView.ImageList = new ImageList();
+            treeView.ImageList.Images.Add(UIConstants.ICON_FOLDER, Resources.Resource.icon_folder);
+            treeView.ImageList.Images.Add(UIConstants.ICON_FILE, Resources.Resource.icon_file);
+            treeView.ImageList.Images.Add(UIConstants.ICON_PACKED, Resources.Resource.icon_packed);
+
+            //Loading Plugins
+            if (_ProjectManager.Plugins != null)
+            {
+                foreach (Sm4shBasePlugin plugin in _ProjectManager.Plugins)
+                {
+                    //Icon
+                    if (plugin.Icons != null)
+                    {
+                        for(int i = 0; i < plugin.Icons.Length; i++)
+                        treeView.ImageList.Images.Add(plugin.Name + i.ToString(), plugin.Icons[0]);
+                    }
+
+                    //Menu
+                    if (!plugin.ShowInPluginList)
+                        continue;
+
+                    ToolStripMenuItem newMenuItem = new ToolStripMenuItem(string.Format("{0} [Research {1}, GUI {2}]", plugin.Name, plugin.Research, plugin.GUI));
+                    newMenuItem.ToolTipText = plugin.Description;
+                    newMenuItem.Click += new EventHandler(this.plugin_Click);
+                    newMenuItem.Tag = plugin;
+
+                    menuPlugins.Enabled = true;
+                    menuPlugins.DropDownItems.Insert(0, newMenuItem);
+                }
+            }
+
             refreshTreeviewToolStripMenuItem_Click(this, null);
         }
         #endregion
-        #endregion
 
-        
+        #endregion
     }
 }

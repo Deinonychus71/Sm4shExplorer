@@ -14,7 +14,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -26,7 +26,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,8 +34,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DTLS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\DTLS.exe</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,6 +50,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="zlibnet, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\zlibnet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="About.cs">
@@ -53,18 +62,25 @@
     <Compile Include="About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="Globals\AppConfig.cs" />
-    <Compile Include="Globals\ConsoleRedirText.cs" />
-    <Compile Include="Globals\ConsoleRedirProgress.cs" />
-    <Compile Include="Globals\UIConstants.cs" />
-    <Compile Include="Globals\Strings.cs" />
-    <Compile Include="Globals\Util.cs" />
-    <Compile Include="LoadingWindow.cs">
+    <Compile Include="CreationProjectInfo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LoadingWindow.Designer.cs">
-      <DependentUpon>LoadingWindow.cs</DependentUpon>
+    <Compile Include="CreationProjectInfo.Designer.cs">
+      <DependentUpon>CreationProjectInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="DB\CharsDB.cs" />
+    <Compile Include="DB\IconsDB.cs" />
+    <Compile Include="DB\StagesDB.cs" />
+    <Compile Include="Globals\ConsoleRedirProgress.cs" />
+    <Compile Include="Globals\ConsoleRedirText.cs" />
+    <Compile Include="Globals\CustomStringComparer.cs" />
+    <Compile Include="Globals\GlobalConstants.cs" />
+    <Compile Include="Globals\LogHelper.cs" />
+    <Compile Include="Globals\PathHelper.cs" />
+    <Compile Include="Globals\Sm4shBasePlugin.cs" />
+    <Compile Include="Globals\UIConstants.cs" />
+    <Compile Include="Globals\UIStrings.cs" />
+    <Compile Include="Globals\Utils.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,6 +88,15 @@
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
     <Compile Include="Objects\Crc32.cs" />
+    <Compile Include="Objects\FileSource.cs" />
+    <Compile Include="Objects\PackageProcessor.cs" />
+    <Compile Include="Objects\PatchFileItem.cs" />
+    <Compile Include="Objects\PatchListFile.cs" />
+    <Compile Include="Objects\ResourceCollection.cs" />
+    <Compile Include="Objects\ResourceExtension.cs" />
+    <Compile Include="Objects\ResourceItem.cs" />
+    <Compile Include="Objects\ResourceNameItem.cs" />
+    <Compile Include="Objects\Sm4shMod.cs" />
     <Compile Include="Options.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,16 +105,24 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resource.Designer.cs">
+    <Compile Include="ReorderPlugins.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ReorderPlugins.Designer.cs">
+      <DependentUpon>ReorderPlugins.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Resource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="RFManager.cs" />
+    <Compile Include="Sm4shProject.cs" />
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LoadingWindow.resx">
-      <DependentUpon>LoadingWindow.cs</DependentUpon>
+    <EmbeddedResource Include="CreationProjectInfo.resx">
+      <DependentUpon>CreationProjectInfo.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
@@ -107,11 +140,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Resource.resx">
+    <EmbeddedResource Include="ReorderPlugins.resx">
+      <DependentUpon>ReorderPlugins.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="Properties\DataSources\Sm4shResourceFileManager.Objects.ResourceEntryObject.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -124,22 +159,19 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sm4shProjectManager\Sm4shProjectManager.csproj">
-      <Project>{3419c920-8f0c-4703-a64f-933c4396c39b}</Project>
-      <Name>Sm4shProjectManager</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
+    <Content Include="libs\DTLS.exe" />
+    <Content Include="libs\zlib32.dll" />
+    <Content Include="libs\zlib64.dll" />
+    <Content Include="libs\zlibnet.dll" />
+    <None Include="Resources\icon_packed.png" />
     <None Include="Resources\icon_folder.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\icon_file.png" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\icon_packed.png" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace Sm4shFileExplorer.Globals
 {
-    public class ConsoleRedirText : TextWriter
+    internal class ConsoleRedirText : TextWriter
     {
         TextBox _output = null;
 
