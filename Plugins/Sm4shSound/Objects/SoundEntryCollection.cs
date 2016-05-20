@@ -141,6 +141,9 @@ namespace Sm4shSound.Objects
 
             sEntry.Title = Strings.DEFAULT_SENTRY_TITLE;
             sEntry.SoundTestTitle = Strings.DEFAULT_SENTRY_TITLE2;
+            sEntry.Description = string.Empty;
+            sEntry.Description2 = string.Empty;
+            sEntry.Source = string.Empty;
 
             _SoundEntries.Add(sEntry);
             _SoundEntriesPerID.Add(sEntry.SoundID, sEntry);

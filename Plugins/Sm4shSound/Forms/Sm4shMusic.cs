@@ -129,13 +129,39 @@ namespace Sm4shSound.Forms
                 SoundEntryCollection = (SoundEntryCollection)Serializer.DeserializeXmlToObject<SoundEntryCollection>(pathToOpen).Clone();
 
                 //Hack for textarea
-                foreach(SoundEntry sEntry in SoundEntryCollection.SoundEntries)
+                try
                 {
-                    sEntry.Title = sEntry.Title.Replace("\n", Environment.NewLine);
-                    sEntry.SoundTestTitle = sEntry.SoundTestTitle.Replace("\n", Environment.NewLine);
-                    sEntry.Description = sEntry.Description.Replace("\n", Environment.NewLine);
-                    sEntry.Description2 = sEntry.Description2.Replace("\n", Environment.NewLine);
-                    sEntry.Source = sEntry.Source.Replace("\n", Environment.NewLine);
+                    foreach (SoundEntry sEntry in SoundEntryCollection.SoundEntries)
+                    {
+                        if (!string.IsNullOrEmpty(sEntry.Title))
+                            sEntry.Title = sEntry.Title.Replace("\n", Environment.NewLine);
+                        else
+                            sEntry.Title = string.Empty;
+
+                        if (!string.IsNullOrEmpty(sEntry.SoundTestTitle))
+                            sEntry.SoundTestTitle = sEntry.SoundTestTitle.Replace("\n", Environment.NewLine);
+                        else
+                            sEntry.SoundTestTitle = string.Empty;
+
+                        if (!string.IsNullOrEmpty(sEntry.Description))
+                            sEntry.Description = sEntry.Description.Replace("\n", Environment.NewLine);
+                        else
+                            sEntry.Description = string.Empty;
+
+                        if (!string.IsNullOrEmpty(sEntry.Description2))
+                            sEntry.Description2 = sEntry.Description2.Replace("\n", Environment.NewLine);
+                        else
+                            sEntry.Description2 = string.Empty;
+
+                        if (!string.IsNullOrEmpty(sEntry.Source))
+                            sEntry.Source = sEntry.Source.Replace("\n", Environment.NewLine);
+                        else
+                            sEntry.Source = string.Empty;
+                    }
+                }
+                catch(Exception ex)
+                {
+                    LogHelper.Error("Error parsing string variables.");
                 }
 
                 LogHelper.Info(string.Format("Sm4shMusic: Configuration '{0}' loaded.", pathToOpen));

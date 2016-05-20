@@ -75,5 +75,6 @@ namespace Sm4shSound.Globals
 
         public const string DEFAULT_SENTRY_TITLE = "BLANK";
         public const string DEFAULT_SENTRY_TITLE2 = "BLANK";
+
     }
 }
