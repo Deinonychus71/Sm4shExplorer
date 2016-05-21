@@ -621,6 +621,17 @@ namespace Sm4shFileExplorer
             LogHelper.Info(string.Format("Starting compilation of the mod ({0})", (packing ? "release" : "debug")));
 
             string exportFolder = PathHelper.FolderExport + (packing ? "release" : "debug") + Path.DirectorySeparatorChar + (_CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
+
+            try
+            {
+                if (Directory.Exists(exportFolder))
+                    Directory.Delete(exportFolder, true);
+            }
+            catch
+            {
+                LogHelper.Error(string.Format("Error deleting '{0}', please delete it manually before attempting to build the mod again.", exportFolder));
+            }
+
             LogHelper.Debug(string.Format("Export folder: '{0}'", exportFolder));
             string exportPatchFolder = exportFolder + "content" + Path.DirectorySeparatorChar + "patch" + Path.DirectorySeparatorChar;
 
@@ -1499,7 +1510,7 @@ namespace Sm4shFileExplorer
                     LogHelper.Warning(string.Format("The filesize of dt00/dt01 doesn't match the region set in your config ({0}). You will not be able to extract from LS.", _CurrentProject.GameRegion));
                     string guessedRegionName = _CurrentProject.GuessRegionFromDTFiles(dt00.Length, dt01.Length);
                     if (!string.IsNullOrEmpty(guessedRegionName))
-                        LogHelper.Info(string.Format("It seems that the size of your dt00/dt01 files match the ({0}) region. You might want to edit your config file: 1 is for JPN, 2 is for USA, 3 is for EUR.", guessedRegionName));
+                        LogHelper.Info(string.Format("It seems that the size of your dt00/dt01 files match the ({0}) region. You might want to edit your config file: 1 is for JPN, 2 is for USA, 4 is for EUR.", guessedRegionName));
                     return false;
                 }
                 return true;

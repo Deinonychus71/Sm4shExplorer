@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sm4shMusic</RootNamespace>
+    <AssemblyName>sm4shplugin_music</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NAudio">
+      <HintPath>libs\NAudio.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DB\BGMFilesDB.cs" />
+    <Compile Include="DB\BGMStage.cs" />
+    <Compile Include="DB\BGMStageDB.cs" />
+    <Compile Include="EventHandlers\MoveItemArgs.cs" />
+    <Compile Include="EventHandlers\ListEntryArgs.cs" />
+    <Compile Include="Forms\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BGMProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BGMProperties.Designer.cs">
+      <DependentUpon>BGMProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CharacterRotation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CharacterRotation.Designer.cs">
+      <DependentUpon>CharacterRotation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Sm4shMusic.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Sm4shMusic.Designer.cs">
+      <DependentUpon>Sm4shMusic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SortMusic.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SortMusic.Designer.cs">
+      <DependentUpon>SortMusic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Globals\Base36.cs" />
+    <Compile Include="Globals\Debug.cs" />
+    <Compile Include="Globals\RefreshingListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Globals\Serializer.cs" />
+    <Compile Include="Globals\Strings.cs" />
+    <Compile Include="Globals\VGMStreamNative.cs" />
+    <Compile Include="Globals\VGMStreamReader.cs" />
+    <Compile Include="Objects\EnumEntity.cs" />
+    <Compile Include="Objects\ISm4shListItem.cs" />
+    <Compile Include="Objects\MSBTVariable.cs" />
+    <Compile Include="Objects\SoundDBStage.cs" />
+    <Compile Include="Objects\SoundDBStageSoundEntry.cs" />
+    <Compile Include="Objects\SoundEntryBGM.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\BGMManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\BGMManagement.Designer.cs">
+      <DependentUpon>BGMManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ListEntries.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\ListEntries.Designer.cs">
+      <DependentUpon>ListEntries.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Globals\Sm4shSoundTools.cs" />
+    <Compile Include="Objects\MyMusicStageBGM.cs" />
+    <Compile Include="Objects\SoundEntry.cs" />
+    <Compile Include="Objects\SoundEntryCollection.cs" />
+    <Compile Include="Objects\MyMusicStage.cs" />
+    <Compile Include="Objects\BGMEntry.cs" />
+    <Compile Include="Objects\MyMusicFile.cs" />
+    <Compile Include="Objects\PropertyFile.cs" />
+    <Compile Include="Objects\SoundMSBTFile.cs" />
+    <Compile Include="Objects\UISoundDBFile.cs" />
+    <Compile Include="Sm4shPlugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserControls\ListEvents.cs" />
+    <Compile Include="UserControls\MusicStageList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\MusicStageList.Designer.cs">
+      <DependentUpon>MusicStageList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\MyMusicManagement.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\MyMusicManagement.Designer.cs">
+      <DependentUpon>MyMusicManagement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\VGMStreamPlayer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\VGMStreamPlayer.Designer.cs">
+      <DependentUpon>VGMStreamPlayer.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BGMProperties.resx">
+      <DependentUpon>BGMProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CharacterRotation.resx">
+      <DependentUpon>CharacterRotation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Sm4shMusic.resx">
+      <DependentUpon>Sm4shMusic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SortMusic.resx">
+      <DependentUpon>SortMusic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\BGMManagement.resx">
+      <DependentUpon>BGMManagement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\ListEntries.resx">
+      <DependentUpon>ListEntries.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\MusicStageList.resx">
+      <DependentUpon>MusicStageList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\MyMusicManagement.resx">
+      <DependentUpon>MyMusicManagement.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\VGMStreamPlayer.resx">
+      <DependentUpon>VGMStreamPlayer.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\stop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowdown.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrowup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\remove.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Sm4shFileExplorer\Sm4shFileExplorer.csproj">
+      <Project>{69340763-b033-4aa4-8a0f-608c2437667b}</Project>
+      <Name>Sm4shFileExplorer</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_music.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y "$(SolutionDir)Plugins\Sm4shMusic\bin\$(ConfigurationName)\sm4shplugin_music.dll" "$(SolutionDir)Sm4shFileExplorer\$(OutDir)plugins"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shFileExplorer", "Sm4shF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{915852C1-1C12-4859-89BC-7F6160FF4859}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shSound", "Plugins\Sm4shSound\Sm4shSound.csproj", "{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shMusic", "Plugins\Sm4shMusic\Sm4shMusic.csproj", "{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shParamEditor", "Plugins\Sm4shParamEditor\Sm4shParamEditor.csproj", "{0456C2C2-3C1C-4524-BA56-23D2133E1443}"
 EndProject

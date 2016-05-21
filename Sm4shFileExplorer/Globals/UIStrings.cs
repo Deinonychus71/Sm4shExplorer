@@ -26,6 +26,7 @@ namespace Sm4shFileExplorer.Globals
         public const string INFO_FILE_HEX = "You must first set up the path to your hex editor.";
 
         public const string CAPTION_PACK_REBUILD = "Rebuild resources";
+        public const string WARN_EXPORT_FOLDER_EXISTS = "Warning. The folder '{0}' already exists. If you wish to continue, all content from this folder will be deleted. Proceed?";
         public const string INFO_PACK_REBUILD = "This feature will rebuild the resource files and patchfile. \r\nThis will ensure that the game takes your changes into account. When it's done, you can find the file in this folder:\r\n{0}";
 
         public const string INFO_THANKS = 

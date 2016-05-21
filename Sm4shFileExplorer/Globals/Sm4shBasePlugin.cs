@@ -47,6 +47,11 @@ namespace Sm4shFileExplorer.Globals
         public abstract string Research { get; }
 
         /// <summary>
+        /// Plugin version
+        /// </summary>
+        public abstract string Version { get; }
+
+        /// <summary>
         /// URL of the project
         /// </summary>
         public abstract string URL { get; }

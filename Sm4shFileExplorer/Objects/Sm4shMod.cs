@@ -131,6 +131,8 @@ namespace Sm4shFileExplorer.Objects
                 case 2:
                     return "USA";
                 case 3:
+                    return "???";
+                case 4:
                     return "EUR";
             }
             return "???";
@@ -145,6 +147,8 @@ namespace Sm4shFileExplorer.Objects
                 case 2:
                     return "AXFE01";
                 case 3:
+                    return "????01";
+                case 4:
                     return "AXFP01";
             }
             return "???";
@@ -173,6 +177,8 @@ namespace Sm4shFileExplorer.Objects
                         return true;
                     break;
                 case 3:
+                    return false;//???
+                case 4:
                     if (dt00size == 4085073920 && dt01size == 4038462509) //EUR
                         return true;
                     break;
@@ -188,6 +194,8 @@ namespace Sm4shFileExplorer.Objects
                 return GetRegionName(2);
             if (CheckDTSizeWiiU(dt00size, dt01size, 3))
                 return GetRegionName(3);
+            if (CheckDTSizeWiiU(dt00size, dt01size, 4))
+                return GetRegionName(4);
             return string.Empty;
         }
     }

@@ -101,8 +101,12 @@ namespace Sm4shFileExplorer
 
         private void menuBuild_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
-            _ProjectManager.RebuildRFAndPatchlist();
+            string exportFolder = PathHelper.FolderExport + "release" + Path.DirectorySeparatorChar + (_ProjectManager.CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
+            if (!Directory.Exists(exportFolder) || (Directory.Exists(exportFolder) && MessageBox.Show(string.Format(UIStrings.WARN_EXPORT_FOLDER_EXISTS, exportFolder), UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes))
+            {
+                MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
+                _ProjectManager.RebuildRFAndPatchlist();
+            }
         }
 
         private void plugin_Click(object sender, EventArgs e)
@@ -120,8 +124,12 @@ namespace Sm4shFileExplorer
 
         private void menuBuildDebug_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
-            _ProjectManager.RebuildRFAndPatchlist(false);
+            string exportFolder = PathHelper.FolderExport + "debug" + Path.DirectorySeparatorChar + (_ProjectManager.CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
+            if (!Directory.Exists(exportFolder) || (Directory.Exists(exportFolder) && MessageBox.Show(string.Format(UIStrings.WARN_EXPORT_FOLDER_EXISTS, exportFolder), UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes))
+            {
+                MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
+                _ProjectManager.RebuildRFAndPatchlist(false);
+            }
         }
 
         private void treeView_AfterSelect(object sender, TreeViewEventArgs e)

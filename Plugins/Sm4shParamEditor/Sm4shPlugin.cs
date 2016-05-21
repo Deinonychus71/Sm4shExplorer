@@ -42,6 +42,14 @@ namespace Sm4shParamEditor
             get { return "https://github.com/Sammi-Husky/Sm4sh-Tools"; }
         }
 
+        public override string Version
+        {
+            get
+            {
+                return "0.2";
+            }
+        }
+
         public override bool ShowInPluginList
         {
             get { return false; }

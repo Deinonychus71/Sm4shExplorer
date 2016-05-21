@@ -23,9 +23,10 @@ namespace Sm4shFileExplorer
             _Config = config;
             _Project = project;
 
-            ddpGameRegion.Items.Add("JPN");
-            ddpGameRegion.Items.Add("USA");
-            ddpGameRegion.Items.Add("EUR");  
+            ddpGameRegion.Items.Add("JPN (Zone 1)");
+            ddpGameRegion.Items.Add("USA (Zone 2)");
+            ddpGameRegion.Items.Add("??? (Zone 3)");
+            ddpGameRegion.Items.Add("EUR (Zone 4)");  
         }
 
         private void ddpGameRegion_VisibleChanged(object sender, EventArgs e)
