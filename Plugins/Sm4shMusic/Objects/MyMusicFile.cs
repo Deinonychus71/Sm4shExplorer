@@ -8,14 +8,14 @@ namespace Sm4shMusic.Objects
     public class MyMusicFile
     {
         private const int HEADER_LEN = 0x8;
-        private SoundEntryCollection _SoundEntryCollection;
+        public SoundEntryCollection SoundEntryCollection { get; set; }
         private string _Path;
         private byte[] _Header;
 
         public MyMusicFile(Sm4shProject projectManager, SoundEntryCollection sEntryCollection, string path)
         {
             string mymusicFile = projectManager.ExtractResource(path, PathHelper.FolderTemp);
-            _SoundEntryCollection = sEntryCollection;
+            SoundEntryCollection = sEntryCollection;
             _Path = path;
 
             using (FileStream fileStream = File.Open(mymusicFile, FileMode.Open))
@@ -55,7 +55,7 @@ namespace Sm4shMusic.Objects
                             b.BaseStream.Position = currentStageOffset + (j * 0x3c);
                             myMusicStage.BGMs.Add(ParseBGMEntry(b));
                         }
-                        _SoundEntryCollection.MyMusicStages.Add(myMusicStage);
+                        SoundEntryCollection.MyMusicStages.Add(myMusicStage);
                     }
                 }
             }
@@ -72,10 +72,10 @@ namespace Sm4shMusic.Objects
                     w.Write(_Header);
 
                     //NbrStage
-                    w.Write(_SoundEntryCollection.MyMusicStages.Count);
+                    w.Write(SoundEntryCollection.MyMusicStages.Count);
 
                     uint offSet = 0;
-                    foreach (MyMusicStage myMusicStage in _SoundEntryCollection.MyMusicStages)
+                    foreach (MyMusicStage myMusicStage in SoundEntryCollection.MyMusicStages)
                     {
                         w.Write(offSet);
                         offSet += ((uint)myMusicStage.BGMs.Count * 0x3c) + 0x24; //0x24 = Padding + Count
@@ -84,15 +84,15 @@ namespace Sm4shMusic.Objects
                     while ((w.BaseStream.Position) % 0x3c != 0) //Magic?
                         w.Write((byte)0x0);
 
-                    for(int i = 0; i < _SoundEntryCollection.MyMusicStages.Count; i++)
+                    for(int i = 0; i < SoundEntryCollection.MyMusicStages.Count; i++)
                     {
-                        MyMusicStage myMusicStage = _SoundEntryCollection.MyMusicStages[i];
+                        MyMusicStage myMusicStage = SoundEntryCollection.MyMusicStages[i];
                         w.Write(myMusicStage.BGMs.Count);
                         foreach (MyMusicStageBGM myMusicStageBGM in myMusicStage.BGMs)
                         {
                             WriteBGMEntry(w, myMusicStageBGM);
                         }
-                        if (i + 1 != _SoundEntryCollection.MyMusicStages.Count)
+                        if (i + 1 != SoundEntryCollection.MyMusicStages.Count)
                         {
                             for (int j = 0; j < 0x20; j++)  //Padding
                                 w.Write((byte)0x0);
@@ -109,7 +109,7 @@ namespace Sm4shMusic.Objects
         {
             uint BGMID = b.ReadUInt32();
 
-            MyMusicStageBGM sMyMusicBGM = new MyMusicStageBGM(_SoundEntryCollection, BGMID);
+            MyMusicStageBGM sMyMusicBGM = new MyMusicStageBGM(SoundEntryCollection, BGMID);
 
             sMyMusicBGM.Index = b.ReadUInt16();
             sMyMusicBGM.SubIndex = b.ReadUInt16();

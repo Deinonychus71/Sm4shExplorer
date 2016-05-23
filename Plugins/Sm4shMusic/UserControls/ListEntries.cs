@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sm4shMusic.Objects;
 using Sm4shMusic.EventHandlers;
+using Sm4shMusic.Globals;
 
 namespace Sm4shMusic.UserControls
 {
@@ -79,7 +80,7 @@ namespace Sm4shMusic.UserControls
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (ItemRemoved != null)
+            if (ItemRemoved != null && MessageBox.Show(string.Format(Strings.INFO_CONFIRM_DELETE, listBox.SelectedItem.ToString()), Strings.CAPTION_INFO, MessageBoxButtons.YesNo) == DialogResult.Yes)
                 this.ItemRemoved(this, new ListEntryArgs(listBox.SelectedItem));
         }
     }

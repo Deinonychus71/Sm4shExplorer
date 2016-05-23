@@ -95,6 +95,7 @@ namespace Sm4shFileExplorer.Globals
             catch(Exception e)
             {
                 LogHelper.Error(string.Format("OpenPluginMenu with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
             }
         }
 
@@ -107,6 +108,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("CanBeLoaded with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
                 return false;
             }
         }
@@ -120,6 +122,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("OnLoad with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
             }
         }
 
@@ -132,6 +135,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("NewModBuilding with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
                 return PluginActionResult.DefaultCancel;
             }
         }
@@ -145,6 +149,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("NewModBuilt with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
             }
         }
 
@@ -157,6 +162,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("CanResourceBeLoaded with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
                 return -1;
             }
         }
@@ -170,6 +176,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("ResourceSelected with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
                 return false;
             }
         }
@@ -183,6 +190,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("ResourcesAddingToWorkspace with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
                 return PluginActionResult.DefaultCancel;
             }
         }
@@ -196,6 +204,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("ResourcesAddedToWorkspace with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
             }
         }
 
@@ -208,6 +217,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("ResourcesRemovingFromWorkspace with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
                 return PluginActionResult.DefaultCancel;
             }
         }
@@ -221,6 +231,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("ResourcesRemovedFromWorkspace with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
             }
         }
 
@@ -233,6 +244,7 @@ namespace Sm4shFileExplorer.Globals
             catch (Exception e)
             {
                 LogHelper.Error(string.Format("GridViewPopulated with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
                 return null;
             }
         }

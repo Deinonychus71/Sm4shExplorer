@@ -15,14 +15,14 @@ namespace Sm4shMusic.Globals
         public const string HELP_BGM_MANAG_DESCRIPTION = "Edit the description of the song.";
         public const string HELP_BGM_MANAG_DESCRIPTION2 = "Edit the second description of the song (Sound test).";
         public const string HELP_BGM_MANAG_SOURCE = "Edit the source of the song.";
-        public const string HELP_BGM_MANAG_BGM = "- Choose a BGM that will be used in associated with this SOUND ID. In order for a SOUND ID to be valid, at least one song must be associated.\r\n- The game accepts up to 5 BGM per Sound (for stages like Mario Maker).\r\n- Custom BGMs must be located in 'content\\sound\\bgm' in the workspace folder. Do NOT copy the original BGM in the workspace!\r\n- To find new musics, you can either create your own or go to 'http://smashcustommusic.com/'.\r\n- A BGM must start with 'snd_bgm_' and ends with '.nus3bank'.\r\n- A nus3bank is NOT A MP3.";
+        public const string HELP_BGM_MANAG_BGM = "- Choose a BGM that will be used in associated with this SOUND ID. In order for a SOUND ID to be valid, at least one song must be associated.\r\n- The game accepts up to 5 BGM per Sound (for stages like Mario Maker).\r\n- Custom BGMs must be located in 'content\\sound\\bgm' in the workspace folder. Do NOT copy the original BGM in the workspace!\r\n- To find new songs, you can either create your own or go to 'http://smashcustommusic.com/'.\r\n- A BGM must start with 'snd_bgm_' and ends with '.nus3bank'.\r\n- A nus3bank is NOT A MP3.";
         public const string HELP_BGM_MANAG_SOUND_SOURCE = "- CoreGameSound: This sound is from the core game.\r\n- DLCSound: This sound is from a DLC (probably locked)\r\n- UpdateSound: This sound came with a free update.\r\n- TournamentSong: Special value for tournament songs (?)\r\n\r\nJust leave it to CoreGameSound. It will work.";
-        public const string HELP_BGM_MANAG_SOUND_MIXTYPE = "- Original: Will not show anything.\r\n- Remix: Will show a 'Remix' logo in white.\r\n- SmashOriginal: Will show an 'Original' logo.\r\n- RemixRed: Will show a 'Remix' logo in Red.";
+        public const string HELP_BGM_MANAG_SOUND_MIXTYPE = "- Original: Will show an 'Original' logo.\r\n- Remix: Will show a 'Remix' logo in white.\r\n- SmashOriginal: Will not show anything.\r\n- RemixRed: Will show a 'Remix' logo in Red.";
         public const string HELP_BGM_MANAG_SOUND_ICON = "Will show a specific icon in Sound Test for this music.";
         public const string HELP_BGM_MANAG_ROTATION_BEHAVIOR = "- NULL: No value set. You don't want that.\r\n- CharacterRandom: Any of the unlocked character can appear in the background in Sound Test.\r\n - RosterRandom: Any of the character selected in Background Rotation can appear in the background in Sound Test.\r\n - CharacterFirst: Only the first character of the list will appear in the background Sound Test.\r\n- UnlockableCharacterFirst: If character unlocked, will appear in the background, if not, then the others.\r\n\r\nThe last 2 options are quite weird. Just use CharacterRandom if you don't know.";
         public const string HELP_BGM_MANAG_ROTATION_BACKGROUND = "Choose up to 8 characters that can be used as a background image while selecting a song in Sound Test.";
-        public const string HELP_BGM_MANAG_ORDER_SOUND_TEST = "Opens a panel to reorder the list of musics for Sound Test.";
-        public const string HELP_BGM_MANAG_ORDER_STAGE_CREATION = "Opens a panel to reorder the list of musics for Stage Creation.";
+        public const string HELP_BGM_MANAG_ORDER_SOUND_TEST = "Opens a panel to reorder the list of songs for Sound Test.";
+        public const string HELP_BGM_MANAG_ORDER_STAGE_CREATION = "Opens a panel to reorder the list of songs for Stage Creation.";
         public const string HELP_BGM_MANAG_GROUP_STAGE_CREATION = "Choose in which group a music must be associated in Stage Creation.";
         public const string HELP_BGM_MANAG_INSOUNDTEST = "Check to show the music in Sound Test.";
         public const string HELP_BGM_MANAG_REGIONJAP = "Check if the song is available in the japanese region. This value change with a few limited songs, like Lost in Thoughts All Alone.";
@@ -67,6 +67,8 @@ namespace Sm4shMusic.Globals
 
         public const string CAPTION_INFO = "Info";
         public const string INFO_COMPILED = "The modifications were successfully saved in the workspace folder. If you wish to restore the original file, simply remove 'sound/config/bgm_property.mpb', 'param/ui/ui_sound_db.bin', 'sound/config/bgm_mymusic.mmb' and 'ui/message/sound.msbt' from the workspace folder.";
+
+        public const string INFO_CONFIRM_DELETE = "Are you sure you want to remove '{0}'? This action cannot be undone.";
 
         public const string INFO_THANKS =
             "- Research on SOUND DB, MyMusic, NUS3BANK and for http://smashcustommusic.com/: Soneek\r\n" +

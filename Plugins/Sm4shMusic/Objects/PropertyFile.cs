@@ -10,7 +10,7 @@ namespace Sm4shMusic.Objects
 {
     public class PropertyFile
     {
-        private SoundEntryCollection _SoundEntryCollection;
+        public SoundEntryCollection SoundEntryCollection { get; set; }
         private string _Path;
         private const int HEADER_LEN = 0x8;
         private byte[] _Header;
@@ -18,7 +18,7 @@ namespace Sm4shMusic.Objects
         public PropertyFile(Sm4shProject projectManager, SoundEntryCollection sEntryCollection, string path)
         {
             string propertyFile = projectManager.ExtractResource(path, PathHelper.FolderTemp);
-            _SoundEntryCollection = sEntryCollection;
+            SoundEntryCollection = sEntryCollection;
             _Path = path;
 
             using (FileStream fileStream = File.Open(propertyFile, FileMode.Open))
@@ -50,7 +50,7 @@ namespace Sm4shMusic.Objects
                         {
                             b.BaseStream.Position = songTableOffset + songIds[i];
                             BGMEntry sEntry = ParseProperty(b, (uint)i);
-                            _SoundEntryCollection.SoundEntriesBGMs.Add(sEntry);
+                            SoundEntryCollection.SoundEntriesBGMs.Add(sEntry);
                         }
                     }
                 }
@@ -88,7 +88,7 @@ namespace Sm4shMusic.Objects
         public void BuildFile()
         {
             string savePath = PathHelper.GetWorkplaceFolder(PathHelperEnum.FOLDER_PATCH) + _Path.Replace('/', Path.DirectorySeparatorChar);
-            uint nbrBGM = _SoundEntryCollection.SoundEntriesBGMs.Max(p => p.BGMID) + 1;
+            uint nbrBGM = SoundEntryCollection.SoundEntriesBGMs.Max(p => p.BGMID) + 1;
 
             using (MemoryStream stream = new MemoryStream())
             {
@@ -99,7 +99,7 @@ namespace Sm4shMusic.Objects
                     uint indexOffset = 0x00000000;
                     for (uint i = 0; i < nbrBGM; i++)
                     {
-                        if (!_SoundEntryCollection.SoundEntriesBGMsPerID.ContainsKey(i))
+                        if (!SoundEntryCollection.SoundEntriesBGMsPerID.ContainsKey(i))
                             w.Write(0xffffffff);
                         else
                         {
@@ -108,7 +108,7 @@ namespace Sm4shMusic.Objects
                         }
                     }
 
-                    foreach (BGMEntry bEntry in _SoundEntryCollection.SoundEntriesBGMsPerID.Values)
+                    foreach (BGMEntry bEntry in SoundEntryCollection.SoundEntriesBGMsPerID.Values)
                     {
                         WriteBGMEntry(bEntry, w);
                     }

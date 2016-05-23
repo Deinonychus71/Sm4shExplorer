@@ -18,6 +18,8 @@ using System.Xml.Serialization;
 
 namespace Sm4shMusic.Forms
 {
+    public delegate void XMLLoaded(object sender, EventArgs e);
+
     public partial class Main : Form
     {
         private BGMManagement _BGMManagement;
@@ -25,6 +27,8 @@ namespace Sm4shMusic.Forms
         private MyMusicManagement _MyMusicManagement;
         private About _About;
         private SoundEntryCollection _SoundEntryCollection;
+
+        public event XMLLoaded XMLLoaded;
 
         public SoundEntryCollection SoundEntryCollection
         {
@@ -163,6 +167,9 @@ namespace Sm4shMusic.Forms
                 {
                     LogHelper.Error("Error parsing string variables.");
                 }
+
+                if (XMLLoaded != null)
+                    this.XMLLoaded(this, new EventArgs());
 
                 LogHelper.Info(string.Format("Sm4shMusic: Configuration '{0}' loaded.", pathToOpen));
                 Initialize(_Sm4shProject);

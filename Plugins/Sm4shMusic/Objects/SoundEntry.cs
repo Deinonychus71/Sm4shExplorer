@@ -131,6 +131,11 @@ namespace Sm4shMusic.Objects
             return this.MemberwiseClone();
         }
 
+        public override string ToString()
+        {
+            return ListTitle;
+        }
+
         #region Implementation of INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 

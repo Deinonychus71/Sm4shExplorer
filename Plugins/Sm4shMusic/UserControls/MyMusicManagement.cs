@@ -304,22 +304,25 @@ namespace Sm4shMusic.UserControls
             {
                 MyMusicStageBGM myMusicStageBGM = SoundEntryCollection.CreateMyMusicStageBGM(sEntryBGM.BGMID, (ushort)_CurrentMyMusicStage.BGMs.Count);
                 _CurrentMyMusicStage.BGMs.Add(myMusicStageBGM);
-                foreach (SoundDBStageSoundEntry sDBStageSoundEntry in _CurrentSoundDBStage.SoundEntries)
+                if (_CurrentSoundDBStage != null)
                 {
-                    if (sDBStageSoundEntry.SoundEntry.BGMFiles.Find(p => p.BGMEntry == sEntryBGM) != null)
-                        return;
-                }
-                if (MessageBox.Show(Strings.WARNING_COPY_MYMUSIC, Strings.CAPTION_WARNING, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    foreach (SoundEntry sEntry in SoundEntryCollection.SoundEntries)
+                    foreach (SoundDBStageSoundEntry sDBStageSoundEntry in _CurrentSoundDBStage.SoundEntries)
                     {
-                        if (sEntry.BGMFiles.Find(p => p.BGMID == sEntryBGM.BGMID) != null)
-                        {
-                            _CurrentSoundDBStage.SoundEntries.Add(new SoundDBStageSoundEntry(SoundEntryCollection,sEntry.SoundID));
-                            break;
-                        }
+                        if (sDBStageSoundEntry.SoundEntry.BGMFiles.Find(p => p.BGMEntry == sEntryBGM) != null)
+                            return;
                     }
-                    _ListSoundDB.RefreshItems();
+                    if (MessageBox.Show(Strings.WARNING_COPY_MYMUSIC, Strings.CAPTION_WARNING, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        foreach (SoundEntry sEntry in SoundEntryCollection.SoundEntries)
+                        {
+                            if (sEntry.BGMFiles.Find(p => p.BGMID == sEntryBGM.BGMID) != null)
+                            {
+                                _CurrentSoundDBStage.SoundEntries.Add(new SoundDBStageSoundEntry(SoundEntryCollection, sEntry.SoundID));
+                                break;
+                            }
+                        }
+                        _ListSoundDB.RefreshItems();
+                    }
                 }
             }
         }

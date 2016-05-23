@@ -22,7 +22,7 @@ namespace Sm4shMusic.Objects
         public const string VAR_DESCRIPTION2 = "MsndO_";
         public const string VAR_SOURCE = "MsndS_";
 
-        private SoundEntryCollection _SoundEntryCollection;
+        public SoundEntryCollection SoundEntryCollection { get; set; }
         private ResourceCollection _ResCol;
         private SortedDictionary<string,MSBTVariable> _VarsMSBT;
         private string _Path;
@@ -37,7 +37,7 @@ namespace Sm4shMusic.Objects
         {
             _ResCol = projectManager.GetResourceCollection(path);
             string soundMSBTFile = projectManager.ExtractResource(path, PathHelper.FolderTemp);
-            _SoundEntryCollection = sEntryCollection;
+            SoundEntryCollection = sEntryCollection;
             _VarsMSBT = new SortedDictionary<string, MSBTVariable>();
             _Path = path;
 
@@ -219,7 +219,7 @@ namespace Sm4shMusic.Objects
                     newMSBTDB.Add(variable.Name, variable);
 
             //Then, we manually generate all the "new variables"
-            foreach (SoundEntry sEntry in _SoundEntryCollection.SoundEntries)
+            foreach (SoundEntry sEntry in SoundEntryCollection.SoundEntries)
                 SetNewMSBTPerSoundEntry(newMSBTDB, sEntry);
 
             return newMSBTDB;

@@ -12,19 +12,16 @@ namespace Sm4shMusic.Objects
     {
         private const int HEADER_LEN = 0x8;
         private const bool INCLUDE_EMPTY_SOUND = true;
-
         private byte[] _Header;
         private byte[] _SecondBloc;
-        private SoundEntryCollection _SoundEntryCollection;
+        public SoundEntryCollection SoundEntryCollection { get; set; }
         private string _Path;
         private Sm4shProject _Project;
-
-        public SoundEntryCollection SoundEntryCollection { get { return _SoundEntryCollection; } }
 
         public UISoundDBFile(Sm4shProject projectManager, SoundEntryCollection sEntryCollection, string path)
         {
             string uiSoundDBFile = projectManager.ExtractResource(path, PathHelper.FolderTemp);
-            _SoundEntryCollection = sEntryCollection;
+            SoundEntryCollection = sEntryCollection;
             _Path = path;
             _Project = projectManager;
 
@@ -64,7 +61,7 @@ namespace Sm4shMusic.Objects
                         SoundEntry sEntry = ParseSoundEntry(b, index);
                         if (sEntry != null && (INCLUDE_EMPTY_SOUND || sEntry.BGMFiles.Count == 0 || sEntry.BGMFiles[0].BGMID != 0x450))
                         {
-                            _SoundEntryCollection.SoundEntries.Add(sEntry);
+                            SoundEntryCollection.SoundEntries.Add(sEntry);
                             soundEntriesIndex.Add(index, sEntry);
                         }
                     }
@@ -80,11 +77,11 @@ namespace Sm4shMusic.Objects
                         for (int j = 0; j < nbrSounds; j++)
                         {
                             uint sEntryIndex = ReadUInt32(b);
-                            stageSoundEntries.Add(new SoundDBStageSoundEntry(_SoundEntryCollection, soundEntriesIndex[sEntryIndex].SoundID));
+                            stageSoundEntries.Add(new SoundDBStageSoundEntry(SoundEntryCollection, soundEntriesIndex[sEntryIndex].SoundID));
                         }
-                        SoundDBStage soundDBStage = new SoundDBStage(_SoundEntryCollection, stageId);
+                        SoundDBStage soundDBStage = new SoundDBStage(SoundEntryCollection, stageId);
                         soundDBStage.SoundEntries = stageSoundEntries;
-                        _SoundEntryCollection.SoundDBStages.Add(soundDBStage);
+                        SoundEntryCollection.SoundDBStages.Add(soundDBStage);
                     }
                 }
             }
@@ -104,9 +101,9 @@ namespace Sm4shMusic.Objects
 
                     //Stages
                     //Nbr Stages
-                    WriteNbrEntries(w, (uint)_SoundEntryCollection.SoundDBStages.Count);
+                    WriteNbrEntries(w, (uint)SoundEntryCollection.SoundDBStages.Count);
 
-                    foreach (SoundDBStage sDBStage in _SoundEntryCollection.SoundDBStages)
+                    foreach (SoundDBStage sDBStage in SoundEntryCollection.SoundDBStages)
                     {
                         WriteUInt32BigEndian(w, sDBStage.SoundDBStageID);
                         WriteUInt32BigEndian(w, (uint)sDBStage.SoundEntries.Count);
@@ -124,8 +121,8 @@ namespace Sm4shMusic.Objects
                     w.Write(_SecondBloc);
 
                     //Third bloc
-                    WriteNbrEntries(w, (uint)_SoundEntryCollection.SoundEntries.Count);
-                    foreach (SoundEntry sEntry in _SoundEntryCollection.SoundEntries)
+                    WriteNbrEntries(w, (uint)SoundEntryCollection.SoundEntries.Count);
+                    foreach (SoundEntry sEntry in SoundEntryCollection.SoundEntries)
                         WriteSoundEntry(w, sEntry);
                 }
 
@@ -140,7 +137,7 @@ namespace Sm4shMusic.Objects
         #region Specific Data
         private SoundEntry ParseSoundEntry(BinaryReader b, uint index)
         {
-            SoundEntry sEntry = new SoundEntry(_SoundEntryCollection);
+            SoundEntry sEntry = new SoundEntry(SoundEntryCollection);
 
             //Sound Index
             sEntry.Index = index; //Important, has apparently something to do with unlock conditions.
@@ -150,7 +147,7 @@ namespace Sm4shMusic.Objects
             {
                 uint bgmID = ReadUInt32(b);
                 if (bgmID != 0x0)
-                    sEntry.BGMFiles.Add(new SoundEntryBGM(_SoundEntryCollection, sEntry, bgmID));
+                    sEntry.BGMFiles.Add(new SoundEntryBGM(SoundEntryCollection, sEntry, bgmID));
             }
 
             //Flags?

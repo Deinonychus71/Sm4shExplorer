@@ -15,7 +15,7 @@ namespace Sm4shMusic
 {
     public class Sm4shPlugin : Sm4shBasePlugin
     {
-        public const string VERSION = "0.4";
+        public const string VERSION = "0.5";
 
         #region Members
         private SoundEntryCollection _SoundEntryCollection;
@@ -146,11 +146,22 @@ namespace Sm4shMusic
             //Launch Form
             _Main = new Forms.Main();
             _Main.SoundEntryCollection = _SoundEntryCollection;
+            _Main.XMLLoaded += _Main_XMLLoaded;
             _Main.Initialize(Sm4shProject);
 
             if (_Main.ShowDialog(Application.OpenForms[0]) == DialogResult.OK)
                 return true;
             return false;
+        }
+
+        private void _Main_XMLLoaded(object sender, EventArgs e)
+        {
+            _SoundEntryCollection = _Main.SoundEntryCollection;
+            _PropertyFile.SoundEntryCollection = _SoundEntryCollection;
+            _MyMusicFile.SoundEntryCollection = _SoundEntryCollection;
+            _UISoundDBFile.SoundEntryCollection = _SoundEntryCollection;
+            foreach(SoundMSBTFile msbtFile in _SoundMSBTFiles)
+                msbtFile.SoundEntryCollection = _SoundEntryCollection;
         }
 
         #region Abstracts methods

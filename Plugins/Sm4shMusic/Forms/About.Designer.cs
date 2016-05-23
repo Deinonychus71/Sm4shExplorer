@@ -79,9 +79,9 @@
             this.lblTitle.AutoSize = true;
             this.lblTitle.Location = new System.Drawing.Point(12, 20);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(102, 13);
+            this.lblTitle.Size = new System.Drawing.Size(99, 13);
             this.lblTitle.TabIndex = 5;
-            this.lblTitle.Text = "Sm4shSound Plugin";
+            this.lblTitle.Text = "Sm4shMusic Plugin";
             // 
             // About
             // 

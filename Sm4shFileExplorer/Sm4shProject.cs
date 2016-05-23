@@ -625,7 +625,12 @@ namespace Sm4shFileExplorer
             try
             {
                 if (Directory.Exists(exportFolder))
-                    Directory.Delete(exportFolder, true);
+                {
+                    foreach(string folder in Directory.GetDirectories(exportFolder))
+                        Directory.Delete(folder, true);
+                    foreach (string file in Directory.GetFiles(exportFolder))
+                        File.Delete(file);
+                }
             }
             catch
             {
