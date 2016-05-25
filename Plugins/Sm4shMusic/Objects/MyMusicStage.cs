@@ -12,13 +12,13 @@ namespace Sm4shMusic.Objects
     public class MyMusicStage : ISm4shListItem
     {
         #region Attributes
-        private uint _MyMusicStageID;
+        private int _MyMusicStageID;
         private BGMStage _BGMStage;
         #endregion
 
         #region Properties
         [XmlElement("mmsid")] 
-        public uint MyMusicStageID { get { return _MyMusicStageID; } set { _MyMusicStageID = value; _BGMStage = BGMStageDB.BGMMyMusics[MyMusicStageID]; } }
+        public int MyMusicStageID { get { return _MyMusicStageID; } set { _MyMusicStageID = value; _BGMStage = BGMStageDB.BGMMyMusics[MyMusicStageID]; } }
         public List<MyMusicStageBGM> BGMs { get; set; }
 
         [XmlIgnore]
@@ -29,7 +29,7 @@ namespace Sm4shMusic.Objects
         public BGMStage BGMStage { get { return _BGMStage; } }
         #endregion
 
-        public MyMusicStage(uint myMusicStageID)
+        public MyMusicStage(int myMusicStageID)
         {
             MyMusicStageID = myMusicStageID;
             BGMs = new List<MyMusicStageBGM>();

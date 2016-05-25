@@ -49,7 +49,7 @@ namespace Sm4shMusic.Objects
                         if (songIds[i] != 0xffffffff)
                         {
                             b.BaseStream.Position = songTableOffset + songIds[i];
-                            BGMEntry sEntry = ParseProperty(b, (uint)i);
+                            BGMEntry sEntry = ParseProperty(b, i);
                             SoundEntryCollection.SoundEntriesBGMs.Add(sEntry);
                         }
                     }
@@ -57,7 +57,7 @@ namespace Sm4shMusic.Objects
             }
         }
 
-        private BGMEntry ParseProperty(BinaryReader b, uint songId)
+        private BGMEntry ParseProperty(BinaryReader b, int songId)
         {
             BGMEntry bEntry = new BGMEntry(songId);
 
@@ -67,20 +67,20 @@ namespace Sm4shMusic.Objects
             else
                 bEntry.BGMTitle = bEntry.BGMTitle.TrimEnd('\0');
 
-            bEntry.BGMUnk1 = b.ReadUInt32();
-            bEntry.BGMUnk2 = b.ReadUInt32();
-            bEntry.BGMUnk3 = b.ReadUInt32();
-            bEntry.BGMUnk4 = b.ReadUInt32();
-            bEntry.MenuCheckPoint1 = b.ReadUInt32();
-            bEntry.MenuCheckPoint2 = b.ReadUInt32();
-            bEntry.MenuCheckPoint3 = b.ReadUInt32();
-            bEntry.MenuCheckPoint4 = b.ReadUInt32();
-            bEntry.LoopStartTime = b.ReadUInt32();
-            bEntry.LoopEndTime = b.ReadUInt32();
-            bEntry.LoopStartSample = b.ReadUInt32();
-            bEntry.LoopEndSample = b.ReadUInt32();
-            bEntry.StreamTotalDuration = b.ReadUInt32();
-            bEntry.StreamTotalSamples = b.ReadUInt32();
+            bEntry.BGMUnk1 = b.ReadInt32();
+            bEntry.BGMUnk2 = b.ReadInt32();
+            bEntry.BGMUnk3 = b.ReadInt32();
+            bEntry.BGMUnk4 = b.ReadInt32();
+            bEntry.MenuCheckPoint1 = b.ReadInt32();
+            bEntry.MenuCheckPoint2 = b.ReadInt32();
+            bEntry.MenuCheckPoint3 = b.ReadInt32();
+            bEntry.MenuCheckPoint4 = b.ReadInt32();
+            bEntry.LoopStartTime = b.ReadInt32();
+            bEntry.LoopEndTime = b.ReadInt32();
+            bEntry.LoopStartSample = b.ReadInt32();
+            bEntry.LoopEndSample = b.ReadInt32();
+            bEntry.StreamTotalDuration = b.ReadInt32();
+            bEntry.StreamTotalSamples = b.ReadInt32();
 
             return bEntry;
         }
@@ -88,7 +88,7 @@ namespace Sm4shMusic.Objects
         public void BuildFile()
         {
             string savePath = PathHelper.GetWorkplaceFolder(PathHelperEnum.FOLDER_PATCH) + _Path.Replace('/', Path.DirectorySeparatorChar);
-            uint nbrBGM = SoundEntryCollection.SoundEntriesBGMs.Max(p => p.BGMID) + 1;
+            int nbrBGM = SoundEntryCollection.SoundEntriesBGMs.Max(p => p.BGMID) + 1;
 
             using (MemoryStream stream = new MemoryStream())
             {
@@ -97,7 +97,7 @@ namespace Sm4shMusic.Objects
                     w.Write(_Header);
                     w.Write(nbrBGM);
                     uint indexOffset = 0x00000000;
-                    for (uint i = 0; i < nbrBGM; i++)
+                    for (int i = 0; i < nbrBGM; i++)
                     {
                         if (!SoundEntryCollection.SoundEntriesBGMsPerID.ContainsKey(i))
                             w.Write(0xffffffff);

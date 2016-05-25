@@ -43,7 +43,7 @@ namespace Sm4shMusic.Objects
 
                     for (int i = 0; i < nbrStages; i++)
                     {
-                        MyMusicStage myMusicStage = new MyMusicStage((uint)i);
+                        MyMusicStage myMusicStage = new MyMusicStage(i);
                         int currentStageOffset = stageStartOffset + offsetsPerElement[i];
 
                         b.BaseStream.Position = currentStageOffset;
@@ -107,20 +107,20 @@ namespace Sm4shMusic.Objects
 
         private MyMusicStageBGM ParseBGMEntry(BinaryReader b)
         {
-            uint BGMID = b.ReadUInt32();
+            int BGMID = b.ReadInt32();
 
             MyMusicStageBGM sMyMusicBGM = new MyMusicStageBGM(SoundEntryCollection, BGMID);
 
-            sMyMusicBGM.Index = b.ReadUInt16();
-            sMyMusicBGM.SubIndex = b.ReadUInt16();
-            sMyMusicBGM.Rarity = b.ReadUInt32();
-            sMyMusicBGM.Unk3 = b.ReadUInt16();
-            sMyMusicBGM.Unk4 = b.ReadUInt16();
-            sMyMusicBGM.Unk5 = b.ReadUInt32();
-            sMyMusicBGM.Unk6 = b.ReadUInt32();
-            sMyMusicBGM.Unk7 = b.ReadUInt32();
-            sMyMusicBGM.Unk8 = b.ReadUInt32();
-            sMyMusicBGM.Unk9 = b.ReadUInt32();
+            sMyMusicBGM.Index = b.ReadInt16();
+            sMyMusicBGM.SubIndex = b.ReadInt16();
+            sMyMusicBGM.Rarity = b.ReadInt32();
+            sMyMusicBGM.Unk3 = b.ReadInt16();
+            sMyMusicBGM.Unk4 = b.ReadInt16();
+            sMyMusicBGM.PlayDelay = b.ReadInt32();
+            sMyMusicBGM.Unk6 = b.ReadInt32();
+            sMyMusicBGM.Unk7 = b.ReadInt32();
+            sMyMusicBGM.Unk8 = b.ReadInt32();
+            sMyMusicBGM.Unk9 = b.ReadInt32();
 
             return sMyMusicBGM;
         }
@@ -133,7 +133,7 @@ namespace Sm4shMusic.Objects
             w.Write(myMusicStageBGM.Rarity);
             w.Write(myMusicStageBGM.Unk3);
             w.Write(myMusicStageBGM.Unk4);
-            w.Write(myMusicStageBGM.Unk5);
+            w.Write(myMusicStageBGM.PlayDelay);
             w.Write(myMusicStageBGM.Unk6);
             w.Write(myMusicStageBGM.Unk7);
             w.Write(myMusicStageBGM.Unk8);

@@ -147,7 +147,7 @@ namespace Sm4shMusic.Forms
         {
             treeView.Nodes.Clear();
             foreach (SoundEntry sEntry in soundEntries.OrderBy(p => p.SoundTestOrder))
-                treeView.Nodes.Add(sEntry.SoundID, sEntry.Title);
+                treeView.Nodes.Add(sEntry.SoundID.ToString(), sEntry.Title);
             _TypeSort = TypeSort.SoundTestOrder;
             _CurrentList = soundEntries;
             _CurrentListOriginal = soundEntriesBackup;
@@ -164,7 +164,7 @@ namespace Sm4shMusic.Forms
                     group = treeView.Nodes.Add(groupKey, sEntry.StageCreationGroupName);
                 else
                     group = treeView.Nodes[groupKey];
-                group.Nodes.Add(sEntry.SoundID, sEntry.Title);
+                group.Nodes.Add(sEntry.SoundID.ToString(), sEntry.Title);
             }
             _TypeSort = TypeSort.StageCreationOrder;
             _CurrentList = soundEntries;
@@ -186,7 +186,7 @@ namespace Sm4shMusic.Forms
             while (enumerator.MoveNext())
             {
                 SoundEntry sEntry = (SoundEntry)enumerator.Current;
-                sEntry.SoundTestOrder = dict[sEntry.SoundID];
+                sEntry.SoundTestOrder = dict[sEntry.SoundID.ToString()];
             }
         }
         
@@ -206,7 +206,7 @@ namespace Sm4shMusic.Forms
             while (enumerator.MoveNext())
             {
                 SoundEntry sEntry = (SoundEntry)enumerator.Current;
-                sEntry.StageCreationOrder = dict[sEntry.SoundID];
+                sEntry.StageCreationOrder = dict[sEntry.SoundID.ToString()];
             }
         }
         #endregion
@@ -224,7 +224,7 @@ namespace Sm4shMusic.Forms
                 while (enumeratorOriginal.MoveNext())
                 {
                     SoundEntry sEntry = (SoundEntry)enumeratorOriginal.Current;
-                    dictOriginal.Add(sEntry.SoundID, sEntry.SoundTestOrder);
+                    dictOriginal.Add(sEntry.SoundID.ToString(), sEntry.SoundTestOrder);
                     listOriginal.Add(sEntry);
                 }
 
@@ -232,7 +232,7 @@ namespace Sm4shMusic.Forms
                 while (enumerator.MoveNext())
                 {
                     SoundEntry sEntry = (SoundEntry)enumerator.Current;
-                    sEntry.SoundTestOrder = dictOriginal[sEntry.SoundID];
+                    sEntry.SoundTestOrder = dictOriginal[sEntry.SoundID.ToString()];
                     list.Add(sEntry);
                 }
                 LoadSoundTestOrder(list, listOriginal);
@@ -251,7 +251,7 @@ namespace Sm4shMusic.Forms
                 while (enumeratorOriginal.MoveNext())
                 {
                     SoundEntry sEntry = (SoundEntry)enumeratorOriginal.Current;
-                    dictOriginal.Add(sEntry.SoundID, sEntry.StageCreationOrder);
+                    dictOriginal.Add(sEntry.SoundID.ToString(), sEntry.StageCreationOrder);
                     listOriginal.Add(sEntry);
                 }
 
@@ -259,7 +259,7 @@ namespace Sm4shMusic.Forms
                 while (enumerator.MoveNext())
                 {
                     SoundEntry sEntry = (SoundEntry)enumerator.Current;
-                    sEntry.StageCreationOrder = dictOriginal[sEntry.SoundID];
+                    sEntry.StageCreationOrder = dictOriginal[sEntry.SoundID.ToString()];
                     list.Add(sEntry);
                 }
                 LoadStageCreationOrder(list, listOriginal);

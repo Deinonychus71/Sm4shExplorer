@@ -9,11 +9,11 @@ namespace Sm4shMusic.DB
     public class BGMStageDB
     {
         #region Members
-        private static Dictionary<uint, BGMStage> _BGMMyMusicDB;
+        private static Dictionary<int, BGMStage> _BGMMyMusicDB;
         #endregion
 
         #region Properties
-        public static Dictionary<uint, BGMStage> BGMMyMusics { get { return _BGMMyMusicDB; } }
+        public static Dictionary<int, BGMStage> BGMMyMusics { get { return _BGMMyMusicDB; } }
         #endregion
 
         #region Main Methods
@@ -37,9 +37,9 @@ namespace Sm4shMusic.DB
         #endregion
 
         #region Wii U
-        private static Dictionary<uint, BGMStage> GenerateBGMMyMusicDatabaseWiiU208()
+        private static Dictionary<int, BGMStage> GenerateBGMMyMusicDatabaseWiiU208()
         {
-            Dictionary<uint, BGMStage> BGMStages = new Dictionary<uint, BGMStage>();
+            Dictionary<int, BGMStage> BGMStages = new Dictionary<int, BGMStage>();
 
             BGMStages[0x0] = new BGMStage("BattleField_f", 0x0, 0x1);
             BGMStages[0x1] = new BGMStage("BattleFieldL_f", 0x1, 0x2f);

@@ -13,7 +13,7 @@ namespace Sm4shMusic.Globals
         public static void WriteDebugSoundMSBTCSV(SoundEntryCollection soundCollection, string pathToSave)
         {
             List<string> soundDBLines = new List<string>();
-            soundDBLines.Add("Index,ID,BGM1,BGM2,BGM3,BGM4,BGM5,InSoundTest,byte2,byte3,byte4,InRegionJPN,InRegionEUUS,SoundSource,SoundMixType,IconID,SoundTestBackImageBehavior,AssociatedFighters,SoundTestOrder,StageCreationOrder,StageCreationGroup,short17,Title,SoundTestTitle,Description1,Description2,Source");
+            soundDBLines.Add("ID,SoundLabel,BGM1,BGM2,BGM3,BGM4,BGM5,InSoundTest,byte2,byte3,byte4,InRegionJPN,InRegionEUUS,SoundSource,SoundMixType,IconID,SoundTestBackImageBehavior,AssociatedFighters,SoundTestOrder,StageCreationOrder,StageCreationGroup,short17,Title,SoundTestTitle,Description1,Description2,Source");
             
             foreach (SoundEntry sEntry in soundCollection.SoundEntries)
             {
@@ -21,7 +21,7 @@ namespace Sm4shMusic.Globals
                 for (int i = 0; i < sEntry.BGMFiles.Count; i++)
                     files[i] = sEntry.BGMFiles[i].BGMEntry.BGMTitle;
 
-                soundDBLines.Add(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23},{24},{25}", sEntry.FullSoundID, files[0], files[1], files[2], files[3], files[4], sEntry.InSoundTest, sEntry.Byte2, sEntry.Byte3, sEntry.Byte4, sEntry.InRegionJPN, sEntry.InRegionEUUS, sEntry.SoundSource, sEntry.SoundMixType, sEntry.IconName, sEntry.SoundTestBackImageBehavior, string.Join(" | ", sEntry.AssociatedFightersName), sEntry.SoundTestOrder, sEntry.StageCreationOrder, sEntry.StageCreationGroupName, sEntry.Int17, StringToCSVCell(sEntry.Title), StringToCSVCell(sEntry.SoundTestTitle), StringToCSVCell(sEntry.Description), StringToCSVCell(sEntry.Description2), StringToCSVCell(sEntry.Source)));
+                soundDBLines.Add(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14},{15},{16},{17},{18},{19},{20},{21},{22},{23},{24},{25},{26}", sEntry.SoundID, sEntry.SoundLabel, files[0], files[1], files[2], files[3], files[4], sEntry.InSoundTest, sEntry.Byte2, sEntry.Byte3, sEntry.Byte4, sEntry.InRegionJPN, sEntry.InRegionEUUS, sEntry.SoundSource, sEntry.SoundMixType, sEntry.IconName, sEntry.SoundTestBackImageBehavior, string.Join(" | ", sEntry.AssociatedFightersName), sEntry.SoundTestOrder, sEntry.StageCreationOrder, sEntry.StageCreationGroupName, sEntry.Int17, StringToCSVCell(sEntry.Title), StringToCSVCell(sEntry.SoundTestTitle), StringToCSVCell(sEntry.Description), StringToCSVCell(sEntry.Description2), StringToCSVCell(sEntry.Source)));
             }
             
             File.WriteAllLines(pathToSave, soundDBLines);
@@ -41,13 +41,13 @@ namespace Sm4shMusic.Globals
         public static void WriteDebugMyMusicCSV(SoundEntryCollection soundCollection, string pathToSave)
         {
             List<string> myMusicLines = new List<string>();
-            myMusicLines.Add("StageMyMusicID,StageSoundDBID,StageName,Index,BGMID,BGMTitle,SubIndex,Rarity,unk3,unk4,unk5,unk6,unk7,unk8,unk9");
+            myMusicLines.Add("StageMyMusicID,StageSoundDBID,StageName,Index,BGMID,BGMTitle,SubIndex,Rarity,unk3,unk4,PlayDelay,unk6,unk7,unk8,unk9");
 
             foreach (MyMusicStage myMusicStage in soundCollection.MyMusicStages)
             {
                 foreach (MyMusicStageBGM musicStageBGM in myMusicStage.BGMs)
                 {
-                    myMusicLines.Add(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}", myMusicStage.MyMusicStageID, myMusicStage.BGMStage.BGMDBID, myMusicStage.BGMStage.Label, musicStageBGM.Index, musicStageBGM.BGMEntry.BGMID, musicStageBGM.BGMEntry.BGMTitle, musicStageBGM.SubIndex, musicStageBGM.Rarity, musicStageBGM.Unk3, musicStageBGM.Unk4, musicStageBGM.Unk5, musicStageBGM.Unk6, musicStageBGM.Unk7, musicStageBGM.Unk8, musicStageBGM.Unk9));
+                    myMusicLines.Add(string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13},{14}", myMusicStage.MyMusicStageID, myMusicStage.BGMStage.BGMDBID, myMusicStage.BGMStage.Label, musicStageBGM.Index, musicStageBGM.BGMEntry.BGMID, musicStageBGM.BGMEntry.BGMTitle, musicStageBGM.SubIndex, musicStageBGM.Rarity, musicStageBGM.Unk3, musicStageBGM.Unk4, musicStageBGM.PlayDelay, musicStageBGM.Unk6, musicStageBGM.Unk7, musicStageBGM.Unk8, musicStageBGM.Unk9));
                 }
             }
 

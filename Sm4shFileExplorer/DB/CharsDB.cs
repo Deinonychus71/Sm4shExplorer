@@ -9,11 +9,11 @@ namespace Sm4shFileExplorer.DB
     public class CharsDB
     {
         #region Members
-        private static Dictionary<uint, string> _CharsDB;
+        private static Dictionary<int, string> _CharsDB;
         #endregion
 
         #region Properties
-        public static Dictionary<uint, string> Chars { get { return _CharsDB; } }
+        public static Dictionary<int, string> Chars { get { return _CharsDB; } }
         #endregion
 
         #region Main Methods
@@ -37,9 +37,9 @@ namespace Sm4shFileExplorer.DB
         #endregion
 
         #region Wii U
-        private static Dictionary<uint, string> GenerateCharsDatabaseWiiU208()
+        private static Dictionary<int, string> GenerateCharsDatabaseWiiU208()
         {
-            Dictionary<uint, string> chars = new Dictionary<uint, string>();
+            Dictionary<int, string> chars = new Dictionary<int, string>();
 
             chars[0x0] = "Omakase";
             chars[0x1] = "Miifighter";

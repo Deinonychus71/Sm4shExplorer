@@ -55,9 +55,10 @@ namespace Sm4shMusic.UserControls
             _Refreshing = false;
         }
 
-        public void SelectLastItem()
+        public void SelectItem(object item)
         {
-            listBox.SelectedIndex = listBox.Items.Count - 1;
+            listBox.SelectedItem = item;
+           // listBox.SelectedIndex = listBox.SelectedValue = id;
         }
 
         private void listBox_SelectedIndexChanged(object sender, EventArgs e)

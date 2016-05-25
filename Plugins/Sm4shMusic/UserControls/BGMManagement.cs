@@ -43,24 +43,24 @@ namespace Sm4shMusic.UserControls
         {
             RefreshBGMTextArea();
 
-            _EnumSoundSource = (EnumEntity[])((IEnumerable<SoundSource>)Enum.GetValues(typeof(SoundSource))).Select(c => new EnumEntity() { Value = (uint)c, Name = c.ToString() }).ToArray();
+            _EnumSoundSource = (EnumEntity[])((IEnumerable<SoundSource>)Enum.GetValues(typeof(SoundSource))).Select(c => new EnumEntity() { Value = (int)c, Name = c.ToString() }).ToArray();
             ddlSoundSource.Items.Clear();
             ddlSoundSource.Items.AddRange(_EnumSoundSource);
 
-            _EnumSoundMixType = (EnumEntity[])((IEnumerable<SoundMixType>)Enum.GetValues(typeof(SoundSource))).Select(c => new EnumEntity() { Value = (uint)c, Name = c.ToString() }).ToArray();
+            _EnumSoundMixType = (EnumEntity[])((IEnumerable<SoundMixType>)Enum.GetValues(typeof(SoundSource))).Select(c => new EnumEntity() { Value = (int)c, Name = c.ToString() }).ToArray();
             ddlSoundMixType.Items.Clear();
             ddlSoundMixType.Items.AddRange(_EnumSoundMixType);
 
-            _EnumBackgroundBehavior = (EnumEntity[])((IEnumerable<SoundTestBackImageBehavior>)Enum.GetValues(typeof(SoundTestBackImageBehavior))).Select(c => new EnumEntity() { Value = (uint)c, Name = c.ToString() }).ToArray();
+            _EnumBackgroundBehavior = (EnumEntity[])((IEnumerable<SoundTestBackImageBehavior>)Enum.GetValues(typeof(SoundTestBackImageBehavior))).Select(c => new EnumEntity() { Value = (int)c, Name = c.ToString() }).ToArray();
             ddlBackRotationBehavior.Items.Clear();
             ddlBackRotationBehavior.Items.AddRange(_EnumBackgroundBehavior);
 
-            _EnumIcons = (EnumEntity[])IconsDB.Icons.Select(c => new EnumEntity() { Value = (uint)c.Key, Name = c.Value }).ToArray();
+            _EnumIcons = (EnumEntity[])IconsDB.Icons.Select(c => new EnumEntity() { Value = (int)c.Key, Name = c.Value }).ToArray();
             ddlGroupStageCreation.Items.Clear();
-            ddlGroupStageCreation.Items.Add(new EnumEntity() { Name = "NULL", Value = 0xffffffff });
+            ddlGroupStageCreation.Items.Add(new EnumEntity() { Name = "NULL", Value = -1 });
             ddlGroupStageCreation.Items.AddRange(_EnumIcons);
             ddlSoundIconID.Items.Clear();
-            ddlSoundIconID.Items.Add(new EnumEntity() { Name = "NULL", Value = 0xffffffff });
+            ddlSoundIconID.Items.Add(new EnumEntity() { Name = "NULL", Value = -1 });
             ddlSoundIconID.Items.AddRange(_EnumIcons);
 
             listEntries.DataSource = SoundEntryCollection.SoundEntries;
@@ -103,9 +103,6 @@ namespace Sm4shMusic.UserControls
             ClearBindings(this);
 
             _CurrentSoundEntry = sEntry;
-
-            if (sEntry.BGMFiles[0].BGMEntry.BGMTitle == "TEST05")
-                SanitizeBGMTest05();
 
             if (SoundEntryCollectionBackup.SoundEntriesPerID.ContainsKey(sEntry.SoundID))
             {
@@ -165,28 +162,6 @@ namespace Sm4shMusic.UserControls
             _LoadingSound = false;
         }
 
-        private void SanitizeBGMTest05()
-        {
-            if(MessageBox.Show(Strings.TEST05_SANITIZE, Strings.CAPTION_INFO, MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                _CurrentSoundEntry.BGMFiles = new List<SoundEntryBGM>();
-                _CurrentSoundEntry.BGMFiles.Add(new SoundEntryBGM(SoundEntryCollection, _CurrentSoundEntry, SoundEntryCollection.SoundEntriesBGMs.First().BGMID));
-                _CurrentSoundEntry.InSoundTest = true;
-                _CurrentSoundEntry.Byte2 = true;
-                _CurrentSoundEntry.Byte3 = true;
-                _CurrentSoundEntry.Byte4 = false;
-                _CurrentSoundEntry.InRegionEUUS = true;
-                _CurrentSoundEntry.InRegionJPN = true;
-                _CurrentSoundEntry.SoundSource = SoundSource.CoreGameSound;
-                _CurrentSoundEntry.SoundMixType = SoundMixType.Original;
-                _CurrentSoundEntry.IconID = 0x0; //smashbros
-                _CurrentSoundEntry.AssociatedFightersIDs = new List<uint>();
-                _CurrentSoundEntry.SoundTestBackImageBehavior = SoundTestBackImageBehavior.RosterRandom;
-                _CurrentSoundEntry.StageCreationGroupID = 0x0; //smashbros
-                _CurrentSoundEntry.Int17 = 0x0;
-            }
-        }
-
         private void ClearBindings(Control parentControl)
         {
             if (parentControl != null)
@@ -219,9 +194,9 @@ namespace Sm4shMusic.UserControls
 
         private void listEntries_ItemAdded(object sender, EventArgs e)
         {
-            SoundEntryCollection.CreateSoundEntry();
+            SoundEntry sEntry = SoundEntryCollection.CreateSoundEntry();
             listEntries.RefreshList();
-            listEntries.SelectLastItem();
+            listEntries.SelectItem(sEntry);
         }
 
         private void listEntries_ItemRemoved(object sender, EventHandlers.ListEntryArgs e)
@@ -374,9 +349,9 @@ namespace Sm4shMusic.UserControls
         {
             EnumEntity entity = (EnumEntity)ddlSoundIconID.SelectedItem;
             if (entity != null)
-                _CurrentSoundEntry.IconID = (uint)entity.Value;
+                _CurrentSoundEntry.IconID = entity.Value;
             else
-                _CurrentSoundEntry.IconID = 4294967295;
+                _CurrentSoundEntry.IconID = -1;
         }
 
         private void ddlBackRotationBehavior_SelectedIndexChanged(object sender, EventArgs e)
@@ -389,9 +364,9 @@ namespace Sm4shMusic.UserControls
         {
             EnumEntity entity = (EnumEntity)ddlGroupStageCreation.SelectedItem;
             if (entity != null)
-                _CurrentSoundEntry.StageCreationGroupID = (uint)entity.Value;
+                _CurrentSoundEntry.StageCreationGroupID = entity.Value;
             else
-                _CurrentSoundEntry.StageCreationGroupID = 4294967295;
+                _CurrentSoundEntry.StageCreationGroupID = -1;
         }
 
         private void txtTitle_TextChanged(object sender, EventArgs e)

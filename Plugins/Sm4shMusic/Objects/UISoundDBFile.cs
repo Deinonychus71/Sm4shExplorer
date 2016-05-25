@@ -11,7 +11,7 @@ namespace Sm4shMusic.Objects
     public class UISoundDBFile
     {
         private const int HEADER_LEN = 0x8;
-        private const bool INCLUDE_EMPTY_SOUND = true;
+        private const bool INCLUDE_EMPTY_SOUND = false;
         private byte[] _Header;
         private byte[] _SecondBloc;
         public SoundEntryCollection SoundEntryCollection { get; set; }
@@ -39,45 +39,41 @@ namespace Sm4shMusic.Objects
 
                     //Number of elements
                     b.BaseStream.Position = HEADER_LEN;
-                    uint nbrStages = ReadNbrEntries(b);
+                    int nbrStages = ReadNbrEntries(b);
 
                     //Offset to second table
-                    uint offsetUnknownSecondTable = HEADER_LEN + 0x5 + (nbrStages * 0xd2);
+                    int offsetUnknownSecondTable = HEADER_LEN + 0x5 + (nbrStages * 0xd2);
                     b.BaseStream.Position = offsetUnknownSecondTable;
-                    uint nbrUnknownSecondTableBlocs = ReadNbrEntries(b);
+                    int nbrUnknownSecondTableBlocs = ReadNbrEntries(b);
                     b.BaseStream.Position = offsetUnknownSecondTable;
                     _SecondBloc = b.ReadBytes((int)(0x5 + (nbrUnknownSecondTableBlocs * 0xa)));
 
                     //Offset to variable/songid table
-                    uint offsetSongTable = offsetUnknownSecondTable + 0x5 + (nbrUnknownSecondTableBlocs * 0xa);
+                    int offsetSongTable = offsetUnknownSecondTable + 0x5 + (nbrUnknownSecondTableBlocs * 0xa);
                     b.BaseStream.Position = offsetSongTable;
-                    uint nbrSoundEntries = ReadNbrEntries(b);
+                    int nbrSoundEntries = ReadNbrEntries(b);
 
                     //Retrieve all sounds
-                    Dictionary<uint, SoundEntry> soundEntriesIndex = new Dictionary<uint, SoundEntry>();
                     for (int i = 0; i < nbrSoundEntries; i++)
                     {
-                        uint index = ReadUInt32(b);
+                        int index = ReadInt32(b);
                         SoundEntry sEntry = ParseSoundEntry(b, index);
                         if (sEntry != null && (INCLUDE_EMPTY_SOUND || sEntry.BGMFiles.Count == 0 || sEntry.BGMFiles[0].BGMID != 0x450))
-                        {
                             SoundEntryCollection.SoundEntries.Add(sEntry);
-                            soundEntriesIndex.Add(index, sEntry);
-                        }
                     }
 
                     //Retrieve info per stage
                     for (int i = 0; i < nbrStages; i++)
                     {
                         b.BaseStream.Position = HEADER_LEN + 0x5 + (i * 0xd2);
-                        uint stageId = ReadUInt32(b);
-                        uint nbrSounds = ReadUInt32(b);
+                        int stageId = ReadInt32(b);
+                        int nbrSounds = ReadInt32(b);
 
                         List<SoundDBStageSoundEntry> stageSoundEntries = new List<SoundDBStageSoundEntry>();
                         for (int j = 0; j < nbrSounds; j++)
                         {
-                            uint sEntryIndex = ReadUInt32(b);
-                            stageSoundEntries.Add(new SoundDBStageSoundEntry(SoundEntryCollection, soundEntriesIndex[sEntryIndex].SoundID));
+                            int sEntryIndex = ReadInt32(b);
+                            stageSoundEntries.Add(new SoundDBStageSoundEntry(SoundEntryCollection, sEntryIndex));
                         }
                         SoundDBStage soundDBStage = new SoundDBStage(SoundEntryCollection, stageId);
                         soundDBStage.SoundEntries = stageSoundEntries;
@@ -101,19 +97,19 @@ namespace Sm4shMusic.Objects
 
                     //Stages
                     //Nbr Stages
-                    WriteNbrEntries(w, (uint)SoundEntryCollection.SoundDBStages.Count);
+                    WriteNbrEntries(w, SoundEntryCollection.SoundDBStages.Count);
 
                     foreach (SoundDBStage sDBStage in SoundEntryCollection.SoundDBStages)
                     {
-                        WriteUInt32BigEndian(w, sDBStage.SoundDBStageID);
-                        WriteUInt32BigEndian(w, (uint)sDBStage.SoundEntries.Count);
+                        WriteInt32BigEndian(w, sDBStage.SoundDBStageID);
+                        WriteInt32BigEndian(w, sDBStage.SoundEntries.Count);
 
                         for (int i = 0; i < 40; i++)
                         {
                             if (sDBStage.SoundEntries.Count > i)
-                                WriteUInt32BigEndian(w, sDBStage.SoundEntries[i].SoundEntry.Index);
+                                WriteInt32BigEndian(w, sDBStage.SoundEntries[i].SoundEntry.SoundID);
                             else
-                                WriteUInt32BigEndian(w, (uint)0xffffffff);
+                                WriteInt32BigEndian(w, -1);
                         }
                     }
 
@@ -121,9 +117,17 @@ namespace Sm4shMusic.Objects
                     w.Write(_SecondBloc);
 
                     //Third bloc
-                    WriteNbrEntries(w, (uint)SoundEntryCollection.SoundEntries.Count);
-                    foreach (SoundEntry sEntry in SoundEntryCollection.SoundEntries)
-                        WriteSoundEntry(w, sEntry);
+                    int lastId = SoundEntryCollection.SoundEntries[SoundEntryCollection.SoundEntries.Count - 1].SoundID;
+                    WriteNbrEntries(w, lastId + 1);
+                    for(int i = 0; i <= lastId; i++)
+                    {
+                        if (SoundEntryCollection.SoundEntriesPerID.ContainsKey(i))
+                            WriteSoundEntry(w, SoundEntryCollection.SoundEntriesPerID[i]);
+                        else
+                            WriteDummySoundEntry(w, i);
+                    }
+                    //foreach (SoundEntry sEntry in SoundEntryCollection.SoundEntries)
+                    //    WriteSoundEntry(w, sEntry);
                 }
 
                 foreach (string savePath in savePaths)
@@ -135,17 +139,17 @@ namespace Sm4shMusic.Objects
         }
 
         #region Specific Data
-        private SoundEntry ParseSoundEntry(BinaryReader b, uint index)
+        private SoundEntry ParseSoundEntry(BinaryReader b, int id)
         {
             SoundEntry sEntry = new SoundEntry(SoundEntryCollection);
 
             //Sound Index
-            sEntry.Index = index; //Important, has apparently something to do with unlock conditions.
+            sEntry.SoundID = id; //Important, has apparently something to do with unlock conditions.
 
             //Sound BGM (up to 5)
             for (int i = 0; i < 5; i++)
             {
-                uint bgmID = ReadUInt32(b);
+                int bgmID = ReadInt32(b);
                 if (bgmID != 0x0)
                     sEntry.BGMFiles.Add(new SoundEntryBGM(SoundEntryCollection, sEntry, bgmID));
             }
@@ -161,38 +165,54 @@ namespace Sm4shMusic.Objects
             //Properties
             sEntry.SoundSource = ReadSourceSound(b);
             sEntry.SoundMixType = ReadMixType(b);
-            sEntry.IconID = ReadUInt32(b);
+            sEntry.IconID = ReadInt32(b);
             sEntry.SoundTestBackImageBehavior = ReadSoundTestBackImageBehavior(b);
 
             int nbrAssociatedCharacters = ReadInt32(b);
             for (int i = 0; i < 8; i++)
             {
-                uint fighterID = ReadUInt32(b);
-                if (fighterID != 0xffffffff)
+                int fighterID = ReadInt32(b);
+                if (fighterID != -1)
                     sEntry.AssociatedFightersIDs.Add(fighterID);
             }
 
-            sEntry.SoundID = ReadString(b).Replace("SOUND", string.Empty);
+            sEntry.OriginalSoundLabel = ReadString(b);
 
-            sEntry.SoundTestOrder = ReadInt32(b);
-            sEntry.StageCreationOrder = ReadInt32(b);
-            sEntry.StageCreationGroupID = ReadUInt32(b);
+            sEntry.SoundTestOrder = ReadOrder(b);
+            sEntry.StageCreationOrder = ReadOrder(b);
+            sEntry.StageCreationGroupID = ReadInt32(b);
 
             sEntry.Int17 = ReadInt16(b);
 
             return sEntry;
         }
 
+        private void WriteDummySoundEntry(BinaryWriter w, int id)
+        {
+            SoundEntry sEntry = new SoundEntry(SoundEntryCollection);
+            sEntry.SoundID = id;
+            sEntry.BGMFiles.Add(new SoundEntryBGM(SoundEntryCollection, sEntry, 0x450));
+            sEntry.SoundSource = SoundSource.CoreGameSound;
+            sEntry.SoundMixType = SoundMixType.Original;
+            sEntry.IconID = -1;
+            sEntry.StageCreationGroupID = -1;
+            sEntry.SoundTestOrder = 999;
+            sEntry.StageCreationOrder = 999;
+            sEntry.SoundTestBackImageBehavior = SoundTestBackImageBehavior.NULL;
+
+            WriteSoundEntry(w, sEntry);
+        }
+
         private void WriteSoundEntry(BinaryWriter w, SoundEntry sEntry)
         {
-            WriteUInt32BigEndian(w, sEntry.Index);
+            WriteInt32BigEndian(w, sEntry.SoundID);
 
             for (int i = 0; i < 5; i++)
             {
                 if (sEntry.BGMFiles.Count > i)
-                    WriteUInt32BigEndian(w, sEntry.BGMFiles[i].BGMID);
+                    WriteInt32BigEndian(w, sEntry.BGMFiles[i].BGMID);
                 else
-                    WriteUInt32BigEndian(w, 0);
+                    WriteInt32BigEndian(w, 0);
             }
 
             WriteBool(w, sEntry.InSoundTest);
@@ -202,32 +222,32 @@ namespace Sm4shMusic.Objects
             WriteBool(w, sEntry.InRegionJPN);
             WriteBool(w, sEntry.InRegionEUUS);
 
-            WriteUInt32BigEndian(w, (uint)sEntry.SoundSource);
-            WriteUInt32BigEndian(w, (uint)sEntry.SoundMixType);
-            WriteUInt32BigEndian(w, sEntry.IconID);
-            WriteUInt32BigEndian(w, (uint)sEntry.SoundTestBackImageBehavior);
+            WriteInt32BigEndian(w, (int)sEntry.SoundSource);
+            WriteInt32BigEndian(w, (int)sEntry.SoundMixType);
+            WriteInt32BigEndian(w, sEntry.IconID);
+            WriteInt32BigEndian(w, (int)sEntry.SoundTestBackImageBehavior);
 
             WriteInt32BigEndian(w, sEntry.AssociatedFightersIDs.Count);
             for (int i = 0; i < 8; i++)
             {
                 if (sEntry.AssociatedFightersIDs.Count > i)
-                    WriteUInt32BigEndian(w, sEntry.AssociatedFightersIDs[i]);
+                    WriteInt32BigEndian(w, sEntry.AssociatedFightersIDs[i]);
                 else
-                    WriteUInt32BigEndian(w, 0xffffffff);
+                    WriteInt32BigEndian(w, -1);
             }
 
-            WriteString(w, sEntry.FullSoundID);
+            WriteString(w, sEntry.SoundLabel);
 
             WriteInt32BigEndian(w, sEntry.SoundTestOrder);
             WriteInt32BigEndian(w, sEntry.StageCreationOrder);
-            WriteUInt32BigEndian(w, sEntry.StageCreationGroupID);
+            WriteInt32BigEndian(w, sEntry.StageCreationGroupID);
 
             WriteInt16BigEndian(w, sEntry.Int17);
         }
 
         private SoundMixType ReadMixType(BinaryReader b)
         {
-            uint value = ReadUInt32(b);
+            int value = ReadInt32(b);
             if (value > 3)
                 throw new Exception("Error, this value is not SoundMixType: " + value);
             return (SoundMixType)value;
@@ -235,7 +255,7 @@ namespace Sm4shMusic.Objects
 
         private SoundSource ReadSourceSound(BinaryReader b)
         {
-            uint value = ReadUInt32(b);
+            int value = ReadInt32(b);
             if (value > 3)
                 throw new Exception("Error, this value is not SoundSource: " + value);
             return (SoundSource)value;
@@ -243,7 +263,7 @@ namespace Sm4shMusic.Objects
 
         private SoundTestBackImageBehavior ReadSoundTestBackImageBehavior(BinaryReader b)
         {
-            uint value = ReadUInt32(b);
+            int value = ReadInt32(b);
             if (value > 4)
                 throw new Exception("Error, this value is not SoundTestBackImageBehavior: " + value);
             return (SoundTestBackImageBehavior)value;
@@ -251,17 +271,17 @@ namespace Sm4shMusic.Objects
         #endregion
 
         #region Generic Data
-        private uint ReadNbrEntries(BinaryReader b)
+        private int ReadNbrEntries(BinaryReader b)
         {
             if (b.ReadByte() != 0x20)
                 throw new Exception("Error while reading nbr entries in 'ui_sound_db.bin'");
             byte[] value = b.ReadBytes(4);
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(value);
-            return BitConverter.ToUInt32(value, 0);
+            return BitConverter.ToInt32(value, 0);
         }
 
-        private void WriteNbrEntries(BinaryWriter w, uint input)
+        private void WriteNbrEntries(BinaryWriter w, int input)
         {
             w.Write((byte)0x20);
             byte[] value = BitConverter.GetBytes(input);
@@ -270,29 +290,41 @@ namespace Sm4shMusic.Objects
             w.Write(value);
         }
 
-        private uint ReadUInt32(BinaryReader b)
+        /*private uint ReadUInt32(BinaryReader b)
         {
-            if (b.ReadByte() != 0x5)
+            int controlByte = b.ReadByte();
+            if (controlByte != 0x5 && controlByte != 0x6)
                 throw new Exception("Error while reading 0x5 UInt32 in 'ui_sound_db.bin'");
             byte[] value = b.ReadBytes(4);
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(value);
             return BitConverter.ToUInt32(value, 0);
-        }
+        }*/
 
-        private void WriteUInt32BigEndian(BinaryWriter w, uint input)
+        /*private void WriteUInt32BigEndian(BinaryWriter w, uint input)
         {
             w.Write((byte)0x5);
             byte[] value = BitConverter.GetBytes(input);
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(value);
             w.Write(value);
-        }
+        }*/
 
         private int ReadInt32(BinaryReader b)
         {
-            if (b.ReadByte() != 0x6)
-                throw new Exception("Error while reading 0x6 Int32 in 'ui_sound_db.bin'");
+            int controlByte = b.ReadByte();
+            if (controlByte != 0x5 && controlByte != 0x6)
+                throw new Exception("Error while reading 0x5/0x6 Int32 in 'ui_sound_db.bin'");
+            byte[] value = b.ReadBytes(4);
+            if (BitConverter.IsLittleEndian)
+                Array.Reverse(value);
+            return BitConverter.ToInt32(value, 0);
+        }
+
+        private int ReadOrder(BinaryReader b)
+        {
+            if (b.ReadByte() != 0x6) //Order?
+                throw new Exception("Error while reading 0x6 Order in 'ui_sound_db.bin'");
             byte[] value = b.ReadBytes(4);
             if (BitConverter.IsLittleEndian)
                 Array.Reverse(value);

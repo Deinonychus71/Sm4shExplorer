@@ -10,11 +10,11 @@ namespace Sm4shMusic.DB
     public static class BGMFilesDB
     {
         #region Members
-        private static Dictionary<uint, string> _BGMDB;
+        private static Dictionary<int, string> _BGMDB;
         #endregion
 
         #region Properties
-        public static Dictionary<uint, string> BGMs { get { return _BGMDB; } }
+        public static Dictionary<int, string> BGMs { get { return _BGMDB; } }
         #endregion
 
         #region Main Methods
@@ -38,9 +38,9 @@ namespace Sm4shMusic.DB
         #endregion
 
         #region Wii U
-        private static Dictionary<uint, string> GenerateBGMDatabaseWiiU208()
+        private static Dictionary<int, string> GenerateBGMDatabaseWiiU208()
         {
-            Dictionary<uint, string> dict = new Dictionary<uint, string>();
+            Dictionary<int, string> dict = new Dictionary<int, string>();
             dict[0x56d] = "A01_SMB_Chijyou";
             dict[0x56f] = "A03_SMB_Suichu";
             dict[0x570] = "A04_LND_Chika";

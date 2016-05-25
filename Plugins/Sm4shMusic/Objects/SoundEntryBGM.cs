@@ -13,7 +13,7 @@ namespace Sm4shMusic.Objects
     {
         #region Properties
         [XmlElement("bid")]
-        public uint BGMID { get; set; }
+        public int BGMID { get; set; }
 
         [XmlIgnore]
         public SoundEntryCollection SoundEntryCollection { get; set; }
@@ -23,7 +23,7 @@ namespace Sm4shMusic.Objects
         public BGMEntry BGMEntry { get { return GetBGMEntry(); } }
         #endregion
 
-        public SoundEntryBGM(SoundEntryCollection soundEntryCollection, SoundEntry sEntry, uint bgmID)
+        public SoundEntryBGM(SoundEntryCollection soundEntryCollection, SoundEntry sEntry, int bgmID)
         {
             SoundEntryCollection = soundEntryCollection;
             BGMID = bgmID;

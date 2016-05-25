@@ -66,8 +66,8 @@ namespace Sm4shMusic.UserControls
             _CurrentMyMusicStageOriginal = SoundEntryCollectionBackup.MyMusicStagesPerID[myMusicStage.MyMusicStageID];
             if(myMusicStage.BGMStage.BGMDBID != null)
             {
-                _CurrentSoundDBStage = SoundEntryCollection.SoundDBStagesPerID[(uint)(myMusicStage.BGMStage.BGMDBID)];
-                _CurrentSoundDBStageOriginal = SoundEntryCollectionBackup.SoundDBStagesPerID[(uint)(myMusicStage.BGMStage.BGMDBID)];
+                _CurrentSoundDBStage = SoundEntryCollection.SoundDBStagesPerID[(int)(myMusicStage.BGMStage.BGMDBID)];
+                _CurrentSoundDBStageOriginal = SoundEntryCollectionBackup.SoundDBStagesPerID[(int)(myMusicStage.BGMStage.BGMDBID)];
                 _ListSoundDB.Enabled = true;
                 btnRestoreSoundDBStageList.Visible = true;
             }
@@ -115,7 +115,7 @@ namespace Sm4shMusic.UserControls
             txtRarity.DataBindings.Add("Text", myMusicStageBGM, "Rarity");
             txtUnk3.DataBindings.Add("Text", myMusicStageBGM, "Unk3");
             txtUnk4.DataBindings.Add("Text", myMusicStageBGM, "Unk4");
-            txtUnk5.DataBindings.Add("Text", myMusicStageBGM, "Unk5");
+            txtPlayDelay.DataBindings.Add("Text", myMusicStageBGM, "PlayDelay");
             txtUnk6.DataBindings.Add("Text", myMusicStageBGM, "Unk6");
             txtUnk7.DataBindings.Add("Text", myMusicStageBGM, "Unk7");
             txtUnk8.DataBindings.Add("Text", myMusicStageBGM, "Unk8");
@@ -197,7 +197,7 @@ namespace Sm4shMusic.UserControls
                 _CurrentMyMusicStageBGM.Rarity = _CurrentMyMusicStageBGMOriginal.Rarity;
                 _CurrentMyMusicStageBGM.Unk3 = _CurrentMyMusicStageBGMOriginal.Unk3;
                 _CurrentMyMusicStageBGM.Unk4 = _CurrentMyMusicStageBGMOriginal.Unk4;
-                _CurrentMyMusicStageBGM.Unk5 = _CurrentMyMusicStageBGMOriginal.Unk5;
+                _CurrentMyMusicStageBGM.PlayDelay = _CurrentMyMusicStageBGMOriginal.PlayDelay;
                 _CurrentMyMusicStageBGM.Unk6 = _CurrentMyMusicStageBGMOriginal.Unk6;
                 _CurrentMyMusicStageBGM.Unk7 = _CurrentMyMusicStageBGMOriginal.Unk7;
                 _CurrentMyMusicStageBGM.Unk8 = _CurrentMyMusicStageBGMOriginal.Unk8;
@@ -329,7 +329,7 @@ namespace Sm4shMusic.UserControls
         private void _ListSoundDB_ItemSelected(object sender, EventHandlers.ListEntryArgs e)
         {
             SoundDBStageSoundEntry sSoundDBStageSoundEntry = e.ListEntry as SoundDBStageSoundEntry;
-            if (sSoundDBStageSoundEntry != null)
+            if (sSoundDBStageSoundEntry != null && sSoundDBStageSoundEntry.SoundEntry != null)
                 _ListSoundDB.VGMStreamFile = SoundEntryCollection.GetBGMFullPath(sSoundDBStageSoundEntry.SoundEntry.BGMFiles[0].BGMEntry.BGMFilename);
             else
                 _ListSoundDB.VGMStreamFile = null;
@@ -365,9 +365,11 @@ namespace Sm4shMusic.UserControls
                 case "helpRarity":
                     MessageBox.Show(Strings.HELP_MUSIC_STAGE_RARITY, Strings.CAPTION_HELP);
                     break;
+                case "helpPlayDelay":
+                    MessageBox.Show(Strings.HELP_MUSIC_STAGE_PLAY_DELAY, Strings.CAPTION_HELP);
+                    break;
                 case "helpUnk3":
                 case "helpUnk4":
-                case "helpUnk5":
                 case "helpUnk6":
                 case "helpUnk7":
                 case "helpUnk8":

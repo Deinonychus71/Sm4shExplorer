@@ -10,15 +10,15 @@ namespace Sm4shMusic.DB
 {
     public class BGMStage
     {
-        private uint _BGMMyMusicID;
-        private uint? _BGMDBID;
+        private int _BGMMyMusicID;
+        private int? _BGMDBID;
         private string _Label;
 
-        public uint BGMMyMusicID { get { return _BGMMyMusicID; } set { _BGMMyMusicID = value; } }
-        public uint? BGMDBID { get { return _BGMDBID; } set { _BGMDBID = value; } }
+        public int BGMMyMusicID { get { return _BGMMyMusicID; } set { _BGMMyMusicID = value; } }
+        public int? BGMDBID { get { return _BGMDBID; } set { _BGMDBID = value; } }
         public string Label { get { return _Label; } set { _Label = value; } }
 
-        public BGMStage(string label, uint myMusicID, uint? dbID)
+        public BGMStage(string label, int myMusicID, int? dbID)
         {
             _Label = label;
             _BGMMyMusicID = myMusicID;

@@ -118,11 +118,11 @@ namespace Sm4shMusic.Objects
             {
                 foreach (SoundEntry sEntry in sEntryCollection.SoundEntries)
                 {
-                    sEntry.Title = GetVariableValue(VAR_TITLE + sEntry.FullSoundID, Strings.DEFAULT_SENTRY_TITLE);
-                    sEntry.SoundTestTitle = GetVariableValue(VAR_TITLE2 + sEntry.FullSoundID, Strings.DEFAULT_SENTRY_TITLE2);
-                    sEntry.Description = GetVariableValue(VAR_DESCRIPTION + sEntry.FullSoundID, string.Empty);
-                    sEntry.Description2 = GetVariableValue(VAR_DESCRIPTION2 + sEntry.FullSoundID, string.Empty);
-                    sEntry.Source = GetVariableValue(VAR_SOURCE + sEntry.FullSoundID, string.Empty);
+                    sEntry.Title = GetVariableValue(VAR_TITLE + sEntry.OriginalSoundLabel, Strings.DEFAULT_SENTRY_TITLE);
+                    sEntry.SoundTestTitle = GetVariableValue(VAR_TITLE2 + sEntry.OriginalSoundLabel, Strings.DEFAULT_SENTRY_TITLE2);
+                    sEntry.Description = GetVariableValue(VAR_DESCRIPTION + sEntry.OriginalSoundLabel, string.Empty);
+                    sEntry.Description2 = GetVariableValue(VAR_DESCRIPTION2 + sEntry.OriginalSoundLabel, string.Empty);
+                    sEntry.Source = GetVariableValue(VAR_SOURCE + sEntry.OriginalSoundLabel, string.Empty);
                 }
             }
         }
@@ -425,11 +425,11 @@ namespace Sm4shMusic.Objects
 
         private void SetNewMSBTPerSoundEntry(SortedDictionary<string, MSBTVariable> newMSBTDB, SoundEntry sEntry)
         {
-            MSBTVariable newTitle = new MSBTVariable(VAR_TITLE + sEntry.FullSoundID, sEntry.Title.Replace(Environment.NewLine, "\n"));
-            MSBTVariable newTitle2 = new MSBTVariable(VAR_TITLE2 + sEntry.FullSoundID, sEntry.SoundTestTitle.Replace(Environment.NewLine, "\n"));
-            MSBTVariable newDescription = new MSBTVariable(VAR_DESCRIPTION + sEntry.FullSoundID, sEntry.Description.Replace(Environment.NewLine, "\n"));
-            MSBTVariable newDescription2 = new MSBTVariable(VAR_DESCRIPTION2 + sEntry.FullSoundID, sEntry.Description2.Replace(Environment.NewLine, "\n"));
-            MSBTVariable newSource = new MSBTVariable(VAR_SOURCE + sEntry.FullSoundID, sEntry.Source.Replace(Environment.NewLine, "\n"));
+            MSBTVariable newTitle = new MSBTVariable(VAR_TITLE + sEntry.SoundLabel, sEntry.Title.Replace(Environment.NewLine, "\n"));
+            MSBTVariable newTitle2 = new MSBTVariable(VAR_TITLE2 + sEntry.SoundLabel, sEntry.SoundTestTitle.Replace(Environment.NewLine, "\n"));
+            MSBTVariable newDescription = new MSBTVariable(VAR_DESCRIPTION + sEntry.SoundLabel, sEntry.Description.Replace(Environment.NewLine, "\n"));
+            MSBTVariable newDescription2 = new MSBTVariable(VAR_DESCRIPTION2 + sEntry.SoundLabel, sEntry.Description2.Replace(Environment.NewLine, "\n"));
+            MSBTVariable newSource = new MSBTVariable(VAR_SOURCE + sEntry.SoundLabel, sEntry.Source.Replace(Environment.NewLine, "\n"));
 
             newMSBTDB.Add(newTitle.Name, newTitle);
             newMSBTDB.Add(newTitle2.Name, newTitle2);

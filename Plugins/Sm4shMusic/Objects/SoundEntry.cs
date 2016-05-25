@@ -1,4 +1,5 @@
 ﻿using Sm4shFileExplorer.DB;
+using Sm4shMusic.Globals;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,9 +52,7 @@ namespace Sm4shMusic.Objects
 
         #region Properties
         [XmlElement("sid")]
-        public string SoundID { get; set; }
-        [XmlElement("in")]
-        public uint Index { get; set; }
+        public int SoundID { get; set; }
         public List<SoundEntryBGM> BGMFiles { get; set; }
 
         [XmlElement("b1")]
@@ -74,18 +73,18 @@ namespace Sm4shMusic.Objects
         [XmlElement("mix")]
         public SoundMixType SoundMixType { get; set; }
         [XmlElement("icon")]
-        public uint IconID { get; set; }
+        public int IconID { get; set; }
         [XmlElement("back")]
         public SoundTestBackImageBehavior SoundTestBackImageBehavior { get; set; }
-        public List<uint> AssociatedFightersIDs { get; set; }
+        public List<int> AssociatedFightersIDs { get; set; }
 
         [XmlElement("storder")]
         public int SoundTestOrder { get; set; }
         [XmlElement("scorder")]
         public int StageCreationOrder { get; set; }
         [XmlElement("scgid")]
-        public uint StageCreationGroupID { get; set; }
-        [XmlElement("u17")]
+        public int StageCreationGroupID { get; set; }
+        [XmlElement("sho")]
         public short Int17 { get { return _Int17; } set { _Int17 = value; InvokePropertyChanged(new PropertyChangedEventArgs("Int17")); } }
 
         [XmlElement("t1")]
@@ -102,24 +101,26 @@ namespace Sm4shMusic.Objects
         [XmlIgnore]
         public SoundEntryCollection SoundEntryCollection { get; set; }
         [XmlIgnore]
-        public string FullSoundID { get { return "SOUND" + SoundID; } }
+        public string OriginalSoundLabel { get; set; } //Only used for parsing
         [XmlIgnore]
-        public string IconName { get { if (IconID == 0xffffffff) return string.Empty; return IconsDB.Icons[IconID]; } }
+        public string SoundLabel { get { return "SOUND" + GetSoundEntryLabel(); } }
         [XmlIgnore]
-        public string StageCreationGroupName { get { if (StageCreationGroupID == 0xffffffff) return string.Empty; return IconsDB.Icons[StageCreationGroupID]; } }
+        public string IconName { get { if (IconID == -1) return string.Empty; return IconsDB.Icons[IconID]; } }
         [XmlIgnore]
-        public List<string> AssociatedFightersName { get { List<string> output = new List<string>(); foreach (uint fighterId in AssociatedFightersIDs) output.Add(CharsDB.Chars[fighterId]); return output; } }
+        public string StageCreationGroupName { get { if (StageCreationGroupID == -1) return string.Empty; return IconsDB.Icons[StageCreationGroupID]; } }
+        [XmlIgnore]
+        public List<string> AssociatedFightersName { get { List<string> output = new List<string>(); foreach (uint fighterId in AssociatedFightersIDs) output.Add(CharsDB.Chars[(int)fighterId]); return output; } }
         [XmlIgnore]
         public string ListTitle { get { return SoundID + " - " + Title; } }
         [XmlIgnore]
-        public string ListValue { get { return SoundID; } }
+        public string ListValue { get { return SoundID.ToString(); } }
         #endregion
 
         public SoundEntry(SoundEntryCollection soundEntryCollection)
         {
             SoundEntryCollection = soundEntryCollection;
             BGMFiles = new List<SoundEntryBGM>();
-            AssociatedFightersIDs = new List<uint>();
+            AssociatedFightersIDs = new List<int>();
         }
 
         public SoundEntry()
@@ -134,6 +135,11 @@ namespace Sm4shMusic.Objects
         public override string ToString()
         {
             return ListTitle;
+        }
+
+        private string GetSoundEntryLabel()
+        {
+            return Base36.Encode(this.SoundID);
         }
 
         #region Implementation of INotifyPropertyChanged

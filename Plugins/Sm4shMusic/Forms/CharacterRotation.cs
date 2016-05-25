@@ -20,12 +20,12 @@ namespace Sm4shMusic.Forms
         {
             InitializeComponent();
 
-            _EnumChars = (EnumEntity[])CharsDB.Chars.Select(c => new EnumEntity() { Value = (uint)c.Key, Name = c.Value }).ToArray();
+            _EnumChars = (EnumEntity[])CharsDB.Chars.Select(c => new EnumEntity() { Value = (int)c.Key, Name = c.Value }).ToArray();
 
             for (int i = 1; i <= 8; i++)
             {
                 ComboBox ddlList = (ComboBox)(this.Controls.Find("ddlChar" + i, true)[0]);
-                ddlList.Items.Add(new EnumEntity() { Name = "NULL", Value = 0xffffffff });
+                ddlList.Items.Add(new EnumEntity() { Name = "NULL", Value = -1 });
                 ddlList.Items.AddRange(_EnumChars);
             }
         }
@@ -60,12 +60,12 @@ namespace Sm4shMusic.Forms
             if (!_Loaded)
                 return;
 
-            CurrentSoundEntry.AssociatedFightersIDs = new List<uint>();
+            CurrentSoundEntry.AssociatedFightersIDs = new List<int>();
 
             for (int i = 1; i <= 8; i++)
             {
                 ComboBox ddlList = (ComboBox)(this.Controls.Find("ddlChar" + i, true)[0]);
-                if (ddlList.SelectedItem != null && ((EnumEntity)(ddlList.SelectedItem)).Value != 0xffffffff)
+                if (ddlList.SelectedItem != null && ((EnumEntity)(ddlList.SelectedItem)).Value != -1)
                     CurrentSoundEntry.AssociatedFightersIDs.Add(((EnumEntity)(ddlList.SelectedItem)).Value);
             }
         }

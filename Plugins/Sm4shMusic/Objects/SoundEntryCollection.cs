@@ -17,11 +17,11 @@ namespace Sm4shMusic.Objects
         private List<MyMusicStage> _MyMusicStages;
         private List<SoundDBStage> _SoundDBStages;
 
-        private Dictionary<string, SoundEntry> _SoundEntriesPerID;
-        private SortedDictionary<uint, BGMEntry> _SoundEntriesBGMsPerID;
+        private Dictionary<int, SoundEntry> _SoundEntriesPerID;
+        private SortedDictionary<int, BGMEntry> _SoundEntriesBGMsPerID;
         private SortedDictionary<string, BGMEntry> _SoundEntriesBGMsPerName;
-        private Dictionary<uint, MyMusicStage> _MyMusicStagesPerID;
-        private Dictionary<uint, SoundDBStage> _SoundDBStagesPerID;
+        private Dictionary<int, MyMusicStage> _MyMusicStagesPerID;
+        private Dictionary<int, SoundDBStage> _SoundDBStagesPerID;
 
         public List<SoundEntry> SoundEntries { get { return _SoundEntries; } set { _SoundEntries = value; } }
         public List<BGMEntry> SoundEntriesBGMs { get { return _SoundEntriesBGMs; } set { _SoundEntriesBGMs = value; } }
@@ -29,16 +29,16 @@ namespace Sm4shMusic.Objects
         public List<SoundDBStage> SoundDBStages { get { return _SoundDBStages; } set { _SoundDBStages = value; } }
         
         [XmlIgnore]
-        public Dictionary<string, SoundEntry> SoundEntriesPerID { get { return _SoundEntriesPerID; } }
+        public Dictionary<int, SoundEntry> SoundEntriesPerID { get { return _SoundEntriesPerID; } }
         [XmlIgnore]
-        public SortedDictionary<uint, BGMEntry> SoundEntriesBGMsPerID { get { return _SoundEntriesBGMsPerID; } }
+        public SortedDictionary<int, BGMEntry> SoundEntriesBGMsPerID { get { return _SoundEntriesBGMsPerID; } }
         [XmlIgnore]
         public SortedDictionary<string, BGMEntry> SoundEntriesBGMsPerName { get { return _SoundEntriesBGMsPerName; } }
         
         [XmlIgnore]
-        public Dictionary<uint, MyMusicStage> MyMusicStagesPerID { get { return _MyMusicStagesPerID; } }
+        public Dictionary<int, MyMusicStage> MyMusicStagesPerID { get { return _MyMusicStagesPerID; } }
         [XmlIgnore]
-        public Dictionary<uint, SoundDBStage> SoundDBStagesPerID { get { return _SoundDBStagesPerID; } }
+        public Dictionary<int, SoundDBStage> SoundDBStagesPerID { get { return _SoundDBStagesPerID; } }
 
         public SoundEntryCollection()
         {
@@ -50,8 +50,8 @@ namespace Sm4shMusic.Objects
 
         public void GenerateStagesDictionaries()
         {
-            _MyMusicStagesPerID = new Dictionary<uint, MyMusicStage>();
-            _SoundDBStagesPerID = new Dictionary<uint, SoundDBStage>();
+            _MyMusicStagesPerID = new Dictionary<int, MyMusicStage>();
+            _SoundDBStagesPerID = new Dictionary<int, SoundDBStage>();
 
             foreach (MyMusicStage myMusicStage in _MyMusicStages)
                 _MyMusicStagesPerID.Add(myMusicStage.MyMusicStageID, myMusicStage);
@@ -62,14 +62,14 @@ namespace Sm4shMusic.Objects
 
         public void GenerateSoundEntriesDictionary()
         {
-            _SoundEntriesPerID = new Dictionary<string, SoundEntry>();
+            _SoundEntriesPerID = new Dictionary<int, SoundEntry>();
             foreach (SoundEntry sEntry in _SoundEntries)
                 _SoundEntriesPerID.Add(sEntry.SoundID, sEntry);
         }
 
         public void GenerateSoundEntriesBGMDictionary()
         {
-            _SoundEntriesBGMsPerID = new SortedDictionary<uint, BGMEntry>();
+            _SoundEntriesBGMsPerID = new SortedDictionary<int, BGMEntry>();
             _SoundEntriesBGMsPerName = new SortedDictionary<string, BGMEntry>();
             foreach (BGMEntry sEntryBGM in _SoundEntriesBGMs)
             {
@@ -84,25 +84,25 @@ namespace Sm4shMusic.Objects
             string file = GetBGMFullPath("snd_bgm_" + bgmName + ".nus3bank");
             VGMStreamReader reader = new VGMStreamReader(file);
 
-            uint lastId = GetNewBGMEntryID();
+            int lastId = GetNewBGMEntryID();
             BGMEntry sEntryBGM = new BGMEntry(lastId);
             sEntryBGM.BGMTitle = bgmName;
             sEntryBGM.BGMUnk1 = 1; // Most common value is 1
-            sEntryBGM.BGMUnk2 = 0xffffffff;
+            sEntryBGM.BGMUnk2 = -1;
             sEntryBGM.BGMUnk3 = 0x190; //Most common value
-            sEntryBGM.BGMUnk4 = 0xffffffff; //Most common value is null
-            sEntryBGM.MenuCheckPoint1 = 0xffffffff;
-            sEntryBGM.MenuCheckPoint2 = 0xffffffff;
-            sEntryBGM.MenuCheckPoint3 = 0xffffffff;
-            sEntryBGM.MenuCheckPoint4 = 0xffffffff;
+            sEntryBGM.BGMUnk4 = -1; //Most common value is null
+            sEntryBGM.MenuCheckPoint1 = -1;
+            sEntryBGM.MenuCheckPoint2 = -1;
+            sEntryBGM.MenuCheckPoint3 = -1;
+            sEntryBGM.MenuCheckPoint4 = -1;
             if (reader.FileLoaded)
             {
-                sEntryBGM.LoopStartTime = (uint)reader.LoopStartMilliseconds;
-                sEntryBGM.LoopEndTime = (uint)reader.LoopEndMilliseconds;
-                sEntryBGM.LoopStartSample = (uint)reader.LoopStartSample;
-                sEntryBGM.LoopEndSample = (uint)reader.LoopEndSample;
-                sEntryBGM.StreamTotalDuration = (uint)reader.TotalMilliseconds;
-                sEntryBGM.StreamTotalSamples = (uint)reader.TotalSamples;
+                sEntryBGM.LoopStartTime = reader.LoopStartMilliseconds;
+                sEntryBGM.LoopEndTime = reader.LoopEndMilliseconds;
+                sEntryBGM.LoopStartSample = reader.LoopStartSample;
+                sEntryBGM.LoopEndSample = reader.LoopEndSample;
+                sEntryBGM.StreamTotalDuration = reader.TotalMilliseconds;
+                sEntryBGM.StreamTotalSamples = reader.TotalSamples;
                 reader.Dispose();
             }
             else
@@ -121,9 +121,8 @@ namespace Sm4shMusic.Objects
         {
             SoundEntry sEntry = new SoundEntry(this);
 
-            sEntry.SoundID = GetNewSoundEntryID();
-            sEntry.Index = _SoundEntries.Last().Index + 1;
-            sEntry.BGMFiles.Add(new SoundEntryBGM(this, sEntry, _SoundEntriesBGMs.First().BGMID));
+            sEntry.SoundID = GetNewSoundID();
+            sEntry.BGMFiles.Add(new SoundEntryBGM(this, sEntry, 0x450));
             sEntry.InSoundTest = true;
             sEntry.Byte2 = true;
             sEntry.Byte3 = true;
@@ -146,25 +145,26 @@ namespace Sm4shMusic.Objects
             sEntry.Source = string.Empty;
 
             _SoundEntries.Add(sEntry);
+            _SoundEntries.Sort((x, y) => x.SoundID.CompareTo(y.SoundID));
             _SoundEntriesPerID.Add(sEntry.SoundID, sEntry);
 
             return sEntry;
         }
 
-        public MyMusicStageBGM CreateMyMusicStageBGM(uint sEntryBGMID, ushort index)
+        public MyMusicStageBGM CreateMyMusicStageBGM(int sEntryBGMID, ushort index)
         {
             MyMusicStageBGM myMusicStageBGM = new MyMusicStageBGM(this, sEntryBGMID);
-            myMusicStageBGM.Index = (ushort)(index + 1);
+            myMusicStageBGM.Index = (short)(index + 1);
             myMusicStageBGM.Rarity = 100;
-            myMusicStageBGM.SubIndex = 0xffff;
-            myMusicStageBGM.Unk3 = 0xffff;
+            myMusicStageBGM.SubIndex = -1;
+            myMusicStageBGM.Unk3 = -1;
 
             return myMusicStageBGM;
         }
         #endregion
 
         #region Delete
-        public void RemoveSoundEntry(string soundID)
+        public void RemoveSoundEntry(int soundID)
         {
             if (_SoundEntriesPerID.ContainsKey(soundID))
             {
@@ -184,7 +184,7 @@ namespace Sm4shMusic.Objects
             }
         }
 
-        public void RemoveBGMEntry(uint bgmID)
+        public void RemoveBGMEntry(int bgmID)
         {
             BGMEntry bEntry = _SoundEntriesBGMsPerID[bgmID];
             _SoundEntriesBGMsPerID.Remove(bEntry.BGMID);
@@ -212,7 +212,7 @@ namespace Sm4shMusic.Objects
             List<BGMEntry> orphanBGMs = new List<BGMEntry>();
 
             //Reference all BGMs from SoundDB
-            List<uint> soundBGMEntriesIDs = new List<uint>();
+            List<int> soundBGMEntriesIDs = new List<int>();
             foreach (SoundEntry sEntry in _SoundEntries)
             {
                 foreach (SoundEntryBGM sBGMEntry in sEntry.BGMFiles)
@@ -220,7 +220,7 @@ namespace Sm4shMusic.Objects
             }
 
             //Reference all BGMS from MyMusic
-            List<uint> myMusicBGMEntriesIDs = new List<uint>();
+            List<int> myMusicBGMEntriesIDs = new List<int>();
             foreach (MyMusicStage myMusicStage in _MyMusicStages)
             {
                 foreach (MyMusicStageBGM myMusicStageBGM in myMusicStage.BGMs)
@@ -256,9 +256,9 @@ namespace Sm4shMusic.Objects
             return string.Format(Strings.DEBUG_LIST_ORPHAN_BGMS, orphanBGMs.Count, listOrphan);
         }
 
-        public uint GetNewBGMEntryID()
+        public int GetNewBGMEntryID()
         {
-            for (uint i = 1; i > 0; i++)
+            for (int i = 1; i > 0; i++)
             {
                 if (_SoundEntriesBGMsPerID.ContainsKey(i))
                     continue;
@@ -267,15 +267,15 @@ namespace Sm4shMusic.Objects
             return 0;
         }
 
-        public string GetNewSoundEntryID()
+        public int GetNewSoundID()
         {
-            string nID = _SoundEntries.Last().SoundID;
-
-            do
-                nID = Base36.Encode((Base36.Decode(nID) + 1));
-            while (_SoundEntries.Find(p => p.SoundID == nID) != null);
-
-            return nID;
+            for (int i = 1; i > 0; i++)
+            {
+                if (_SoundEntriesPerID.ContainsKey(i))
+                    continue;
+                return i;
+            }
+            return 0;
         }
 
         public object Clone()

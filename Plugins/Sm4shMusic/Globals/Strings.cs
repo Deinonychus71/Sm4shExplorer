@@ -48,6 +48,7 @@ namespace Sm4shMusic.Globals
         public const string HELP_MUSIC_STAGE_RARITY = "From 0 to 100, indicate the odds to have one specific song played in a stage.\r\n\r\nWhile loading the game, if the rarity level stays at 0, try resetting the settings for this stage. It's probably the save file that didn't know about a new song you just added.";
         public const string HELP_MUSIC_STAGE_MYMUSIC = "List of the MyMusic songs associated to this stage. In order for a song to be visible and playable. They usually need to appear in both lists (with some not-so-well-known exceptions).";
         public const string HELP_MUSIC_STAGE_SOUND = "List of the SoundDB songs associated to this stage. This list represents the list you will see in the UI of the game. In order for a song to be visible and playable. They usually need to appear in both lists (with some not-so-well-known exceptions).";
+        public const string HELP_MUSIC_STAGE_PLAY_DELAY = "This value determines how long to wait before playing the song in a match. -1 apparently means that the song has to start during the 'GO'.\r\nThank you Pib from gbatemp :-)";
         public const string HELP_MUSIC_STAGE_UNKNOWN = "The behavior of this value is unknown! If you can figure it out, please tell us :)";
 
         public const string CAPTION_WARNING = "Warning";
@@ -68,7 +69,7 @@ namespace Sm4shMusic.Globals
         public const string CAPTION_INFO = "Info";
         public const string INFO_COMPILED = "The modifications were successfully saved in the workspace folder. If you wish to restore the original file, simply remove 'sound/config/bgm_property.mpb', 'param/ui/ui_sound_db.bin', 'sound/config/bgm_mymusic.mmb' and 'ui/message/sound.msbt' from the workspace folder.";
 
-        public const string INFO_CONFIRM_DELETE = "Are you sure you want to remove '{0}'? This action cannot be undone.";
+        public const string INFO_CONFIRM_DELETE = "Are you sure you want to remove '{0}'? If deleting one of the first 521 'official' IDs it could mess with how songs are unlocked. This action cannot be undone.";
 
         public const string INFO_THANKS =
             "- Research on SOUND DB, MyMusic, NUS3BANK and for http://smashcustommusic.com/: Soneek\r\n" +
@@ -77,8 +78,5 @@ namespace Sm4shMusic.Globals
 
         public const string DEFAULT_SENTRY_TITLE = "BLANK";
         public const string DEFAULT_SENTRY_TITLE2 = "BLANK";
-
-        public const string TEST05_SANITIZE = "The selected Sound BGM was detected as TEST05, which usually means that it's an empty entry within the DB.\r\nIn order to appear in Sound Test and in your stages, some properties need to be modified.\r\nProceed?";
-
     }
 }

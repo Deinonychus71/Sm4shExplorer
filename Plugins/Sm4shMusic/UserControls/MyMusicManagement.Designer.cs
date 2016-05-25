@@ -38,7 +38,7 @@
             this.btnRestoreMyMusicProperties = new System.Windows.Forms.Button();
             this.helpUnk9 = new System.Windows.Forms.PictureBox();
             this.helpUnk7 = new System.Windows.Forms.PictureBox();
-            this.helpUnk5 = new System.Windows.Forms.PictureBox();
+            this.helpPlayDelay = new System.Windows.Forms.PictureBox();
             this.helpUnk3 = new System.Windows.Forms.PictureBox();
             this.helpUnk8 = new System.Windows.Forms.PictureBox();
             this.helpUnk6 = new System.Windows.Forms.PictureBox();
@@ -50,7 +50,7 @@
             this.txtUnk8 = new System.Windows.Forms.TextBox();
             this.txtUnk7 = new System.Windows.Forms.TextBox();
             this.txtUnk6 = new System.Windows.Forms.TextBox();
-            this.txtUnk5 = new System.Windows.Forms.TextBox();
+            this.txtPlayDelay = new System.Windows.Forms.TextBox();
             this.txtUnk4 = new System.Windows.Forms.TextBox();
             this.txtUnk3 = new System.Windows.Forms.TextBox();
             this.txtRarity = new System.Windows.Forms.TextBox();
@@ -58,7 +58,7 @@
             this.lblUnk8 = new System.Windows.Forms.Label();
             this.lblUnk7 = new System.Windows.Forms.Label();
             this.lblUnk6 = new System.Windows.Forms.Label();
-            this.lblUnk5 = new System.Windows.Forms.Label();
+            this.lblPlayDelay = new System.Windows.Forms.Label();
             this.lblUnk4 = new System.Windows.Forms.Label();
             this.lblUnk3 = new System.Windows.Forms.Label();
             this.lblRarity = new System.Windows.Forms.Label();
@@ -85,7 +85,7 @@
             this.groupMusicStageBGM.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk9)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk7)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.helpUnk5)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.helpPlayDelay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk6)).BeginInit();
@@ -166,7 +166,7 @@
             this.groupMusicStageBGM.Controls.Add(this.btnRestoreMyMusicProperties);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk9);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk7);
-            this.groupMusicStageBGM.Controls.Add(this.helpUnk5);
+            this.groupMusicStageBGM.Controls.Add(this.helpPlayDelay);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk3);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk8);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk6);
@@ -178,7 +178,7 @@
             this.groupMusicStageBGM.Controls.Add(this.txtUnk8);
             this.groupMusicStageBGM.Controls.Add(this.txtUnk7);
             this.groupMusicStageBGM.Controls.Add(this.txtUnk6);
-            this.groupMusicStageBGM.Controls.Add(this.txtUnk5);
+            this.groupMusicStageBGM.Controls.Add(this.txtPlayDelay);
             this.groupMusicStageBGM.Controls.Add(this.txtUnk4);
             this.groupMusicStageBGM.Controls.Add(this.txtUnk3);
             this.groupMusicStageBGM.Controls.Add(this.txtRarity);
@@ -186,7 +186,7 @@
             this.groupMusicStageBGM.Controls.Add(this.lblUnk8);
             this.groupMusicStageBGM.Controls.Add(this.lblUnk7);
             this.groupMusicStageBGM.Controls.Add(this.lblUnk6);
-            this.groupMusicStageBGM.Controls.Add(this.lblUnk5);
+            this.groupMusicStageBGM.Controls.Add(this.lblPlayDelay);
             this.groupMusicStageBGM.Controls.Add(this.lblUnk4);
             this.groupMusicStageBGM.Controls.Add(this.lblUnk3);
             this.groupMusicStageBGM.Controls.Add(this.lblRarity);
@@ -236,15 +236,15 @@
             this.helpUnk7.TabStop = false;
             this.helpUnk7.Click += new System.EventHandler(this.help_Click);
             // 
-            // helpUnk5
+            // helpPlayDelay
             // 
-            this.helpUnk5.Image = global::Sm4shMusic.Properties.Resources.help;
-            this.helpUnk5.Location = new System.Drawing.Point(559, 109);
-            this.helpUnk5.Name = "helpUnk5";
-            this.helpUnk5.Size = new System.Drawing.Size(16, 16);
-            this.helpUnk5.TabIndex = 32;
-            this.helpUnk5.TabStop = false;
-            this.helpUnk5.Click += new System.EventHandler(this.help_Click);
+            this.helpPlayDelay.Image = global::Sm4shMusic.Properties.Resources.help;
+            this.helpPlayDelay.Location = new System.Drawing.Point(559, 109);
+            this.helpPlayDelay.Name = "helpPlayDelay";
+            this.helpPlayDelay.Size = new System.Drawing.Size(16, 16);
+            this.helpPlayDelay.TabIndex = 32;
+            this.helpPlayDelay.TabStop = false;
+            this.helpPlayDelay.Click += new System.EventHandler(this.help_Click);
             // 
             // helpUnk3
             // 
@@ -344,12 +344,12 @@
             this.txtUnk6.Size = new System.Drawing.Size(170, 20);
             this.txtUnk6.TabIndex = 20;
             // 
-            // txtUnk5
+            // txtPlayDelay
             // 
-            this.txtUnk5.Location = new System.Drawing.Point(383, 107);
-            this.txtUnk5.Name = "txtUnk5";
-            this.txtUnk5.Size = new System.Drawing.Size(170, 20);
-            this.txtUnk5.TabIndex = 19;
+            this.txtPlayDelay.Location = new System.Drawing.Point(383, 107);
+            this.txtPlayDelay.Name = "txtPlayDelay";
+            this.txtPlayDelay.Size = new System.Drawing.Size(170, 20);
+            this.txtPlayDelay.TabIndex = 19;
             // 
             // txtUnk4
             // 
@@ -408,14 +408,14 @@
             this.lblUnk6.TabIndex = 12;
             this.lblUnk6.Text = "Unk6 :";
             // 
-            // lblUnk5
+            // lblPlayDelay
             // 
-            this.lblUnk5.AutoSize = true;
-            this.lblUnk5.Location = new System.Drawing.Point(295, 110);
-            this.lblUnk5.Name = "lblUnk5";
-            this.lblUnk5.Size = new System.Drawing.Size(39, 13);
-            this.lblUnk5.TabIndex = 11;
-            this.lblUnk5.Text = "Unk5 :";
+            this.lblPlayDelay.AutoSize = true;
+            this.lblPlayDelay.Location = new System.Drawing.Point(295, 110);
+            this.lblPlayDelay.Name = "lblPlayDelay";
+            this.lblPlayDelay.Size = new System.Drawing.Size(61, 13);
+            this.lblPlayDelay.TabIndex = 11;
+            this.lblPlayDelay.Text = "Play delay :";
             // 
             // lblUnk4
             // 
@@ -613,7 +613,7 @@
             this.groupMusicStageBGM.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk9)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk7)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.helpUnk5)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.helpPlayDelay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk6)).EndInit();
@@ -655,7 +655,7 @@
         private System.Windows.Forms.TextBox txtUnk8;
         private System.Windows.Forms.TextBox txtUnk7;
         private System.Windows.Forms.TextBox txtUnk6;
-        private System.Windows.Forms.TextBox txtUnk5;
+        private System.Windows.Forms.TextBox txtPlayDelay;
         private System.Windows.Forms.TextBox txtUnk4;
         private System.Windows.Forms.TextBox txtUnk3;
         private System.Windows.Forms.TextBox txtRarity;
@@ -663,12 +663,12 @@
         private System.Windows.Forms.Label lblUnk8;
         private System.Windows.Forms.Label lblUnk7;
         private System.Windows.Forms.Label lblUnk6;
-        private System.Windows.Forms.Label lblUnk5;
+        private System.Windows.Forms.Label lblPlayDelay;
         private System.Windows.Forms.Label lblUnk4;
         private System.Windows.Forms.Label lblUnk3;
         private System.Windows.Forms.PictureBox helpUnk9;
         private System.Windows.Forms.PictureBox helpUnk7;
-        private System.Windows.Forms.PictureBox helpUnk5;
+        private System.Windows.Forms.PictureBox helpPlayDelay;
         private System.Windows.Forms.PictureBox helpUnk3;
         private System.Windows.Forms.PictureBox helpUnk8;
         private System.Windows.Forms.PictureBox helpUnk6;

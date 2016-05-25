@@ -13,13 +13,13 @@ namespace Sm4shMusic.Objects
         #region Properties
         public List<SoundDBStageSoundEntry> SoundEntries { get; set; }
         [XmlElement("stid")]
-        public uint SoundDBStageID { get; set; }
+        public int SoundDBStageID { get; set; }
 
         [XmlIgnore]
         public SoundEntryCollection SoundEntryCollection { get; set; }
         #endregion
 
-        public SoundDBStage(SoundEntryCollection soundEntryCollection, uint soundDBStageID)
+        public SoundDBStage(SoundEntryCollection soundEntryCollection, int soundDBStageID)
         {
             SoundEntryCollection = soundEntryCollection;
             SoundDBStageID = soundDBStageID;

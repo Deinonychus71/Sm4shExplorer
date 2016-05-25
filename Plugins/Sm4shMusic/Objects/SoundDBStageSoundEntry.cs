@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sm4shMusic.Globals;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,19 +13,19 @@ namespace Sm4shMusic.Objects
     {
         #region Properties
         [XmlElement("sid")]
-        public string SoundID { get; set; }
+        public int SoundID { get; set; }
 
         [XmlIgnore]
         public SoundEntryCollection SoundEntryCollection { get; set; }
         [XmlIgnore]
-        public SoundEntry SoundEntry { get { return SoundEntryCollection.SoundEntriesPerID[SoundID]; } }
+        public SoundEntry SoundEntry { get { return SoundEntryCollection.SoundEntriesPerID.ContainsKey(SoundID) ? SoundEntryCollection.SoundEntriesPerID[SoundID] : null; } }
         [XmlIgnore]
-        public string ListTitle { get { return SoundEntry.ListTitle; } }
+        public string ListTitle { get { return SoundEntry != null ? SoundEntry.ListTitle : SoundID + " - " + Strings.DEFAULT_SENTRY_TITLE; } }
         [XmlIgnore]
-        public string ListValue { get { return SoundEntry.ListValue; } }
+        public string ListValue { get { return SoundID.ToString(); } }
         #endregion
 
-        public SoundDBStageSoundEntry(SoundEntryCollection soundEntryCollection, string soundID)
+        public SoundDBStageSoundEntry(SoundEntryCollection soundEntryCollection, int soundID)
         {
             SoundEntryCollection = soundEntryCollection;
             SoundID = soundID;

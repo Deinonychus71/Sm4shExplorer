@@ -9,11 +9,11 @@ namespace Sm4shFileExplorer.DB
     public class IconsDB
     {
         #region Members
-        private static Dictionary<uint, string> _IconsDB;
+        private static Dictionary<int, string> _IconsDB;
         #endregion
 
         #region Properties
-        public static Dictionary<uint, string> Icons { get { return _IconsDB; } }
+        public static Dictionary<int, string> Icons { get { return _IconsDB; } }
         #endregion
 
         #region Main Methods
@@ -37,9 +37,9 @@ namespace Sm4shFileExplorer.DB
         #endregion
 
         #region Wii U
-        private static Dictionary<uint, string> GenerateIconsDatabaseWiiU208()
+        private static Dictionary<int, string> GenerateIconsDatabaseWiiU208()
         {
-            Dictionary<uint, string> smashIcons = new Dictionary<uint, string>();
+            Dictionary<int, string> smashIcons = new Dictionary<int, string>();
 
             smashIcons[0x0] = "smashbros";
             smashIcons[0x1] = "donkeykong";

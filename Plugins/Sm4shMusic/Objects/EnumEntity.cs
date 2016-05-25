@@ -8,7 +8,7 @@ namespace Sm4shMusic.Objects
 {
     public class EnumEntity
     {
-        public uint Value { get; set; }
+        public int Value { get; set; }
         public string Name { get; set; }
     }
 }

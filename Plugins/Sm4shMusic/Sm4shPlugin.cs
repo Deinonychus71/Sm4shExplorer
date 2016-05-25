@@ -15,7 +15,7 @@ namespace Sm4shMusic
 {
     public class Sm4shPlugin : Sm4shBasePlugin
     {
-        public const string VERSION = "0.5";
+        public const string VERSION = "0.6";
 
         #region Members
         private SoundEntryCollection _SoundEntryCollection;
@@ -113,8 +113,13 @@ namespace Sm4shMusic
 
                     //From SoundDB
                     List<BGMEntry> bgmsSoundDB = new List<BGMEntry>();
-                    foreach (SoundDBStageSoundEntry sDBStageSoundEntry in _SoundEntryCollection.SoundDBStagesPerID[(uint)myMusicStage.BGMStage.BGMDBID].SoundEntries)
+                    foreach (SoundDBStageSoundEntry sDBStageSoundEntry in _SoundEntryCollection.SoundDBStagesPerID[(int)myMusicStage.BGMStage.BGMDBID].SoundEntries)
                     {
+                        if (sDBStageSoundEntry.SoundEntry == null)
+                        {
+                            LogHelper.Warning(string.Format("SOUNDID '{0}' have an issue with one of its associated stages.", sDBStageSoundEntry.SoundID));
+                            continue;
+                        }
                         foreach (SoundEntryBGM sEntryBGM in sDBStageSoundEntry.SoundEntry.BGMFiles)
                             bgmsSoundDB.Add(sEntryBGM.BGMEntry);
                     }
