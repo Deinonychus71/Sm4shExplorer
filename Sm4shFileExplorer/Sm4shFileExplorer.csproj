@@ -56,39 +56,42 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About.cs">
+    <Compile Include="UI\About.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="About.Designer.cs">
+    <Compile Include="UI\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
-    <Compile Include="CreationProjectInfo.cs">
+    <Compile Include="UI\CreationProjectInfo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreationProjectInfo.Designer.cs">
+    <Compile Include="UI\CreationProjectInfo.Designer.cs">
       <DependentUpon>CreationProjectInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="DB\CharsDB.cs" />
     <Compile Include="DB\IconsDB.cs" />
     <Compile Include="DB\StagesDB.cs" />
-    <Compile Include="Globals\ConsoleRedirProgress.cs" />
-    <Compile Include="Globals\ConsoleRedirText.cs" />
+    <Compile Include="UI\Objects\ConsoleRedirProgress.cs" />
+    <Compile Include="UI\Objects\ConsoleRedirText.cs" />
     <Compile Include="Globals\CustomStringComparer.cs" />
     <Compile Include="Globals\GlobalConstants.cs" />
+    <Compile Include="Globals\IOHelper.cs" />
     <Compile Include="Globals\LogHelper.cs" />
     <Compile Include="Globals\PathHelper.cs" />
     <Compile Include="Globals\Sm4shBasePlugin.cs" />
-    <Compile Include="Globals\UIConstants.cs" />
-    <Compile Include="Globals\UIStrings.cs" />
+    <Compile Include="UI\Objects\UIConstants.cs" />
+    <Compile Include="UI\Objects\UIStrings.cs" />
     <Compile Include="Globals\Utils.cs" />
-    <Compile Include="Main.cs">
+    <Compile Include="UI\Main.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Main.Designer.cs">
+    <Compile Include="UI\Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
-    <Compile Include="Objects\Crc32.cs" />
+    <Compile Include="UI\Objects\BackgroundWorkerInstance.cs" />
+    <Compile Include="Globals\Crc32.cs" />
     <Compile Include="Objects\FileSource.cs" />
+    <Compile Include="Objects\HashEntity.cs" />
     <Compile Include="Objects\PackageProcessor.cs" />
     <Compile Include="Objects\PatchFileItem.cs" />
     <Compile Include="Objects\PatchListFile.cs" />
@@ -96,19 +99,20 @@
     <Compile Include="Objects\ResourceExtension.cs" />
     <Compile Include="Objects\ResourceItem.cs" />
     <Compile Include="Objects\ResourceNameItem.cs" />
+    <Compile Include="Objects\SDMode.cs" />
     <Compile Include="Objects\Sm4shMod.cs" />
-    <Compile Include="Options.cs">
+    <Compile Include="UI\Options.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Options.Designer.cs">
+    <Compile Include="UI\Options.Designer.cs">
       <DependentUpon>Options.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReorderPlugins.cs">
+    <Compile Include="UI\ReorderPlugins.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ReorderPlugins.Designer.cs">
+    <Compile Include="UI\ReorderPlugins.Designer.cs">
       <DependentUpon>ReorderPlugins.cs</DependentUpon>
     </Compile>
     <Compile Include="Resources\Resource.Designer.cs">
@@ -118,16 +122,16 @@
     </Compile>
     <Compile Include="RFManager.cs" />
     <Compile Include="Sm4shProject.cs" />
-    <EmbeddedResource Include="About.resx">
+    <EmbeddedResource Include="UI\About.resx">
       <DependentUpon>About.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CreationProjectInfo.resx">
+    <EmbeddedResource Include="UI\CreationProjectInfo.resx">
       <DependentUpon>CreationProjectInfo.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Main.resx">
+    <EmbeddedResource Include="UI\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Options.resx">
+    <EmbeddedResource Include="UI\Options.resx">
       <DependentUpon>Options.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -140,7 +144,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="ReorderPlugins.resx">
+    <EmbeddedResource Include="UI\ReorderPlugins.resx">
       <DependentUpon>ReorderPlugins.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Resource.resx">

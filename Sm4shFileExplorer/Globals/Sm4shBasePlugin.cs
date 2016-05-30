@@ -153,6 +153,33 @@ namespace Sm4shFileExplorer.Globals
             }
         }
 
+        internal PluginActionResult InternalSendingToSD(SDMode sdMode, string exportFolder, string sdFolder)
+        {
+            try
+            {
+                return SendingToSD(sdMode, exportFolder, sdFolder);
+            }
+            catch (Exception e)
+            {
+                LogHelper.Error(string.Format("InternalSendingToSD with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
+                return PluginActionResult.DefaultCancel;
+            }
+        }
+
+        internal void InternalSentToSD(SDMode sdMode, string exportFolder, string sdFolder)
+        {
+            try
+            {
+                SentToSD(sdMode, exportFolder, sdFolder);
+            }
+            catch (Exception e)
+            {
+                LogHelper.Error(string.Format("InternalSentToSD with {0}: {1}", Name, e.Message));
+                LogHelper.Debug(string.Format("Stacktrace: {0}", e.StackTrace));
+            }
+        }
+
         internal int InternalCanResourceBeLoaded(ResourceCollection resCol, string relativePath)
         {
             try
@@ -290,6 +317,29 @@ namespace Sm4shFileExplorer.Globals
         /// </summary>
         /// <param name="exportFolder">Folder where the mod has been built</param>
         public virtual void NewModBuilt(string exportFolder)
+        {
+
+        }
+
+        /// <summary>
+        /// Is triggered before sending the content of exportFolder to the SD, the action can be cancelled (default: pass)
+        /// </summary>
+        /// <param name="sdMode">SDMode: Loadiine or SDCafiine</param>
+        /// <param name="exportFolder">Folder source</param>
+        /// <param name="sdFolder">SD Folder destination</param>
+        /// <returns>PluginActionResult object</returns>
+        public virtual PluginActionResult SendingToSD(SDMode sdMode, string exportFolder, string sdFolder)
+        {
+            return PluginActionResult.DefaultPass;
+        }
+
+        /// <summary>
+        /// Is triggered after sending exported mod to the SD
+        /// </summary>
+        /// <param name="sdMode">SDMode: Loadiine or SDCafiine</param>
+        /// <param name="exportFolder">Folder source</param>
+        /// <param name="sdFolder">SD Folder destination</param>
+        public virtual void SentToSD(SDMode sdMode, string exportFolder, string sdFolder)
         {
 
         }

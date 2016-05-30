@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sm4shFileExplorer.Globals
+namespace Sm4shFileExplorer.UI.Objects
 {
     internal class UIStrings
     {
@@ -23,11 +23,16 @@ namespace Sm4shFileExplorer.Globals
         public const string CAPTION_FILE_MODIFIED = "File modified";
         public const string INFO_FILE_MODIFIED = "The resource {0} seems to have been modified, do you want to include it to the project?";
 
+        public const string CAPTION_OPERATION = "Working";
+        public const string INFO_WORKING = "Sm4shExplorer is currently performing an operation. If you exit now, your changes won't be saved. Process?";
+
         public const string INFO_FILE_HEX = "You must first set up the path to your hex editor.";
 
         public const string CAPTION_PACK_REBUILD = "Rebuild resources";
         public const string WARN_EXPORT_FOLDER_EXISTS = "Warning. The folder '{0}' already exists. If you wish to continue, all content from this folder will be deleted. Proceed?";
         public const string INFO_PACK_REBUILD = "This feature will rebuild the resource files and patchfile. \r\nThis will ensure that the game takes your changes into account. When it's done, you can find the file in this folder:\r\n{0}";
+
+        public const string INFO_PACK_SEND_SD = "Do you want to copy the newly exported mod to SD?";
 
         public const string INFO_THANKS = 
             "- Sammi Husky for his DTLSExtractor\r\n"+

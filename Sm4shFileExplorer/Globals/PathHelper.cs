@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 
 namespace Sm4shFileExplorer.Globals
 {
@@ -28,8 +29,10 @@ namespace Sm4shFileExplorer.Globals
         public static string FolderTemp { get { return GetProjectTempFolder(); } }
         public static string FolderWorkplace { get { return GetProjectWorkplaceFolder(); } }
         public static string FolderPlugins { get { return GetPluginsFolder(); } }
-        public static string FolderExtract { get { return GetProjectExportFolder(); } }
+        public static string FolderExtract { get { return GetProjectExtractFolder(); } }
         public static string FolderExport { get { return GetProjectExportFolder(); } }
+        [XmlIgnore]
+        public static string FolderCache { get { return GetProjectCacheFolder(); } }
 
         #region public methods
         public static bool IsItSmashFolder(string folder)
@@ -139,7 +142,15 @@ namespace Sm4shFileExplorer.Globals
                 return Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "workspace" + Path.DirectorySeparatorChar;
             return _Project.ProjectWorkplaceFolder + (!_Project.ProjectWorkplaceFolder.EndsWith(Path.DirectorySeparatorChar.ToString()) ? Path.DirectorySeparatorChar.ToString() : string.Empty); ;
         }
-        
+
+        private static string GetProjectCacheFolder()
+        {
+            string cacheFolder = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "cache" + Path.DirectorySeparatorChar;
+            if (!Directory.Exists(cacheFolder))
+                Directory.CreateDirectory(cacheFolder);
+            return cacheFolder;
+        }
+
         private static string GetProjectExportFolder()
         {
             if (string.IsNullOrEmpty(_Project.ProjectExportFolder))

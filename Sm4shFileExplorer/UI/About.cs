@@ -1,8 +1,9 @@
 ﻿using Sm4shFileExplorer.Globals;
+using Sm4shFileExplorer.UI.Objects;
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace Sm4shFileExplorer
+namespace Sm4shFileExplorer.UI
 {
     internal partial class About : Form
     {

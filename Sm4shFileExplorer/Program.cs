@@ -1,7 +1,5 @@
-﻿using Sm4shFileExplorer.Globals;
+﻿using Sm4shFileExplorer.UI;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Sm4shFileExplorer

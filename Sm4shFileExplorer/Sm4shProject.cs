@@ -21,6 +21,7 @@ namespace Sm4shFileExplorer
         private string _ProjectFilePath = string.Empty;
         private RFManager _RfManager;
         private BindingList<Sm4shBasePlugin> _Plugins;
+        private string _CachedSDPath;
         #endregion
 
         #region Properties
@@ -118,7 +119,7 @@ namespace Sm4shFileExplorer
 
             if (string.IsNullOrEmpty(_CurrentProject.ProjectExportFolder) || !Directory.Exists(_CurrentProject.ProjectExportFolder))
                 _CurrentProject.ProjectExportFolder = PathHelper.FolderExport;
-            if(string.IsNullOrEmpty(_CurrentProject.ProjectExportFolder) || !Directory.Exists(_CurrentProject.ProjectExportFolder))
+            if (string.IsNullOrEmpty(_CurrentProject.ProjectExportFolder) || !Directory.Exists(_CurrentProject.ProjectExportFolder))
                 _CurrentProject.ProjectExtractFolder = PathHelper.FolderExtract;
             if (string.IsNullOrEmpty(_CurrentProject.ProjectTempFolder) || !Directory.Exists(_CurrentProject.ProjectTempFolder))
                 _CurrentProject.ProjectTempFolder = PathHelper.FolderTemp;
@@ -144,7 +145,7 @@ namespace Sm4shFileExplorer
                 IconsDB.InitializeIconsDB(_CurrentProject.GameVersion, _CurrentProject.Is3DS);
                 CharsDB.InitializeCharsDB(_CurrentProject.GameVersion, _CurrentProject.Is3DS);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 LogHelper.Error(string.Format("Error while loading the DBs: {0}", e.Message));
             }
@@ -177,7 +178,7 @@ namespace Sm4shFileExplorer
                 LogHelper.Error(string.Format("Loading the game from LS is not supported yet, sm4shexplorer couldn't find the resource file from the patch: '{0}'", PathHelper.GetGameFolder(PathHelperEnum.FILE_PATCH_RESOURCE)));
                 return;
             }
-            
+
             //Load RF Files
             _resCols = _RfManager.LoadRFFiles(rfFiles);
             _resColDataCore = _resCols.LastOrDefault(p => !p.IsRegion);
@@ -273,8 +274,7 @@ namespace Sm4shFileExplorer
                 //If file is present in workplace, a mod already exist.
                 if (File.Exists(workplaceFile))
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(extractFile));
-                    File.Copy(workplaceFile, extractFile, true);
+                    IOHelper.CopyFile(workplaceFile, extractFile);
 
                     if (!isFromFolder)
                         LogHelper.Info(string.Format("Extracting file '{0}' from Mod...", absolutePath));
@@ -316,7 +316,10 @@ namespace Sm4shFileExplorer
             }
 
             if (!isFromFolder)
+            {
                 _RfManager.ClearCachedDataSources();
+                LogHelper.Info("Done!");
+            }
 
             return extractFile;
         }
@@ -339,13 +342,13 @@ namespace Sm4shFileExplorer
 
             foreach (string resource in lResources)
             {
-                if(!resource.EndsWith("/"))
+                if (!resource.EndsWith("/"))
                     ExtractFile(resCol, resource, outputFolder, true);
             }
             _RfManager.ClearCachedDataSources();
 
             LogHelper.Info("Done!");
-            
+
             return outputFolder;
         }
         #endregion
@@ -389,17 +392,14 @@ namespace Sm4shFileExplorer
             foreach (string fileToProcess in lFiles)
             {
                 if (!Utils.IsAnAcceptedExtension(fileToProcess) || fileToProcess.EndsWith("packed"))
-                    LogHelper.Error(string.Format("The file '{0}' has a forbidden extension, skipping...", fileToProcess));
+                    LogHelper.Warning(string.Format("The file '{0}' has a forbidden extension, skipping...", fileToProcess));
                 else
                 {
                     string newFile = GetWorkspaceFileFromPath(absolutePath) + fileToProcess.Replace(baseToExclude, string.Empty);
 
                     FileAttributes pathAttrs = File.GetAttributes(fileToProcess);
                     if (!pathAttrs.HasFlag(FileAttributes.Directory))
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(newFile));
-                        File.Copy(fileToProcess, newFile, true);
-                    }
+                        IOHelper.CopyFile(fileToProcess, newFile);
                 }
             }
 
@@ -436,14 +436,15 @@ namespace Sm4shFileExplorer
 
             try
             {
+                bool deleted = false;
                 if (File.Exists(pathToDelete))
-                    File.Delete(pathToDelete);
+                    deleted = IOHelper.DeleteFile(pathToDelete);
                 else if (Directory.Exists(pathToDelete))
-                    Directory.Delete(pathToDelete, true);
-                else
+                    deleted = IOHelper.DeleteDirectory(pathToDelete);
+                if(!deleted)
                     return false;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 LogHelper.Error(string.Format("Error while deleting '{0}': {1}", pathToDelete, e.Message));
                 return false;
@@ -475,7 +476,7 @@ namespace Sm4shFileExplorer
             if (resCol == null || !resCol.IsRegion)
                 return false;
 
-            //Get list of files to unlocalize
+            //Get list of resources to unlocalize
             List<ResourceItem> lItems = GetResources(resCol, relativePath);
             ResourceCollection dataCol = _resColDataCore;
 
@@ -554,7 +555,7 @@ namespace Sm4shFileExplorer
             if (resCol == null)
                 return false;
 
-            //Get list of files to unlocalize
+            //Get list of resources to remove
             List<ResourceItem> lItems = GetResources(resCol, relativePath);
             ResourceCollection dataCol = _resColDataCore;
 
@@ -590,13 +591,7 @@ namespace Sm4shFileExplorer
             foreach (string path in paths)
             {
                 if (path.StartsWith(relativePath))
-                {
-                    ResourceItem dItem = resCol.Resources[path];
-                    if (dItem.IsAPackage && dItem.IsFolder)
-                        CurrentProject.ReintroduceOriginalResource(resCol.PartitionName, path + "packed");
-                    else
-                        CurrentProject.ReintroduceOriginalResource(resCol.PartitionName, path);
-                }
+                    CurrentProject.ReintroduceOriginalResource(resCol.PartitionName, path);
             }
 
             SaveProject();
@@ -608,88 +603,176 @@ namespace Sm4shFileExplorer
         #endregion
         #endregion
 
-        #region Rebuilding Files
-        #region internal methods
-        internal void RebuildRFAndPatchlist()
+        #region Packing Folder
+        internal bool SetPackFlagResource(string absolutePath)
         {
-            RebuildRFAndPatchlist(true);
+            if (string.IsNullOrEmpty(absolutePath))
+                return false;
+            string relativePath = GetRelativePath(absolutePath);
+            ResourceCollection resCol = GetResourceCollection(absolutePath);
+            return UnlocalizePath(resCol, relativePath);
         }
 
-        internal void RebuildRFAndPatchlist(bool packing)
+        internal bool SetPackFlagResource(ResourceCollection resCol, string relativePath)
+        {
+            if (resCol == null)
+                return false;
+
+            LogHelper.Info(string.Format("Set flag to pack folder '{0}'. Make sure there is no packed subfolder. This folder will now be packed during rebuild.", relativePath));
+            _CurrentProject.PackResource(resCol.PartitionName, relativePath);
+
+            SaveProject();
+
+            LogHelper.Info("Done!");
+
+            return true;
+        }
+
+        internal bool UnsetPackFlagResource(string absolutePath)
+        {
+            if (string.IsNullOrEmpty(absolutePath))
+                return false;
+            string relativePath = GetRelativePath(absolutePath);
+            ResourceCollection resCol = GetResourceCollection(absolutePath);
+            return UnsetPackFlagResource(resCol, relativePath);
+        }
+
+        internal bool UnsetPackFlagResource(ResourceCollection resCol, string relativePath)
+        {
+            if (resCol == null)
+                return false;
+
+            LogHelper.Info(string.Format("Unset flag to pack folder '{0}'.", relativePath));
+
+            CurrentProject.RemovePackResource(resCol.PartitionName, relativePath);
+
+            SaveProject();
+
+            LogHelper.Info("Done!");
+
+            return true;
+        }
+
+        internal bool CanBePacked(string absolutePath)
+        {
+            ResourceItem selRes = GetResource(absolutePath);
+            if (selRes != null)
+            {
+                if (selRes.IsFolder && selRes.OffInPack == 0 && !selRes.IsAPackage)
+                {
+                    List<ResourceItem> lItems = GetResources(absolutePath);
+                    foreach (ResourceItem rItem in lItems)
+                    {
+                        if (rItem.OffInPack != 0)
+                            return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            else
+            {
+                string partition = GetResourceCollection(absolutePath).PartitionName;
+                string[] relativePaths = GetAllWorkplaceRelativePaths(absolutePath);
+                foreach (string relativePath in relativePaths)
+                {
+                    if (CurrentProject.IsResourceToBePacked(partition, relativePath))
+                        return false;
+                }
+                return true;
+            }
+        }
+        #endregion
+
+        #region Rebuilding Files
+        #region internal methods
+        internal string RebuildRFAndPatchlist()
+        {
+            return RebuildRFAndPatchlist(true);
+        }
+
+        internal string RebuildRFAndPatchlist(bool packing)
         {
             LogHelper.Info("----------------------------------------------------------------");
             LogHelper.Info(string.Format("Starting compilation of the mod ({0})", (packing ? "release" : "debug")));
 
             string exportFolder = PathHelper.FolderExport + (packing ? "release" : "debug") + Path.DirectorySeparatorChar + (_CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
 
-            try
+            bool deleted = true;
+            if (Directory.Exists(exportFolder))
             {
-                if (Directory.Exists(exportFolder))
-                {
-                    foreach(string folder in Directory.GetDirectories(exportFolder))
-                        Directory.Delete(folder, true);
-                    foreach (string file in Directory.GetFiles(exportFolder))
-                        File.Delete(file);
-                }
+                foreach (string folder in Directory.GetDirectories(exportFolder))
+                    if (!IOHelper.DeleteDirectory(folder))
+                        deleted = false;
+                foreach (string file in Directory.GetFiles(exportFolder))
+                    if (!IOHelper.DeleteFile(file))
+                        deleted = false;
             }
-            catch
+
+            if (!deleted)
             {
                 LogHelper.Error(string.Format("Error deleting '{0}', please delete it manually before attempting to build the mod again.", exportFolder));
+                return string.Empty;
             }
 
-            LogHelper.Debug(string.Format("Export folder: '{0}'", exportFolder));
-            string exportPatchFolder = exportFolder + "content" + Path.DirectorySeparatorChar + "patch" + Path.DirectorySeparatorChar;
-
-            //Plugin NewModBuilding hook
-            foreach (Sm4shBasePlugin plugin in _Plugins)
+            try
             {
-                PluginActionResult result = plugin.InternalNewModBuilding(exportFolder);
-                if (result.Cancel)
+                LogHelper.Debug(string.Format("Export folder: '{0}'", exportFolder));
+                string exportPatchFolder = exportFolder + "content" + Path.DirectorySeparatorChar + "patch" + Path.DirectorySeparatorChar;
+
+                //Plugin NewModBuilding hook
+                foreach (Sm4shBasePlugin plugin in _Plugins)
                 {
-                    LogHelper.Error(string.Format("Build interrupted, reason: {0}", result.Reason));
-                    return;
+                    PluginActionResult result = plugin.InternalNewModBuilding(exportFolder);
+                    if (result.Cancel)
+                    {
+                        LogHelper.Error(string.Format("Build interrupted, reason: {0}", result.Reason));
+                        return string.Empty;
+                    }
                 }
+
+                //Copy resources, pack files if needed
+                ResourceCollection dataResCol = null;
+                foreach (ResourceCollection resCol in _resCols)
+                {
+                    LogHelper.Debug(string.Format("Rebuilding partition '{0}'...", resCol.PartitionName));
+
+                    //Cloning to leave the original resourcecollection untouched
+                    ResourceCollection newCol = (ResourceCollection)resCol.Clone();
+
+                    //Build Export Files
+                    BuildingExportFiles(newCol, exportPatchFolder, packing);
+
+                    //Build Resource
+                    LogHelper.Info(string.Format("Rebuilding '{0}'...", newCol.ResourceName));
+                    ResourceCollection collection = null;
+                    if (!newCol.IsRegion) //No region, take the resource file "as it"
+                    {
+                        collection = newCol;
+                        dataResCol = newCol;
+                    }
+                    else
+                        collection = GetMergedRegionResources(dataResCol, newCol);
+
+                    RemoveOriginalResourcesFromPackage(newCol);
+
+                    LogHelper.Debug(string.Format("Rebuilding resource file '{0}'...", resCol.ResourceName));
+
+                    _RfManager.RebuildResourceFile(collection, exportPatchFolder);
+
+                    //Save CSV
+                    ExportCSV(resCol, collection, exportPatchFolder);
+                }
+
+                //Patchlist
+                LogHelper.Info("Rebuilding 'patchlist'...");
+                BuildPatchfile(exportPatchFolder);
             }
-
-            if (Directory.Exists(exportPatchFolder))
-                Directory.Delete(exportPatchFolder, true);
-
-            //Copy resources, pack files if needed
-            ResourceCollection dataResCol = null;
-            foreach (ResourceCollection resCol in _resCols)
+            catch(Exception e)
             {
-                LogHelper.Debug(string.Format("Rebuilding partition '{0}'...", resCol.PartitionName));
-
-                //Cloning to leave the original resourcecollection untouched
-                ResourceCollection newCol = (ResourceCollection)resCol.Clone();
-
-                //Build Export Files
-                BuildingExportFiles(newCol, exportPatchFolder, packing);
-
-                //Build Resource
-                LogHelper.Info(string.Format("Rebuilding '{0}'...", newCol.ResourceName));
-                ResourceCollection collection = null;
-                if (!newCol.IsRegion) //No region, take the resource file "as it"
-                {
-                    collection = newCol;
-                    dataResCol = newCol;
-                }
-                else
-                    collection = GetMergedRegionResources(dataResCol, newCol);
-
-                RemoveOriginalResourcesFromPackage(newCol);
-
-                LogHelper.Debug(string.Format("Rebuilding resource file '{0}'...", resCol.ResourceName));
-
-                _RfManager.RebuildResourceFile(collection, exportPatchFolder);
-
-                //Save CSV
-                ExportCSV(resCol, collection, exportPatchFolder);
+                LogHelper.Error(string.Format("Error while building the mod: {0}", e.Message));
+                return string.Empty;
             }
-
-            //Patchlist
-            LogHelper.Info("Rebuilding 'patchlist'...");
-            BuildPatchfile(exportPatchFolder);
 
             //Plugin NewModBuilt hook
             foreach (Sm4shBasePlugin plugin in _Plugins)
@@ -697,6 +780,8 @@ namespace Sm4shFileExplorer
 
             LogHelper.Info(string.Format("Completed compilation of the mod ({0})", (packing ? "release" : "debug")));
             LogHelper.Info("----------------------------------------------------------------");
+
+            return exportFolder;
         }
         #endregion
 
@@ -707,7 +792,7 @@ namespace Sm4shFileExplorer
             if (modItem == null)
                 return;
 
-            foreach(string relativePath in modItem.Paths)
+            foreach (string relativePath in modItem.Paths)
             {
                 resCol.Resources.Remove(relativePath);
                 LogHelper.Debug(string.Format("Removing resource '{0}' from partition '{1}'", relativePath, resCol.PartitionName));
@@ -806,7 +891,7 @@ namespace Sm4shFileExplorer
             foreach (string file in filesToProcess)
             {
                 if (!Utils.IsAnAcceptedExtension(file))
-                    LogHelper.Error(string.Format("The file '{0}' has a forbidden extension, skipping...", file));
+                    LogHelper.Warning(string.Format("The file '{0}' has a forbidden extension, skipping...", file));
                 else
                     listFiles.Add(file);
             }
@@ -814,6 +899,7 @@ namespace Sm4shFileExplorer
 
             string baseToExclude = PathHelper.GetWorkplaceFolder(PathHelperEnum.FOLDER_PATCH, resCol.PartitionName);
             List<PackageProcessor> packNeedsRepacking = new List<PackageProcessor>();
+            Sm4shModItem resourcesToPack = _CurrentProject.ResourcesToPack.Find(p => p.Partition == resCol.PartitionName);
             foreach (string file in files)
             {
                 string relativePath = file.Replace(baseToExclude, string.Empty).Replace(Path.DirectorySeparatorChar, '/');
@@ -827,6 +913,17 @@ namespace Sm4shFileExplorer
                     isFolder = true;
                 }
 
+                ResourceItem nItem = GetEditedResource(resCol, relativePath);
+
+                //Force packed
+                if (_CurrentProject.IsResourceToBePacked(resCol.PartitionName, relativePath))
+                    nItem.IsAPackage = true;
+                else if (_CurrentProject.IsResourceInPackage(resCol.PartitionName, relativePath))
+                {
+                    nItem.OffInPack = 1;
+                     nItem.IsAPackage = false;
+                }
+
                 //Checking if part of a pack to repack, if yes, lets process it after with PackageProcessor
                 ResourceItem resPacked = GetPackedPath(resCol, relativePath);
                 if (resPacked != null && packNeedsRepacking.Find(p => p.PackedRelativePath == resPacked.RelativePath) == null)
@@ -836,8 +933,6 @@ namespace Sm4shFileExplorer
                     packNeedsRepacking.Find(p => p.PackedRelativePath == resPacked.RelativePath).FilesToAdd.Add(file);
                     continue;
                 }
-
-                ResourceItem nItem = GetEditedResource(resCol, relativePath);
 
                 if (!isFolder)
                 {
@@ -1032,10 +1127,7 @@ namespace Sm4shFileExplorer
                     if (pathAttrs.HasFlag(FileAttributes.Directory))
                         Directory.CreateDirectory(savePath);
                     else
-                    {
-                        Directory.CreateDirectory(Path.GetDirectoryName(savePath));
-                        File.Copy(file, savePath, true);
-                    }
+                        IOHelper.CopyFile(file, savePath);
                 }
             }
 
@@ -1159,25 +1251,154 @@ namespace Sm4shFileExplorer
         #endregion
         #endregion
 
-        #region Packing Folder
-        internal void PackFolder(ResourceCollection resCol, string pathToPack)
+        #region SD sending
+        internal string GetSDFolder()
         {
-            /*if (!resCol.Resources.ContainsKey(pathToPack))
+            if (!string.IsNullOrEmpty(_CachedSDPath) && Directory.Exists(_CachedSDPath))
+                return _CachedSDPath;
+
+            foreach (DriveInfo drive in DriveInfo.GetDrives())
             {
-                Console.WriteLine(string.Format("Path {0} not found!", pathToPack));
+                if (drive.IsReady && drive.DriveType == DriveType.Removable && drive.DriveFormat == "FAT32")
+                {
+                    //SDCafiine
+                    string sdCafiineFolder = string.Format("{0}{1}{2}", drive.Name, _CurrentProject.GameFullID, Path.DirectorySeparatorChar);
+                    if (Directory.Exists(sdCafiineFolder))
+                    {
+                        _CachedSDPath = sdCafiineFolder;
+                        return sdCafiineFolder;
+                    }
+
+                    //Loadiine
+                    string sdLoadiineGameFolder = string.Format("{0}wiiu{1}games{1}", drive.Name, Path.DirectorySeparatorChar);
+                    if (Directory.Exists(sdLoadiineGameFolder))
+                    {
+                        string sdLoadiineID = "[" + _CurrentProject.GameID + "]";
+                        foreach (string folder in Directory.GetDirectories(sdLoadiineGameFolder))
+                        {
+                            if (folder.Contains(sdLoadiineID))
+                            {
+                                _CachedSDPath = folder + Path.DirectorySeparatorChar;
+                                return folder + Path.DirectorySeparatorChar;
+                            }
+                        }
+                    }
+                }
+            }
+            return string.Empty;
+        }
+
+        internal void SendToSD(string exportFolder)
+        {
+            string sdCardPath = GetSDFolder();
+            if(string.IsNullOrEmpty(sdCardPath))
+            {
+                LogHelper.Warning("No SD card containing either an installation of Loadiine or SDCafiine for Sm4sh was found.");
                 return;
             }
-            Console.WriteLine(string.Format("Packing resource {0}...", pathToPack));
 
-            ResourceItem rItem = resCol.Resources[pathToPack];
+            SDMode sdMode = SDMode.SDCafiine;
+            if (sdCardPath.Contains(string.Format("wiiu{0}games{0}", Path.DirectorySeparatorChar)))
+                sdMode = SDMode.Loadiine;
+            SendToSD(sdMode, exportFolder, sdCardPath);
+        }
 
-            PackageProcessor processPackage = new PackageProcessor();
-            processPackage.TopResource = rItem;
-            processPackage.PackedPath = rItem.Path;
+        internal void SendToSD(SDMode sdMode, string exportFolder, string sdFolder)
+        {
+            LogHelper.Info("----------------------------------------------------------------");
+            LogHelper.Info(string.Format("{0}: Copying '{1}' to SD ('{2}')", sdMode, exportFolder, sdFolder));
 
-            ProcessPackage(processPackage);
+            string patchPath = "patch" + Path.DirectorySeparatorChar;
+            string modContentFolder = exportFolder + "content" + Path.DirectorySeparatorChar + patchPath;
+            if (!Directory.Exists(modContentFolder))
+            {
+                LogHelper.Info("No mod found, please select a directory that has an exported mod");
+                return;
+            }
 
-            SaveProject();*/
+            //Plugin SendingToSD hook
+            foreach (Sm4shBasePlugin plugin in _Plugins)
+            {
+                PluginActionResult result = plugin.InternalSendingToSD(sdMode, exportFolder, sdFolder);
+                if (result.Cancel)
+                {
+                    LogHelper.Error(string.Format("Sending to SD interrupted, reason: {0}", result.Reason));
+                    return;
+                }
+            }
+
+            try
+            {
+                LogHelper.Info(string.Format("{0}: Calculating CRC32 values. If this is the first time with this SD card, this operation can take up to 3-8 minutes...", sdMode));
+                //crc values export
+                HashCollection modPatchHT = new HashCollection("ht_mod_content_patch", modContentFolder, patchPath);
+
+                //crc values sd
+                string sdPatchFolder = sdFolder + (sdMode == SDMode.Loadiine ? "content" + Path.DirectorySeparatorChar : string.Empty) + patchPath;
+                HashCollection sdPatchHT = new HashCollection("ht_sd_content_patch", sdPatchFolder, patchPath);
+
+                //crc values official, to replace any that should be replaced.
+                string gamePatchFolder = PathHelper.GetGameFolder(PathHelperEnum.FOLDER_PATCH);
+                HashCollection gamePatchHT = new HashCollection("ht_game_content_patch", gamePatchFolder, patchPath);
+
+                //With Loadiine, the whole game (and patch) must be on the SD, then the mod.
+                if (sdMode == SDMode.Loadiine)
+                {
+                    //Cleanup - If a file isnt on the sd, or is on the SD BUT isnt official AND isnt part of the upcoming mod, it needs to be replace
+                    LogHelper.Info(string.Format("{0}: Adding patch files or replacing previously modded patch files to SD...", sdMode));
+                    int i = 0;
+                    foreach (HashEntity hEntity in gamePatchHT)
+                    {
+                        if (modPatchHT[hEntity.Key] == null && (sdPatchHT[hEntity.Key] == null || sdPatchHT[hEntity.Key].Crc32 != hEntity.Crc32))
+                        {
+                            IOHelper.CopyFile(gamePatchFolder + hEntity.Key, sdPatchFolder + hEntity.Key);
+                            i++;
+                        }
+                    }
+                    LogHelper.Info(string.Format("{0}: {1} file(s) were not official patch files and needed to be replaced in SD", sdMode, i));
+                }
+                else if (sdMode == SDMode.SDCafiine)
+                {
+                    //Cleanup: All non mod files need to be deleted from the SD to not override the original patch files
+                    LogHelper.Info(string.Format("{0}: Removing previously modded patch files from SD...", sdMode));
+                    int i = 0;
+                    foreach (HashEntity hEntity in gamePatchHT)
+                    {
+                        if (sdPatchHT[hEntity.Key] != null && modPatchHT[hEntity.Key] == null)
+                        {
+                            IOHelper.DeleteFile(sdPatchFolder + hEntity.Key);
+                            i++;
+                        }
+                    }
+                    LogHelper.Info(string.Format("{0}: {1} file(s) were not official patch files and needed to be removed from SD", sdMode, i));
+                }
+
+                //Copy mod files if needed
+                LogHelper.Info(string.Format("{0}: Adding mod files to SD...", sdMode));
+                int j = 0;
+                foreach (HashEntity hEntity in modPatchHT)
+                {
+                    if (sdPatchHT[hEntity.Key] == null || sdPatchHT[hEntity.Key].Crc32 != hEntity.Crc32)
+                    {
+                        IOHelper.CopyFile(modContentFolder + hEntity.Key, sdPatchFolder + hEntity.Key);
+                        j++;
+                    }
+                }
+                LogHelper.Info(string.Format("{0}: {1} mod file(s) were added to SD.", sdMode, j));
+            }
+            catch (Exception e)
+            {
+                LogHelper.Error(string.Format("Error while sending files to SD: {0}", e.Message));
+                return;
+            }
+            //No need to delete non related files
+
+            //Plugin SentToSD hook
+            foreach (Sm4shBasePlugin plugin in _Plugins)
+                plugin.InternalSentToSD(sdMode, exportFolder, sdFolder);
+
+            LogHelper.Info(string.Format("{0}: Operation completed. Please check the io.txt logs if you encountered any issue.", sdMode));
+            LogHelper.Info("----------------------------------------------------------------");
         }
         #endregion
 
@@ -1469,16 +1690,20 @@ namespace Sm4shFileExplorer
             if (Directory.Exists(baseToRemove))
             {
                 List<string> pathResources = new List<string>();
+                List<string> pathResourcesToReturn = new List<string>();
                 pathResources.AddRange(Directory.GetFiles(baseToRemove, "*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
                 pathResources.AddRange(Directory.GetDirectories(baseToRemove, "*", recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly));
                 for (int i = 0; i < pathResources.Count; i++)
                 {
+                    if (!Utils.IsAnAcceptedExtension(pathResources[i]))
+                        continue;
                     FileAttributes pathAttrs = File.GetAttributes(pathResources[i]);
                     pathResources[i] = pathResources[i].Replace(baseToRemove, string.Empty).Replace(Path.DirectorySeparatorChar, '/');
                     if (pathAttrs.HasFlag(FileAttributes.Directory) && !pathResources[i].EndsWith("/"))
                         pathResources[i] += "/";
+                    pathResourcesToReturn.Add(pathResources[i]);
                 }
-                return pathResources.ToArray();
+                return pathResourcesToReturn.ToArray();
             }
             return new string[0];
         }
@@ -1488,9 +1713,8 @@ namespace Sm4shFileExplorer
         /// </summary>
         public void CleanTempFolder()
         {
-            if(_CurrentProject != null)
-                if (Directory.Exists(PathHelper.FolderTemp))
-                    Directory.Delete(PathHelper.FolderTemp, true);
+            if (_CurrentProject != null)
+                IOHelper.DeleteDirectory(PathHelper.FolderTemp);
         }
         #endregion
 
