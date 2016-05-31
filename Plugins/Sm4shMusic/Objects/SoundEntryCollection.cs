@@ -157,7 +157,7 @@ namespace Sm4shMusic.Objects
             myMusicStageBGM.Index = (short)(index + 1);
             myMusicStageBGM.Rarity = 100;
             myMusicStageBGM.SubIndex = -1;
-            myMusicStageBGM.Unk3 = -1;
+            myMusicStageBGM.SaveMyMusic = -1;
 
             return myMusicStageBGM;
         }

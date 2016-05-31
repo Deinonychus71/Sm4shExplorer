@@ -205,36 +205,6 @@ namespace Sm4shMusic
             }
         }
 
-        public override void SentToSD(SDMode sdMode, string exportFolder, string sdFolder)
-        {
-            LogHelper.Info(string.Format("{0}: Sm4shMusic - Calculating CRC32 values for sounds. If this is the first time with this SD card, this operation can take up to 3-8 minutes...", sdMode));
-
-            string soundPath = "sound" + Path.DirectorySeparatorChar + "bgm" + Path.DirectorySeparatorChar;
-
-            //crc values export
-            string modSoundFolder = exportFolder + "content" + Path.DirectorySeparatorChar + soundPath;
-            HashCollection modSoundHT = new HashCollection("ht_mod_sound", modSoundFolder, soundPath);
-
-            //crc values sd
-            string sdSoundFolder = sdFolder + (sdMode == SDMode.Loadiine ? "content" + Path.DirectorySeparatorChar : string.Empty) + soundPath;
-            if (!Directory.Exists(sdSoundFolder))
-                Directory.CreateDirectory(sdSoundFolder);
-            HashCollection sdSoundHT = new HashCollection("ht_sd_sound", sdSoundFolder, soundPath);
-
-            //Copy mod files if needed
-            LogHelper.Info(string.Format("{0}: Sm4shMusic - Adding mod files to SD...", sdMode));
-            int j = 0;
-            foreach (HashEntity hEntity in modSoundHT)
-            {
-                if (sdSoundHT[hEntity.Key] == null || sdSoundHT[hEntity.Key].Crc32 != hEntity.Crc32)
-                {
-                    IOHelper.CopyFile(modSoundFolder + hEntity.Key, sdSoundFolder + hEntity.Key);
-                    j++;
-                }
-            }
-            LogHelper.Info(string.Format("{0}: Sm4shMusic - {1} mod file(s) were added to SD.", sdMode, j));
-        }
-
         public override bool CanBeLoaded()
         {
             //3DS

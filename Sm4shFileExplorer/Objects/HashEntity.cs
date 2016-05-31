@@ -10,6 +10,7 @@ namespace Sm4shFileExplorer.Objects
     public class HashCollection : IEnumerable<HashEntity>
     {
         private Dictionary<string, HashEntity> _HashEntityCollection;
+        private string[] _FilterPaths;
 
         public string CollectionID { get; private set; }
         public string CSVPath { get { return PathHelper.FolderCache + "csv" + Path.DirectorySeparatorChar + CollectionID + ".csv"; } }
@@ -25,12 +26,13 @@ namespace Sm4shFileExplorer.Objects
             }
         }
 
-        public HashCollection(string collectionID, string folderToInspect, string lastIndex)
+        public HashCollection(string collectionID, string folderToInspect, string[] filterPaths)
         {
             CollectionID = collectionID;
             Folder = folderToInspect;
             Dictionary<string, HashEntity> OldHashEntityCollection = new Dictionary<string, HashEntity>();
             _HashEntityCollection = new Dictionary<string, HashEntity>();
+            _FilterPaths = filterPaths;
 
             string fileCache = CSVPath;
             bool needSave = true;
@@ -55,9 +57,9 @@ namespace Sm4shFileExplorer.Objects
 
             foreach (string file in Directory.GetFiles(folderToInspect, "*", SearchOption.AllDirectories))
             {
-                if (file.EndsWith(".DS_Store") || file.EndsWith("Thumbs.db") || file.EndsWith(".csv"))
+                string key = file.Substring(folderToInspect.Length);
+                if (!IsValidKey(key))
                     continue;
-                string key = file.Substring(file.LastIndexOf(lastIndex) + lastIndex.Length);
                 FileInfo fileInfo = new FileInfo(file);
                 if (!OldHashEntityCollection.ContainsKey(key))
                     _HashEntityCollection.Add(key, new HashEntity(key, DateTime.MinValue));
@@ -74,6 +76,22 @@ namespace Sm4shFileExplorer.Objects
 
             if (needSave)
                 Save();
+        }
+
+        private bool IsValidKey(string key)
+        {
+            if (!Utils.IsAnAcceptedExtension(key))
+                return false;
+
+            if (_FilterPaths != null)
+            {
+                foreach (string path in _FilterPaths)
+                    if (key.StartsWith(path))
+                        return true;
+                return false;
+            }
+
+            return true;
         }
 
         public void Save()

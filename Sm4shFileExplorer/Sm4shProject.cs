@@ -731,6 +731,9 @@ namespace Sm4shFileExplorer
                     }
                 }
 
+                //Get a map of the workspace folder
+                //HashCollection htWorkspace = new HashCollection("ht_workspace", PathHelper.FolderWorkplace, null);
+
                 //Copy resources, pack files if needed
                 ResourceCollection dataResCol = null;
                 foreach (ResourceCollection resCol in _resCols)
@@ -1308,38 +1311,28 @@ namespace Sm4shFileExplorer
             LogHelper.Info("----------------------------------------------------------------");
             LogHelper.Info(string.Format("{0}: Copying '{1}' to SD ('{2}')", sdMode, exportFolder, sdFolder));
 
-            string patchPath = "patch" + Path.DirectorySeparatorChar;
-            string modContentFolder = exportFolder + "content" + Path.DirectorySeparatorChar + patchPath;
-            if (!Directory.Exists(modContentFolder))
-            {
-                LogHelper.Info("No mod found, please select a directory that has an exported mod");
-                return;
-            }
-
-            //Plugin SendingToSD hook
-            foreach (Sm4shBasePlugin plugin in _Plugins)
-            {
-                PluginActionResult result = plugin.InternalSendingToSD(sdMode, exportFolder, sdFolder);
-                if (result.Cancel)
-                {
-                    LogHelper.Error(string.Format("Sending to SD interrupted, reason: {0}", result.Reason));
-                    return;
-                }
-            }
-
             try
             {
                 LogHelper.Info(string.Format("{0}: Calculating CRC32 values. If this is the first time with this SD card, this operation can take up to 3-8 minutes...", sdMode));
+
+                string[] filters = new string[] { "patch", "sound" };
+
                 //crc values export
-                HashCollection modPatchHT = new HashCollection("ht_mod_content_patch", modContentFolder, patchPath);
+                string modContentFolder = exportFolder + "content" + Path.DirectorySeparatorChar;
+                if (!Directory.Exists(modContentFolder))
+                {
+                    LogHelper.Info("No mod found, please select a directory that has an exported mod.");
+                    return;
+                }
+                HashCollection modContentHT = new HashCollection("ht_mod_content", modContentFolder, filters);
 
                 //crc values sd
-                string sdPatchFolder = sdFolder + (sdMode == SDMode.Loadiine ? "content" + Path.DirectorySeparatorChar : string.Empty) + patchPath;
-                HashCollection sdPatchHT = new HashCollection("ht_sd_content_patch", sdPatchFolder, patchPath);
+                string sdContentFolder = sdFolder + (sdMode == SDMode.Loadiine ? "content" + Path.DirectorySeparatorChar : string.Empty);
+                HashCollection sdContentHT = new HashCollection("ht_sd_content", sdContentFolder, filters);
 
                 //crc values official, to replace any that should be replaced.
-                string gamePatchFolder = PathHelper.GetGameFolder(PathHelperEnum.FOLDER_PATCH);
-                HashCollection gamePatchHT = new HashCollection("ht_game_content_patch", gamePatchFolder, patchPath);
+                string gameContentFolder = PathHelper.GetGameFolder(PathHelperEnum.FOLDER_CONTENT);
+                HashCollection gameContentHT = new HashCollection("ht_game_content", gameContentFolder, filters);
 
                 //With Loadiine, the whole game (and patch) must be on the SD, then the mod.
                 if (sdMode == SDMode.Loadiine)
@@ -1347,11 +1340,11 @@ namespace Sm4shFileExplorer
                     //Cleanup - If a file isnt on the sd, or is on the SD BUT isnt official AND isnt part of the upcoming mod, it needs to be replace
                     LogHelper.Info(string.Format("{0}: Adding patch files or replacing previously modded patch files to SD...", sdMode));
                     int i = 0;
-                    foreach (HashEntity hEntity in gamePatchHT)
+                    foreach (HashEntity hEntity in gameContentHT)
                     {
-                        if (modPatchHT[hEntity.Key] == null && (sdPatchHT[hEntity.Key] == null || sdPatchHT[hEntity.Key].Crc32 != hEntity.Crc32))
+                        if (modContentHT[hEntity.Key] == null && (sdContentHT[hEntity.Key] == null || sdContentHT[hEntity.Key].Crc32 != hEntity.Crc32))
                         {
-                            IOHelper.CopyFile(gamePatchFolder + hEntity.Key, sdPatchFolder + hEntity.Key);
+                            IOHelper.CopyFile(gameContentFolder + hEntity.Key, sdContentFolder + hEntity.Key);
                             i++;
                         }
                     }
@@ -1362,11 +1355,11 @@ namespace Sm4shFileExplorer
                     //Cleanup: All non mod files need to be deleted from the SD to not override the original patch files
                     LogHelper.Info(string.Format("{0}: Removing previously modded patch files from SD...", sdMode));
                     int i = 0;
-                    foreach (HashEntity hEntity in gamePatchHT)
+                    foreach (HashEntity hEntity in gameContentHT)
                     {
-                        if (sdPatchHT[hEntity.Key] != null && modPatchHT[hEntity.Key] == null)
+                        if (sdContentHT[hEntity.Key] != null && modContentHT[hEntity.Key] == null)
                         {
-                            IOHelper.DeleteFile(sdPatchFolder + hEntity.Key);
+                            IOHelper.DeleteFile(sdContentFolder + hEntity.Key);
                             i++;
                         }
                     }
@@ -1376,11 +1369,11 @@ namespace Sm4shFileExplorer
                 //Copy mod files if needed
                 LogHelper.Info(string.Format("{0}: Adding mod files to SD...", sdMode));
                 int j = 0;
-                foreach (HashEntity hEntity in modPatchHT)
+                foreach (HashEntity hEntity in modContentHT)
                 {
-                    if (sdPatchHT[hEntity.Key] == null || sdPatchHT[hEntity.Key].Crc32 != hEntity.Crc32)
+                    if (sdContentHT[hEntity.Key] == null || sdContentHT[hEntity.Key].Crc32 != hEntity.Crc32)
                     {
-                        IOHelper.CopyFile(modContentFolder + hEntity.Key, sdPatchFolder + hEntity.Key);
+                        IOHelper.CopyFile(modContentFolder + hEntity.Key, sdContentFolder + hEntity.Key);
                         j++;
                     }
                 }
@@ -1392,10 +1385,6 @@ namespace Sm4shFileExplorer
                 return;
             }
             //No need to delete non related files
-
-            //Plugin SentToSD hook
-            foreach (Sm4shBasePlugin plugin in _Plugins)
-                plugin.InternalSentToSD(sdMode, exportFolder, sdFolder);
 
             LogHelper.Info(string.Format("{0}: Operation completed. Please check the io.txt logs if you encountered any issue.", sdMode));
             LogHelper.Info("----------------------------------------------------------------");
