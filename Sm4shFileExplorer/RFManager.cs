@@ -428,7 +428,21 @@ namespace Sm4shFileExplorer
                 string formatedPath = pItem.AbsolutePath + (pItem.Packed ? "packed" : string.Empty);
                 if (Array.Exists(filesToRemove, p => p == formatedPath))
                     continue;
-                files.Add(formatedPath);
+
+                //Make sure to remove 0x4000 flagged files that have been repacked. TODO: Need proper support
+                bool removeFlag0x4000 = false;
+                foreach (string fileToAdd in filesToAdd)
+                {
+                    if (!fileToAdd.EndsWith("packed"))
+                        continue;
+                    if (pItem.AbsolutePath.StartsWith(fileToAdd.Replace("packed", string.Empty)))
+                    {
+                        removeFlag0x4000 = true;
+                        continue;
+                    }
+                }
+                if(!removeFlag0x4000)
+                    files.Add(formatedPath);
             }
             foreach (string fileToAdd in filesToAdd)
                 if (!files.Contains(fileToAdd))

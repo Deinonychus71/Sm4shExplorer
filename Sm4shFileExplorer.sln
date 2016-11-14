@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shMusic", "Plugins\Sm4sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shParamEditor", "Plugins\Sm4shParamEditor\Sm4shParamEditor.csproj", "{0456C2C2-3C1C-4524-BA56-23D2133E1443}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sm4shMSBT", "Plugins\Sm4shMSBT\Sm4shMSBT.csproj", "{92E4B668-F191-4644-A5AE-E891580E84A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{0456C2C2-3C1C-4524-BA56-23D2133E1443}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0456C2C2-3C1C-4524-BA56-23D2133E1443}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0456C2C2-3C1C-4524-BA56-23D2133E1443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92E4B668-F191-4644-A5AE-E891580E84A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92E4B668-F191-4644-A5AE-E891580E84A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92E4B668-F191-4644-A5AE-E891580E84A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92E4B668-F191-4644-A5AE-E891580E84A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,5 +42,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{EB30AA7F-9BF8-4E78-AD50-DCFC0E327A6F} = {915852C1-1C12-4859-89BC-7F6160FF4859}
 		{0456C2C2-3C1C-4524-BA56-23D2133E1443} = {915852C1-1C12-4859-89BC-7F6160FF4859}
+		{92E4B668-F191-4644-A5AE-E891580E84A9} = {915852C1-1C12-4859-89BC-7F6160FF4859}
 	EndGlobalSection
 EndGlobal

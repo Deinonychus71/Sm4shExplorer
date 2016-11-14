@@ -531,7 +531,8 @@ namespace Sm4shFileExplorer.UI
                     break;
                 case BackgroundWorkerMode.BuildProject:
                     string exportedFolder = _ProjectManager.RebuildRFAndPatchlist((bool)bw.Object);
-                    if (exportedFolder != string.Empty && MessageBox.Show(UIStrings.INFO_PACK_SEND_SD, UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    string sdCardPath = _ProjectManager.GetSDFolder();
+                    if (exportedFolder != string.Empty && !string.IsNullOrEmpty(sdCardPath) && MessageBox.Show(UIStrings.INFO_PACK_SEND_SD, UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes)
                         _ProjectManager.SendToSD(exportedFolder);
                     break;
                 case BackgroundWorkerMode.SendToSD:

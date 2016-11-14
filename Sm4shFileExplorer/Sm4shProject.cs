@@ -884,6 +884,12 @@ namespace Sm4shFileExplorer
                     foreach (string pathToRemove in rModItem.Paths)
                         filesToRemove.Add(rModItem.Partition + "/" + pathToRemove);
                 }
+                foreach (Sm4shModItem rModItem in _CurrentProject.ResourcesToRemove)
+                {
+                    foreach (string pathToRemove in rModItem.Paths)
+                     if(!filesToRemove.Contains(rModItem.Partition + "/" + pathToRemove))
+                        filesToRemove.Add(rModItem.Partition + "/" + pathToRemove);
+                }
                 _RfManager.RebuildPatchListFile(filesToAdd.ToArray(), filesToRemove.ToArray(), exportFolder);
             }
         }
@@ -1173,6 +1179,7 @@ namespace Sm4shFileExplorer
                                 resPath += "/";
 
                             ResourceItem nItem = GetEditedResource(resCol, resPath);
+                            //nItem.OverridePackedFile = false;
                             int folderDepth = (int)nItem.FolderDepth;
                             uint cmpSize = 0;
                             uint decSize = 0;
@@ -1262,7 +1269,7 @@ namespace Sm4shFileExplorer
 
             foreach (DriveInfo drive in DriveInfo.GetDrives())
             {
-                if (drive.IsReady && drive.DriveType == DriveType.Removable && drive.DriveFormat == "FAT32")
+                if (drive.IsReady && drive.DriveType == DriveType.Removable && (drive.DriveFormat == "FAT32" || drive.DriveFormat == "FAT"))
                 {
                     //SDCafiine
                     string sdCafiineFolder = string.Format("{0}{1}{2}", drive.Name, _CurrentProject.GameFullID, Path.DirectorySeparatorChar);
@@ -1728,7 +1735,7 @@ namespace Sm4shFileExplorer
                     LogHelper.Warning(string.Format("The filesize of dt00/dt01 doesn't match the region set in your config ({0}). You will not be able to extract from LS.", _CurrentProject.GameRegion));
                     string guessedRegionName = _CurrentProject.GuessRegionFromDTFiles(dt00.Length, dt01.Length);
                     if (!string.IsNullOrEmpty(guessedRegionName))
-                        LogHelper.Info(string.Format("It seems that the size of your dt00/dt01 files match the ({0}) region. You might want to edit your config file: 1 is for JPN, 2 is for USA, 4 is for EUR.", guessedRegionName));
+                        LogHelper.Info(string.Format("It seems that the size of your dt00/dt01 files matches the ({0}) region. You might want to edit your config file: 1 is for JPN, 2 is for USA, 4 is for EUR.", guessedRegionName));
                     return false;
                 }
                 return true;
