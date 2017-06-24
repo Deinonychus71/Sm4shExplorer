@@ -1271,12 +1271,25 @@ namespace Sm4shFileExplorer
             {
                 if (drive.IsReady && drive.DriveType == DriveType.Removable && (drive.DriveFormat == "FAT32" || drive.DriveFormat == "FAT"))
                 {
-                    //SDCafiine
-                    string sdCafiineFolder = string.Format("{0}{1}{2}", drive.Name, _CurrentProject.GameFullID, Path.DirectorySeparatorChar);
+                    //SDCafiine new
+                    string sdCafiineFolder = string.Format("{0}sdcafiine{1}", drive.Name, Path.DirectorySeparatorChar);
                     if (Directory.Exists(sdCafiineFolder))
                     {
-                        _CachedSDPath = sdCafiineFolder;
-                        return sdCafiineFolder;
+                        string sdCafiineNewFolder = string.Format("{0}{1}{2}content{2}", sdCafiineFolder, _CurrentProject.GameFullID, Path.DirectorySeparatorChar);
+                        Directory.CreateDirectory(sdCafiineNewFolder);
+                        if (Directory.Exists(sdCafiineNewFolder))
+                        {
+                            _CachedSDPath = sdCafiineNewFolder;
+                            return sdCafiineNewFolder;
+                        }
+                    }
+
+                    //SDCafiine old
+                    string sdCafiineOldFolder = string.Format("{0}{1}{2}", drive.Name, _CurrentProject.GameFullID, Path.DirectorySeparatorChar);
+                    if (Directory.Exists(sdCafiineOldFolder))
+                    {
+                        _CachedSDPath = sdCafiineOldFolder;
+                        return sdCafiineOldFolder;
                     }
 
                     //Loadiine

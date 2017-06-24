@@ -10,11 +10,11 @@ namespace Sm4shFileExplorer
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] Args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Main main = new Main();
+            Main main = new Main(Args);
             if (main.MainLoaded)
                 Application.Run(main);
         }

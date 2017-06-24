@@ -29,7 +29,7 @@ namespace Sm4shFileExplorer.UI
         #endregion
 
         #region Constructors
-        public Main()
+        public Main(string[] Args)
         {
             InitializeComponent();
 

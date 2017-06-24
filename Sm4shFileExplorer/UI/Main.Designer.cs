@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.menuProject = new System.Windows.Forms.ToolStripMenuItem();
             this.menuBuild = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,6 +66,7 @@
             this.reintroduceResourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.packThisFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.doNotPackThisFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.textConsole = new System.Windows.Forms.TextBox();
             this.oPanelLeft = new System.Windows.Forms.Panel();
@@ -84,7 +86,6 @@
             this.treeView = new System.Windows.Forms.TreeView();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.doNotPackThisFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.contextMenuTreeView.SuspendLayout();
             this.oPanelLeft.SuspendLayout();
@@ -131,51 +132,51 @@
             // menuBuild
             // 
             this.menuBuild.Name = "menuBuild";
-            this.menuBuild.Size = new System.Drawing.Size(231, 22);
+            this.menuBuild.Size = new System.Drawing.Size(230, 22);
             this.menuBuild.Text = "Build the mod";
             this.menuBuild.Click += new System.EventHandler(this.menuBuild_Click);
             // 
             // menuBuildDebug
             // 
             this.menuBuildDebug.Name = "menuBuildDebug";
-            this.menuBuildDebug.Size = new System.Drawing.Size(231, 22);
+            this.menuBuildDebug.Size = new System.Drawing.Size(230, 22);
             this.menuBuildDebug.Text = "Build the mod (NO PACKING)";
             this.menuBuildDebug.Click += new System.EventHandler(this.menuBuildDebug_Click);
             // 
             // sendToSDToolStripMenuItem
             // 
             this.sendToSDToolStripMenuItem.Name = "sendToSDToolStripMenuItem";
-            this.sendToSDToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
+            this.sendToSDToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.sendToSDToolStripMenuItem.Text = "Send to SD [Experimental]";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(228, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(227, 6);
             // 
             // refreshTreeviewToolStripMenuItem
             // 
             this.refreshTreeviewToolStripMenuItem.Name = "refreshTreeviewToolStripMenuItem";
-            this.refreshTreeviewToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
+            this.refreshTreeviewToolStripMenuItem.Size = new System.Drawing.Size(230, 22);
             this.refreshTreeviewToolStripMenuItem.Text = "Refresh treeview";
             this.refreshTreeviewToolStripMenuItem.Click += new System.EventHandler(this.refreshTreeviewToolStripMenuItem_Click);
             // 
             // menuOptions
             // 
             this.menuOptions.Name = "menuOptions";
-            this.menuOptions.Size = new System.Drawing.Size(231, 22);
+            this.menuOptions.Size = new System.Drawing.Size(230, 22);
             this.menuOptions.Text = "Options";
             this.menuOptions.Click += new System.EventHandler(this.menuOptions_Click);
             // 
             // oMenuFileSeparator
             // 
             this.oMenuFileSeparator.Name = "oMenuFileSeparator";
-            this.oMenuFileSeparator.Size = new System.Drawing.Size(228, 6);
+            this.oMenuFileSeparator.Size = new System.Drawing.Size(227, 6);
             // 
             // menuExit
             // 
             this.menuExit.Name = "menuExit";
-            this.menuExit.Size = new System.Drawing.Size(231, 22);
+            this.menuExit.Size = new System.Drawing.Size(230, 22);
             this.menuExit.Text = "Exit";
             this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
             // 
@@ -306,7 +307,7 @@
             this.packThisFolderToolStripMenuItem,
             this.doNotPackThisFolderToolStripMenuItem});
             this.contextMenuTreeView.Name = "contextMenuTreeView";
-            this.contextMenuTreeView.Size = new System.Drawing.Size(195, 220);
+            this.contextMenuTreeView.Size = new System.Drawing.Size(195, 198);
             this.contextMenuTreeView.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuTreeView_Opening);
             // 
             // extractToolStripMenuItem
@@ -372,6 +373,13 @@
             this.packThisFolderToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
             this.packThisFolderToolStripMenuItem.Text = "Pack this folder";
             this.packThisFolderToolStripMenuItem.Click += new System.EventHandler(this.packThisFolderToolStripMenuItem_Click);
+            // 
+            // doNotPackThisFolderToolStripMenuItem
+            // 
+            this.doNotPackThisFolderToolStripMenuItem.Name = "doNotPackThisFolderToolStripMenuItem";
+            this.doNotPackThisFolderToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.doNotPackThisFolderToolStripMenuItem.Text = "Do not pack this folder";
+            this.doNotPackThisFolderToolStripMenuItem.Click += new System.EventHandler(this.doNotPackThisFolderToolStripMenuItem_Click);
             // 
             // folderBrowserDialog
             // 
@@ -567,13 +575,6 @@
             this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
             this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
             // 
-            // doNotPackThisFolderToolStripMenuItem
-            // 
-            this.doNotPackThisFolderToolStripMenuItem.Name = "doNotPackThisFolderToolStripMenuItem";
-            this.doNotPackThisFolderToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.doNotPackThisFolderToolStripMenuItem.Text = "Do not pack this folder";
-            this.doNotPackThisFolderToolStripMenuItem.Click += new System.EventHandler(this.doNotPackThisFolderToolStripMenuItem_Click);
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -581,6 +582,7 @@
             this.ClientSize = new System.Drawing.Size(884, 661);
             this.Controls.Add(this.splitContainer);
             this.Controls.Add(this.menuStrip);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
             this.Name = "Main";
             this.Text = "Sm4shExplorer";
