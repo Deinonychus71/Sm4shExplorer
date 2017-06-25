@@ -200,69 +200,69 @@
             this.openSm4shexplorerDirectoryToolStripMenuItem,
             this.openTempDirectoryToolStripMenuItem});
             this.directoriesToolStripMenuItem.Name = "directoriesToolStripMenuItem";
-            this.directoriesToolStripMenuItem.Size = new System.Drawing.Size(75, 20);
-            this.directoriesToolStripMenuItem.Text = "Directories";
+            this.directoriesToolStripMenuItem.Size = new System.Drawing.Size(57, 20);
+            this.directoriesToolStripMenuItem.Text = "Folders";
             // 
             // openGameDirectoryToolStripMenuItem
             // 
             this.openGameDirectoryToolStripMenuItem.Name = "openGameDirectoryToolStripMenuItem";
-            this.openGameDirectoryToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.openGameDirectoryToolStripMenuItem.Text = "Dump Folder";
+            this.openGameDirectoryToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.openGameDirectoryToolStripMenuItem.Text = "Dump";
             this.openGameDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openGameDirectoryToolStripMenuItem_Click);
             // 
             // openSdDirectoryToolStripMenuItem
             // 
             this.openSdDirectoryToolStripMenuItem.Name = "openSdDirectoryToolStripMenuItem";
-            this.openSdDirectoryToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.openSdDirectoryToolStripMenuItem.Text = "SD Directory";
+            this.openSdDirectoryToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.openSdDirectoryToolStripMenuItem.Text = "SD Card";
             this.openSdDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openSdDirectoryToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(210, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(174, 6);
             // 
             // openExtractDirectoryToolStripMenuItem
             // 
             this.openExtractDirectoryToolStripMenuItem.Name = "openExtractDirectoryToolStripMenuItem";
             this.openExtractDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.openExtractDirectoryToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.openExtractDirectoryToolStripMenuItem.Text = "Extract Folder";
+            this.openExtractDirectoryToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.openExtractDirectoryToolStripMenuItem.Text = "Extract";
             this.openExtractDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openExtractDirectoryToolStripMenuItem_Click);
             // 
             // openWorkspaceDirectoryToolStripMenuItem
             // 
             this.openWorkspaceDirectoryToolStripMenuItem.Name = "openWorkspaceDirectoryToolStripMenuItem";
             this.openWorkspaceDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.openWorkspaceDirectoryToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.openWorkspaceDirectoryToolStripMenuItem.Text = "Workspace Folder";
+            this.openWorkspaceDirectoryToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.openWorkspaceDirectoryToolStripMenuItem.Text = "Workspace";
             this.openWorkspaceDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openWorkspaceDirectoryToolStripMenuItem_Click);
             // 
             // openExportDirectoryToolStripMenuItem
             // 
             this.openExportDirectoryToolStripMenuItem.Name = "openExportDirectoryToolStripMenuItem";
             this.openExportDirectoryToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-            this.openExportDirectoryToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.openExportDirectoryToolStripMenuItem.Text = "Export Folder";
+            this.openExportDirectoryToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.openExportDirectoryToolStripMenuItem.Text = "Export";
             this.openExportDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openExportDirectoryToolStripMenuItem_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(210, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(174, 6);
             // 
             // openSm4shexplorerDirectoryToolStripMenuItem
             // 
             this.openSm4shexplorerDirectoryToolStripMenuItem.Name = "openSm4shexplorerDirectoryToolStripMenuItem";
-            this.openSm4shexplorerDirectoryToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.openSm4shexplorerDirectoryToolStripMenuItem.Text = "Sm4shExplorer Folder";
+            this.openSm4shexplorerDirectoryToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.openSm4shexplorerDirectoryToolStripMenuItem.Text = "Sm4shExplorer";
             this.openSm4shexplorerDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openSm4shexplorerDirectoryToolStripMenuItem_Click);
             // 
             // openTempDirectoryToolStripMenuItem
             // 
             this.openTempDirectoryToolStripMenuItem.Name = "openTempDirectoryToolStripMenuItem";
-            this.openTempDirectoryToolStripMenuItem.Size = new System.Drawing.Size(213, 22);
-            this.openTempDirectoryToolStripMenuItem.Text = "Temp Folder";
+            this.openTempDirectoryToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.openTempDirectoryToolStripMenuItem.Text = "Temp";
             this.openTempDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openTempDirectoryToolStripMenuItem_Click);
             // 
             // menuPlugins
@@ -278,12 +278,12 @@
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(143, 6);
             // 
             // orderPluginsToolStripMenuItem
             // 
             this.orderPluginsToolStripMenuItem.Name = "orderPluginsToolStripMenuItem";
-            this.orderPluginsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.orderPluginsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.orderPluginsToolStripMenuItem.Text = "Order Plugins";
             this.orderPluginsToolStripMenuItem.Click += new System.EventHandler(this.orderPluginsToolStripMenuItem_Click);
             // 
