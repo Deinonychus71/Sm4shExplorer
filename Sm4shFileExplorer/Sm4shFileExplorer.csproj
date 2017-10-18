@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\SDCafiineVersion.cs" />
     <Compile Include="UI\About.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,6 +75,12 @@
     <Compile Include="DB\CharsDB.cs" />
     <Compile Include="DB\IconsDB.cs" />
     <Compile Include="DB\StagesDB.cs" />
+    <Compile Include="UI\NameModpack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\NameModpack.Designer.cs">
+      <DependentUpon>NameModpack.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Objects\ConsoleRedirProgress.cs" />
     <Compile Include="UI\Objects\ConsoleRedirText.cs" />
     <Compile Include="Globals\CustomStringComparer.cs" />
@@ -130,6 +137,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\CreationProjectInfo.resx">
       <DependentUpon>CreationProjectInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\NameModpack.resx">
+      <DependentUpon>NameModpack.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>

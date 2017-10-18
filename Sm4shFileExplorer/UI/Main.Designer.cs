@@ -150,7 +150,7 @@
             // 
             this.sendToSDToolStripMenuItem.Name = "sendToSDToolStripMenuItem";
             this.sendToSDToolStripMenuItem.Size = new System.Drawing.Size(299, 22);
-            this.sendToSDToolStripMenuItem.Text = "Send to SD";
+            this.sendToSDToolStripMenuItem.Text = "Send to SD/USB";
             // 
             // toolStripSeparator3
             // 

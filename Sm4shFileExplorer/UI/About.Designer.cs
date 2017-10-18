@@ -77,7 +77,7 @@
             this.lkRepo.AutoSize = true;
             this.lkRepo.Location = new System.Drawing.Point(12, 88);
             this.lkRepo.Name = "lkRepo";
-            this.lkRepo.Size = new System.Drawing.Size(254, 26);
+            this.lkRepo.Size = new System.Drawing.Size(254, 13);
             this.lkRepo.TabIndex = 4;
             this.lkRepo.TabStop = true;
             this.lkRepo.Text = "https://github.com/Deinonychus71/Sm4shExplorer/";
