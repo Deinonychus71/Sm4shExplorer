@@ -214,7 +214,7 @@
             // 
             this.openSdDirectoryToolStripMenuItem.Name = "openSdDirectoryToolStripMenuItem";
             this.openSdDirectoryToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-            this.openSdDirectoryToolStripMenuItem.Text = "SD Card";
+            this.openSdDirectoryToolStripMenuItem.Text = "SD Card / USB";
             this.openSdDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openSdDirectoryToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
