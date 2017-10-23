@@ -560,9 +560,20 @@ namespace Sm4shFileExplorer.UI
                     string workspaceName = GetWorkspaceName((string)bw.Object);
                     if (workspaceName == null)
                     {
-
+                        string defaultName = PathHelper.FolderWorkplace.TrimEnd(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })
+                                .Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })
+                                .Last();
+                        using (ModpackName box = new ModpackName(defaultName))
+                        {
+                            if (box.ShowDialog() == DialogResult.OK)
+                            {
+                                _ProjectManager.SendToSD((string)bw.Object, box._ModpackName);
+                            }
+                        }
+                    } else
+                    {
+                        _ProjectManager.SendToSD((string)bw.Object, workspaceName);
                     }
-                    _ProjectManager.SendToSD((string)bw.Object, workspaceName);
                     break;
             }
         }
