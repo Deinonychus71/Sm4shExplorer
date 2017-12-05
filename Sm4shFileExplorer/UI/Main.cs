@@ -402,7 +402,7 @@ namespace Sm4shFileExplorer.UI
             string exportFolder = PathHelper.FolderExport + "release" + Path.DirectorySeparatorChar + (_ProjectManager.CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
             if (!Directory.Exists(exportFolder) || (Directory.Exists(exportFolder) && MessageBox.Show(string.Format(UIStrings.WARN_EXPORT_FOLDER_EXISTS, exportFolder), UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes))
             {
-                MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
+                //MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
                 menuStrip.Enabled = false;
                 treeView.Enabled = false;
                 backgroundWorker.RunWorkerAsync(new BackgroundWorkerInstance(BackgroundWorkerMode.BuildProject, true));
@@ -579,7 +579,7 @@ namespace Sm4shFileExplorer.UI
             }
 
             treeView.BeginUpdate();
-            LogHelper.Info("Populating Treeview...");
+            LogHelper.Info("Populating tree-view...");
             treeView.Sort();
             treeView.Nodes.Clear();
             foreach (ResourceCollection resourceCollection in resourceData)
