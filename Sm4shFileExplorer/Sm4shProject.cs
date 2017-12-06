@@ -165,11 +165,34 @@ namespace Sm4shFileExplorer
             _RfManager.SkipTrashEntries = _CurrentProject.SkipJunkEntries;
             _RfManager.ForceOriginalFlags = _CurrentProject.KeepOriginalFlags;
 
+            List<string> rfFilesToIgnore = new List<string>();
+            rfFilesToIgnore.Add("resource(us_sp)");
+            rfFilesToIgnore.Add("resource(eu_fr)");
+            rfFilesToIgnore.Add("resource(eu_gr)");
+            rfFilesToIgnore.Add("resource(eu_it)");
+            rfFilesToIgnore.Add("resource(eu_ne)");
+            rfFilesToIgnore.Add("resource(eu_po)");
+            rfFilesToIgnore.Add("resource(eu_ru)");
+            rfFilesToIgnore.Add("resource(eu_sp)");
+            
             string[] rfFiles = null;
             PatchFileItem[] patchFiles = null;
             if (File.Exists(PathHelper.GetGameFolder(PathHelperEnum.FILE_PATCH_RESOURCE)))
             {
                 rfFiles = PathHelper.GetResourceFiles(PathHelper.GetGameFolder(PathHelperEnum.FOLDER_PATCH));
+                List<string> rfFilesList = rfFiles.ToList();
+                foreach (string s in rfFilesToIgnore)
+                {
+                    for (int i = 0; i < rfFilesList.Count; i++)
+                    {
+                        if (Path.GetFileName(rfFilesList[i]) == s)
+                        {
+                            rfFilesList.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+                rfFiles = rfFilesList.ToArray();
                 patchFiles = _RfManager.LoadPatchFile(PathHelper.GetGameFolder(PathHelperEnum.FILE_PATCH_PATCHLIST));
             }
             else
@@ -694,7 +717,7 @@ namespace Sm4shFileExplorer
         internal string RebuildRFAndPatchlist(bool packing)
         {
             LogHelper.Info("----------------------------------------------------------------");
-            LogHelper.Info(string.Format("Starting compilation of the mod ({0})", (packing ? "release" : "debug")));
+            LogHelper.Info(string.Format("Commencing build... ({0})", (packing ? "release" : "debug")));
 
             string exportFolder = PathHelper.FolderExport + (packing ? "release" : "debug") + Path.DirectorySeparatorChar + (_CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
 

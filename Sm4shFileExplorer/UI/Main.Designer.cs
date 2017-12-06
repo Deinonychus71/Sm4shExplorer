@@ -132,21 +132,21 @@
             // 
             this.menuBuild.Name = "menuBuild";
             this.menuBuild.Size = new System.Drawing.Size(231, 22);
-            this.menuBuild.Text = "Build the mod";
+            this.menuBuild.Text = "Build";
             this.menuBuild.Click += new System.EventHandler(this.menuBuild_Click);
             // 
             // menuBuildDebug
             // 
             this.menuBuildDebug.Name = "menuBuildDebug";
             this.menuBuildDebug.Size = new System.Drawing.Size(231, 22);
-            this.menuBuildDebug.Text = "Build the mod (NO PACKING)";
+            this.menuBuildDebug.Text = "Build without packing";
             this.menuBuildDebug.Click += new System.EventHandler(this.menuBuildDebug_Click);
             // 
             // sendToSDToolStripMenuItem
             // 
             this.sendToSDToolStripMenuItem.Name = "sendToSDToolStripMenuItem";
             this.sendToSDToolStripMenuItem.Size = new System.Drawing.Size(231, 22);
-            this.sendToSDToolStripMenuItem.Text = "Send to SD [Experimental]";
+            this.sendToSDToolStripMenuItem.Text = "Send to SD Card";
             // 
             // toolStripSeparator3
             // 
