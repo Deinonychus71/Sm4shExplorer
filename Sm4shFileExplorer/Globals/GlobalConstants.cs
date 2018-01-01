@@ -17,7 +17,7 @@ namespace Sm4shFileExplorer.Globals
         public const bool FORCE_ORIGINAL_COMPRESSION = true; //Default value is true, false will let the program choose whether a file should be compressed or not when adding/replacing it (default is > 1Kb = compress)
 
         //Utils
-        public const int GAME_LAST_PATH_VERSION = 288;
+        public const int GAME_LAST_PATH_VERSION = 304;
         public const int SIZE_FILE_COMPRESSION_MIN = 1024;
     }
 }
