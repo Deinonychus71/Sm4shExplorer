@@ -73,7 +73,7 @@ namespace Sm4shFileExplorer
             }
             catch (Exception e)
             {
-                LogHelper.Error(string.Format("Error parsing meta.xml. Sm4shExplorer will assume that you are using the latest patch ({0}) and that your game region is USA. If this isn't the case, please update your config file before doing anything. (error: {1})", GlobalConstants.GAME_LAST_PATH_VERSION, e.Message));
+                LogHelper.Error(string.Format("Error parsing 'meta.xml'. Sm4shExplorer will assume that you are using the latest patch ({0}) and that your game region is USA. If this isn't the case, please update your config file before doing anything. (error: {1})", GlobalConstants.GAME_LAST_PATH_VERSION, e.Message));
                 _CurrentProject.GameVersion = GlobalConstants.GAME_LAST_PATH_VERSION;
                 _CurrentProject.GameRegionID = 2;
             }

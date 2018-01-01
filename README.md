@@ -1,30 +1,38 @@
 Sm4shExplorer
 ===========
-Sm4shExplorer is a WIP tool to add and replace any file for Smash Bros for Wii U. It uses the patch folder and modify the resource files of the game.
+Sm4shExplorer is a tool for managing the file-system of Super Smash Bros. for Wii U. It uses a game dump to build upon and create modified patch files for the game to use.
 
-Please keep in mind that this is a early version, made purposely to try messing around with the game files and see what can be done with it. It probably contains bugs / performance issues.
+Please keep in mind that this program is still under development and may contain bugs.
 
-##What does it do?##
-- It will let you see the whole filesystem of Smash (main data + regions) in a treeview using [DTLSExtractor from Sammi-Husky](https://github.com/Sammi-Husky/Sm4sh-Tools/tree/master/DTLS). The treeview will show the updated version of the game (core files in black + patch files in blue)
-- Give you a few informations about any file (name, path, size, flags, source...)
-- Extract any file/folder to a specific "extract" folder
-- Let you open any file with a hex editor (needs to be configured)
-- Replace/Add files. If a file is modified/added in a packed file, the whole packed file will be rebuilt automatically during export. A modified "mod file will appear in green.
-- For region folders, "unlocalize" a folder or a file so that the game loads the unlocalized (english) file instead.
-- Let you "remove" original resources from the game (experimental, works on stage models)
-- Repack files and rebuild resources and patchlist into a specific "export" folder.
-- Plugin system to add more features
-- Plugin Sm4shMusic to manage the list of musics and assign them to different stages (use [vgmstream from kode54](https://github.com/kode54/vgmstream)
-- Plugin Sm4shParamEditer to use [Sammi-Husky's Param Editor](https://github.com/Sammi-Husky/Sm4sh-Tools/tree/master/PARAM) directly in Sm4shExplorer.
+This is a fork containing modifications by Dr. HyperCake. The tool is originally developed by @Deinonychus71, whose repository for it can be found [here](https://github.com/Deinonychus71/Sm4shExplorer).
+## Changes made by this fork
+- Fix a long-standing issue with packing externally-patched files. Previously, certain stage folders would invariably crash the game when modified in a build through Sm4shExplorer. Now, they will not crash as long as the user includes all the affected externally patched files for a package when modifying it. See the [wiki](https://github.com/Dr-HyperCake/Sm4shExplorer/wiki/_new#including-files-with-stage-folders-to-prevent-crashes) for more info and a list of files.
+  - These aforementioned externally-patched files will also now extract decompressed, like other files do.
+- Add the option to ignore regional partitions of the user's choosing. By default, Sm4shExplorer loads and uses all regional partitions, including those of languages that the user does not need. There is now the option to not load or use partitions by specifying them in the configuration xml. See the [wiki](https://github.com/Dr-HyperCake/Sm4shExplorer/wiki/_new#using-partition-ignoring) for more info.
+- Update a lot of UI and message strings. This is to fix grammar, terminology and wording.
+
+## Base info
+### What does it do?
+- Allow viewing of the whole file-system of SSBU (including regional partitions) in a tree-view by utilizing [DTLSExtractor from Sammi-Husky](https://github.com/Sammi-Husky/Sm4sh-Tools/tree/master/DTLS). The tree-view will show update files as well; base-game files are in black text, patched files are in blue, and user-modified files are in green.
+- View useful information about any file, such as name, path, size, flags and source.
+- Extract any file or folder to be viewed and modified.
+- Quickly open files in a hex editor from within the program (requires configuration).
+- Replace files and add new ones. If a file is modified or added in a packed file, the whole packed file will be rebuilt automatically during exporting. A modified file will appear with green text in the tree-view.
+- For localized partitions, "unlocalize" a folder or a file so that the game loads the unlocalized file instead.
+- Lets you remove original files from the game, so that they will be ignored when re-building.
+- Automatically rebuild the changes you've made into a mod build, so that they can be loaded by the game from an SD card or USB.
+- Plugin system to add more features to the program.
+- Plugin Sm4shMusic to manage the game's songs, add new songs, and assign songs to different stages (utilizes [vgmstream from kode54](https://github.com/kode54/vgmstream)).
+- Plugin Sm4shParamEditor to use [Sammi-Husky's Param Editor](https://github.com/Sammi-Husky/Sm4sh-Tools/tree/master/PARAM) directly in Sm4shExplorer.
  
-##What do I need?##
-- An extration of the game on your computer (folders "content", "code" and "meta"). The will folder will have to remain untouched at all time to avoid issues.
-- The latest patch, unmodified (current is v288, you need at least v208) in the same directory (so that "content" > "patch")
+### What do I need?
+- A dump of the game on your computer (including folders "content", "code" and "meta"). This folder is only read by Sm4shExplorer to build upon and will not be modified.
+- A dump of the latest patch in the game dump. The latest version of the game is v304 (1.1.7), you need at least v208 (1.1.4).
 - On your SD: Backup your 'content/patch' folder before doing ANY CHANGE.
 - Visual Studio 2015 and .NET Framework 4.5
-- Libs zlib32.dll/zlib64.dll/zlibnet.dll/DTLS.exe for the main soft
-- Libs libg719_decode.dll/libg7221_decode.dll/libmpg123-0.dll/libvorbis.dll/NAudio.dll and libvgmstream.dll from my repo for Sm4shMusic
+- Libs zlib32.dll, zlib64.dll, zlibnet.dll and DTLS.exe for the main software.
+- Libs libg719_decode.dll, libg7221_decode.dll, libmpg123-0.dll, libvorbis.dll, NAudio.dll and libvgmstream.dll from Deinonychus71's repository.
 
-##Future plans##
+### Future plans
 - Pack any folder, including added folders.
-- Manually choose what file needs to be automatically compressed
+- Manually choose which files need to be automatically compressed.

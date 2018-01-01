@@ -15,7 +15,7 @@ namespace Sm4shFileExplorer.UI.Objects
 
         public const string CAPTION_CREATE_PROJECT = "Create project";
         public const string CREATE_PROJECT_SUCCESS = "Project created!";
-        public const string CREATE_PROJECT_FIND_FOLDER = "First, please select the root folder of your game dump. This folder must contain the folder 'content'. This folder will not be modified by this program.\r\n\r\nPlease understand that this program is meant to be used with the full version of the game. The best setting is a full dump on the latest game version.";
+        public const string CREATE_PROJECT_FIND_FOLDER = "First, please select the root folder of your game dump. This folder must contain the folder 'content'. This folder will not be modified by Sm4shExplorer.\r\n\r\nPlease understand that Sm4shExplorer is designed to be used with a full dump of the game. The best setting is a complete dump on the latest game version.";
 
         public const string CAPTION_PACK_FOLDER = "Packing folder";
         public const string WARNING_PACK_FOLDER = "Warning! This is a highly experimental feature that should not be used on original content! Proceed?";
