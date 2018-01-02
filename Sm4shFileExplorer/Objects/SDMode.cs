@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sm4shFileExplorer.Objects
+﻿namespace Sm4shFileExplorer.Objects
 {
     public enum SDMode
     {

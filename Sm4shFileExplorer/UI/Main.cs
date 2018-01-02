@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Sm4shFileExplorer.UI
@@ -29,7 +31,7 @@ namespace Sm4shFileExplorer.UI
         #endregion
 
         #region Constructors
-        public Main()
+        public Main(string[] Args)
         {
             InitializeComponent();
 
@@ -402,7 +404,6 @@ namespace Sm4shFileExplorer.UI
             string exportFolder = PathHelper.FolderExport + "release" + Path.DirectorySeparatorChar + (_ProjectManager.CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
             if (!Directory.Exists(exportFolder) || (Directory.Exists(exportFolder) && MessageBox.Show(string.Format(UIStrings.WARN_EXPORT_FOLDER_EXISTS, exportFolder), UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes))
             {
-                //MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
                 menuStrip.Enabled = false;
                 treeView.Enabled = false;
                 backgroundWorker.RunWorkerAsync(new BackgroundWorkerInstance(BackgroundWorkerMode.BuildProject, true));
@@ -412,13 +413,9 @@ namespace Sm4shFileExplorer.UI
         private void menuBuildDebug_Click(object sender, EventArgs e)
         {
             string exportFolder = PathHelper.FolderExport + "debug" + Path.DirectorySeparatorChar + (_ProjectManager.CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
-            if (!Directory.Exists(exportFolder) || (Directory.Exists(exportFolder) && MessageBox.Show(string.Format(UIStrings.WARN_EXPORT_FOLDER_EXISTS, exportFolder), UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes))
-            {
-                MessageBox.Show(string.Format(UIStrings.INFO_PACK_REBUILD, _ProjectManager.CurrentProject.ProjectExportFolder), UIStrings.CAPTION_PACK_REBUILD);
-                menuStrip.Enabled = false;
-                treeView.Enabled = false;
-                backgroundWorker.RunWorkerAsync(new BackgroundWorkerInstance(BackgroundWorkerMode.BuildProject, false));
-            }
+            menuStrip.Enabled = false;
+            treeView.Enabled = false;
+            backgroundWorker.RunWorkerAsync(new BackgroundWorkerInstance(BackgroundWorkerMode.BuildProject, false));
         }
 
         private void menuOptions_Click(object sender, EventArgs e)
@@ -479,6 +476,14 @@ namespace Sm4shFileExplorer.UI
                     {
                         newMenuItem.Name = directory;
                         newMenuItem.Text = directory.Substring(directory.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                        if (directory.EndsWith("release"))
+                        {
+                            newMenuItem.ShortcutKeys = Keys.Control | Keys.R;
+                        }
+                        else if (directory.EndsWith("debug"))
+                        {
+                            newMenuItem.ShortcutKeys = Keys.Control | Keys.D;
+                        }
                     }
                     else
                     {
@@ -532,11 +537,46 @@ namespace Sm4shFileExplorer.UI
                 case BackgroundWorkerMode.BuildProject:
                     string exportedFolder = _ProjectManager.RebuildRFAndPatchlist((bool)bw.Object);
                     string sdCardPath = _ProjectManager.GetSDFolder();
-                    if (exportedFolder != string.Empty && !string.IsNullOrEmpty(sdCardPath) && MessageBox.Show(UIStrings.INFO_PACK_SEND_SD, UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        _ProjectManager.SendToSD(exportedFolder);
+                    if (exportedFolder != string.Empty && !string.IsNullOrEmpty(sdCardPath))
+                    {
+                        string wsName = GetWorkspaceName(exportedFolder);
+                        if (wsName == null)
+                        {
+                            string defaultName = PathHelper.FolderWorkplace.TrimEnd(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })
+                                .Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })
+                                .Last();
+                            using (ModpackName box = new ModpackName(defaultName))
+                            {
+                                if (box.ShowDialog() == DialogResult.OK)
+                                {
+                                    _ProjectManager.SendToSD(exportedFolder, box._ModpackName);
+                                }
+                            }
+                        }
+                        else if (MessageBox.Show($"Do you want to copy your newly built modpack to your SD card or USB?\nModpack name: {wsName}", UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            _ProjectManager.SendToSD(exportedFolder, wsName);
+                        }
+                    }
                     break;
                 case BackgroundWorkerMode.SendToSD:
-                    _ProjectManager.SendToSD((string)bw.Object);
+                    string workspaceName = GetWorkspaceName((string)bw.Object);
+                    if (workspaceName == null)
+                    {
+                        string defaultName = PathHelper.FolderWorkplace.TrimEnd(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })
+                                .Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar })
+                                .Last();
+                        using (ModpackName box = new ModpackName(defaultName))
+                        {
+                            if (box.ShowDialog() == DialogResult.OK)
+                            {
+                                _ProjectManager.SendToSD((string)bw.Object, box._ModpackName);
+                            }
+                        }
+                    } else
+                    {
+                        _ProjectManager.SendToSD((string)bw.Object, workspaceName);
+                    }
                     break;
             }
         }
@@ -922,6 +962,18 @@ namespace Sm4shFileExplorer.UI
         }
         #endregion
 
+        #region Misc
+        private string GetWorkspaceName(string exportedFolder)
+        {
+            string workspaceName = null;
+            Match match = Regex.Match(exportedFolder, @"workspaces\\(.+?)\\export");
+            if (match.Success)
+            {
+                workspaceName = match.Groups[1].Value;
+            }
+            return workspaceName;
+        }
+        #endregion
         #endregion
     }
 }

@@ -36,6 +36,9 @@
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DTLS, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Objects\SDCafiineVersion.cs" />
     <Compile Include="UI\About.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -71,6 +75,12 @@
     <Compile Include="DB\CharsDB.cs" />
     <Compile Include="DB\IconsDB.cs" />
     <Compile Include="DB\StagesDB.cs" />
+    <Compile Include="UI\NameModpack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\NameModpack.Designer.cs">
+      <DependentUpon>NameModpack.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Objects\ConsoleRedirProgress.cs" />
     <Compile Include="UI\Objects\ConsoleRedirText.cs" />
     <Compile Include="Globals\CustomStringComparer.cs" />
@@ -128,6 +138,9 @@
     <EmbeddedResource Include="UI\CreationProjectInfo.resx">
       <DependentUpon>CreationProjectInfo.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\NameModpack.resx">
+      <DependentUpon>NameModpack.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
@@ -163,6 +176,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icon.ico" />
     <Content Include="libs\DTLS.exe" />
     <Content Include="libs\zlib32.dll" />
     <Content Include="libs\zlib64.dll" />

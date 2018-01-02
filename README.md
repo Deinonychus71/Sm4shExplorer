@@ -4,7 +4,7 @@ Sm4shExplorer is a tool for managing the file-system of Super Smash Bros. for Wi
 
 Please keep in mind that this program is still under development and may contain bugs.
 
-This is a fork containing modifications by Dr. HyperCake. The tool is originally developed by @Deinonychus71, whose repository for it can be found [here](https://github.com/Deinonychus71/Sm4shExplorer).
+This is a fork containing modifications by Dr. HyperCake. The tool is originally developed by @Deinonychus71, whose repository for it can be found [here](https://github.com/Deinonychus71/Sm4shExplorer). This fork also contains the changes made by @thefungus, whose repository for it can be found [here](https://github.com/thefungus/Sm4shExplorer).
 ## Changes made by this fork
 - Fix a long-standing issue with packing externally-patched files. Previously, certain stage folders would invariably crash the game when modified in a build through Sm4shExplorer. Now, they will not crash as long as the user includes all the affected externally patched files for a package when modifying it. See the [wiki](https://github.com/Dr-HyperCake/Sm4shExplorer/wiki#including-files-with-stage-folders-to-prevent-crashes) for more info and a list of files.
   - These aforementioned externally-patched files will also now extract decompressed, like other files do.

@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -1283,6 +1285,14 @@ namespace Sm4shFileExplorer
         #endregion
 
         #region SD sending
+        private SDCafiineVersion GetSDCafiineVersion(string folder)
+        {
+            if (Regex.Match(folder, $"\\{Path.DirectorySeparatorChar}sdcafiine\\{Path.DirectorySeparatorChar}").Success)
+            {
+                return SDCafiineVersion.New;
+            }
+            return SDCafiineVersion.Old;
+        }
         internal string GetSDFolder()
         {
             if (!string.IsNullOrEmpty(_CachedSDPath) && Directory.Exists(_CachedSDPath))
@@ -1290,14 +1300,27 @@ namespace Sm4shFileExplorer
 
             foreach (DriveInfo drive in DriveInfo.GetDrives())
             {
-                if (drive.IsReady && drive.DriveType == DriveType.Removable && (drive.DriveFormat == "FAT32" || drive.DriveFormat == "FAT"))
+                if (drive.IsReady && (drive.DriveFormat == "FAT32" || drive.DriveFormat == "FAT"))
                 {
-                    //SDCafiine
-                    string sdCafiineFolder = string.Format("{0}{1}{2}", drive.Name, _CurrentProject.GameFullID, Path.DirectorySeparatorChar);
+                    //SDCafiine new
+                    string sdCafiineFolder = string.Format("{0}sdcafiine{1}", drive.Name, Path.DirectorySeparatorChar);
                     if (Directory.Exists(sdCafiineFolder))
                     {
-                        _CachedSDPath = sdCafiineFolder;
-                        return sdCafiineFolder;
+                        string sdCafiineNewFolder = Path.Combine(sdCafiineFolder, _CurrentProject.GameFullID) + Path.DirectorySeparatorChar;
+                        Directory.CreateDirectory(sdCafiineNewFolder);
+                        if (Directory.Exists(sdCafiineNewFolder))
+                        {
+                            _CachedSDPath = sdCafiineNewFolder;
+                            return sdCafiineNewFolder;
+                        }
+                    }
+
+                    //SDCafiine old
+                    string sdCafiineOldFolder = string.Format("{0}{1}{2}", drive.Name, _CurrentProject.GameFullID, Path.DirectorySeparatorChar);
+                    if (Directory.Exists(sdCafiineOldFolder))
+                    {
+                        _CachedSDPath = sdCafiineOldFolder;
+                        return sdCafiineOldFolder;
                     }
 
                     //Loadiine
@@ -1314,34 +1337,58 @@ namespace Sm4shFileExplorer
                             }
                         }
                     }
+
+                    // No SDCafiine folder
+                    DialogResult res = MessageBox.Show($"It seems the SD card or USB on {drive.Name} doesn't have an SDCafiine folder. Do you want to create one?",
+                        "No SDCafiine folder found",
+                        MessageBoxButtons.YesNo);
+                    if (res == DialogResult.Yes)
+                    {
+                        string sdCafiineNewFolder = Path.Combine(sdCafiineFolder, _CurrentProject.GameFullID) + Path.DirectorySeparatorChar;
+                        Directory.CreateDirectory(sdCafiineNewFolder);
+                        _CachedSDPath = sdCafiineNewFolder;
+                        return sdCafiineNewFolder;
+                    }
                 }
             }
             return string.Empty;
         }
 
-        internal void SendToSD(string exportFolder)
+        internal void SendToSD(string exportFolder, string workspaceName)
         {
             string sdCardPath = GetSDFolder();
             if(string.IsNullOrEmpty(sdCardPath))
             {
-                LogHelper.Warning("No SD card containing either an installation of Loadiine or SDCafiine for Sm4sh was found.");
+                LogHelper.Warning("No SD card or USB containing either an installation of Loadiine or SDCafiine for Sm4sh was found.");
                 return;
             }
-
+            
             SDMode sdMode = SDMode.SDCafiine;
             if (sdCardPath.Contains(string.Format("wiiu{0}games{0}", Path.DirectorySeparatorChar)))
                 sdMode = SDMode.Loadiine;
+            
+            if (sdMode == SDMode.SDCafiine && GetSDCafiineVersion(sdCardPath) == SDCafiineVersion.New)
+            {
+                sdCardPath += $"{workspaceName}{Path.DirectorySeparatorChar}content{Path.DirectorySeparatorChar}";
+                Directory.CreateDirectory(sdCardPath);
+                if (!Directory.Exists(sdCardPath))
+                {
+                    LogHelper.Warning("There was an error in creating the necessary folder for the new SDCafiine version.");
+                    return;
+                }
+            }
+            
             SendToSD(sdMode, exportFolder, sdCardPath);
         }
 
         internal void SendToSD(SDMode sdMode, string exportFolder, string sdFolder)
         {
             LogHelper.Info("----------------------------------------------------------------");
-            LogHelper.Info(string.Format("{0}: Copying '{1}' to SD card ('{2}')", sdMode, exportFolder, sdFolder));
+            LogHelper.Info(string.Format("{0}: Copying '{1}' to SD card/USB ('{2}')", sdMode, exportFolder, sdFolder));
 
             try
             {
-                LogHelper.Info(string.Format("{0}: Calculating CRC32 values. If this is the first time with this SD card, this operation can take 3-8 minutes.", sdMode));
+                LogHelper.Info(string.Format("{0}: Calculating CRC32 values. If this is the first time with this SD card/USB, this operation can take 3-8 minutes.", sdMode));
 
                 string[] filters = new string[] { "patch", "sound" };
 
@@ -1381,7 +1428,7 @@ namespace Sm4shFileExplorer
                 else if (sdMode == SDMode.SDCafiine)
                 {
                     //Cleanup: All non mod files need to be deleted from the SD to not override the original patch files
-                    LogHelper.Info(string.Format("{0}: Removing previously modded patch files from the SD card...", sdMode));
+                    LogHelper.Info(string.Format("{0}: Removing previously modded patch files from the SD card/USB...", sdMode));
                     int i = 0;
                     foreach (HashEntity hEntity in gameContentHT)
                     {
@@ -1391,11 +1438,11 @@ namespace Sm4shFileExplorer
                             i++;
                         }
                     }
-                    LogHelper.Info(string.Format("{0}: {1} file(s) were not official patch files and were removed from the SD card.", sdMode, i));
+                    LogHelper.Info(string.Format("{0}: {1} file(s) were not official patch files and were removed from the SD card/USB.", sdMode, i));
                 }
 
                 //Copy mod files if needed
-                LogHelper.Info(string.Format("{0}: Adding mod files to the SD card...", sdMode));
+                LogHelper.Info(string.Format("{0}: Adding mod files to the SD card/USB...", sdMode));
                 int j = 0;
                 foreach (HashEntity hEntity in modContentHT)
                 {
@@ -1405,11 +1452,11 @@ namespace Sm4shFileExplorer
                         j++;
                     }
                 }
-                LogHelper.Info(string.Format("{0}: {1} mod file(s) were added to the SD card.", sdMode, j));
+                LogHelper.Info(string.Format("{0}: {1} mod file(s) were added to the SD card/USB.", sdMode, j));
             }
             catch (Exception e)
             {
-                LogHelper.Error(string.Format("Error while sending files to the SD card: {0}", e.Message));
+                LogHelper.Error(string.Format("Error while sending files to the SD card/USB: {0}", e.Message));
                 return;
             }
             //No need to delete non related files
@@ -1721,7 +1768,7 @@ namespace Sm4shFileExplorer
                     pathResourcesToReturn.Add(pathResources[i]);
                 }
                 return pathResourcesToReturn.ToArray();
-            }
+            } 
             return new string[0];
         }
 
