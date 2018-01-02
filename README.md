@@ -6,22 +6,18 @@ Please keep in mind that this program is still under development and may contain
 
 The tool is originally developed by @Deinonychus71, whose repository for it can be found [here](https://github.com/Deinonychus71/Sm4shExplorer).
 
-This fork contains changes made by @thefungus and @Dr-Hypercake.
+This fork contains changes made by @thefungus and @Dr-HyperCake.
 
 For help on using this tool, join the [Sm4sh Modding Discord](https://discord.gg/EUZJhUJ), check this [written guide](https://gamebanana.com/tools/6294), check video tutorials on YouTube (make sure they are up to date), or check [other tutorials on Gamebanana](https://gamebanana.com/tuts/games/5547).
 
 ## Changes made by this fork
-- Fix a long-standing issue with packing externally-patched files. Previously, certain stage folders would invariably crash the game when modified in a build through Sm4shExplorer. Now, they will not crash as long as the user includes all the affected externally patched files for a package when modifying it. See the [wiki](https://github.com/Dr-HyperCake/Sm4shExplorer/wiki#including-files-with-stage-folders-to-prevent-crashes) for more info and a list of files.
+- Fix a long-standing issue with packing externally-patched files. Previously, certain stage folders would invariably crash the game when modified in a build through Sm4shExplorer. Now, they will not crash as long as the user includes all the affected externally patched files for a package when modifying it. See the [wiki](https://github.com/thefungus/Sm4shExplorer/wiki#including-files-with-stage-folders-to-prevent-crashes) for more info and a list of files.
   - These aforementioned externally-patched files will also now extract decompressed, like other files do.
-- Add the option to ignore regional partitions of the user's choosing. By default, Sm4shExplorer loads and uses all regional partitions, including those of languages that the user does not need. There is now the option to not load or use partitions by specifying them in the configuration xml. See the [wiki](https://github.com/Dr-HyperCake/Sm4shExplorer/wiki#using-partition-ignoring) for more info.
+- Add the option to ignore regional partitions of the user's choosing. By default, Sm4shExplorer loads and uses all regional partitions, including those of languages that the user does not need. There is now the option to not load or use partitions by specifying them in the configuration xml. See the [wiki](https://github.com/thefungus/Sm4shExplorer/wiki#using-partition-ignoring) for more info.
 - Update a lot of UI and message strings. This is to fix grammar, terminology and wording.
 - Send to SD for newer SDCafiine versions
 - Send to SD now supports USB devices (FAT32) (SDCafiine 1.4+)
-- Added keyboard shortcuts for a few things
- - F5 to refresh treeview
- - Ctrl+b to build the modpack
- - Ctrl+Shift+b to build the modpack with no packing
- - Ctrl+r to Send to SD/USB, Ctrl+d to Send to SD/USB (no packing)
+- Added keyboard shortcuts
 - Send to SD asks what you want to name your modpack, uses current workspace folder name as default
 
 ## Base info
