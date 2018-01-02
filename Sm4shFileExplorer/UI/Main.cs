@@ -402,9 +402,12 @@ namespace Sm4shFileExplorer.UI
         private void menuBuild_Click(object sender, EventArgs e)
         {
             string exportFolder = PathHelper.FolderExport + "release" + Path.DirectorySeparatorChar + (_ProjectManager.CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
-            menuStrip.Enabled = false;
-            treeView.Enabled = false;
-            backgroundWorker.RunWorkerAsync(new BackgroundWorkerInstance(BackgroundWorkerMode.BuildProject, true));
+            if (!Directory.Exists(exportFolder) || (Directory.Exists(exportFolder) && MessageBox.Show(string.Format(UIStrings.WARN_EXPORT_FOLDER_EXISTS, exportFolder), UIStrings.CAPTION_PACK_REBUILD, MessageBoxButtons.YesNo) == DialogResult.Yes))
+            {
+                menuStrip.Enabled = false;
+                treeView.Enabled = false;
+                backgroundWorker.RunWorkerAsync(new BackgroundWorkerInstance(BackgroundWorkerMode.BuildProject, true));
+            }
         }
 
         private void menuBuildDebug_Click(object sender, EventArgs e)
@@ -616,7 +619,7 @@ namespace Sm4shFileExplorer.UI
             }
 
             treeView.BeginUpdate();
-            LogHelper.Info("Populating Treeview...");
+            LogHelper.Info("Populating tree-view...");
             treeView.Sort();
             treeView.Nodes.Clear();
             foreach (ResourceCollection resourceCollection in resourceData)

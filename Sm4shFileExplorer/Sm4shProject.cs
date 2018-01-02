@@ -75,7 +75,7 @@ namespace Sm4shFileExplorer
             }
             catch (Exception e)
             {
-                LogHelper.Error(string.Format("Error parsing meta.xml. Sm4shexplorer will assume that you are using the latest patch ({0}) and that your game region is USA. If it isn't the case please update the config file before doing anything. (error: {1})", GlobalConstants.GAME_LAST_PATH_VERSION, e.Message));
+                LogHelper.Error(string.Format("Error parsing 'meta.xml'. Sm4shExplorer will assume that you are using the latest patch ({0}) and that your game region is USA. If this isn't the case, please update your config file before doing anything. (error: {1})", GlobalConstants.GAME_LAST_PATH_VERSION, e.Message));
                 _CurrentProject.GameVersion = GlobalConstants.GAME_LAST_PATH_VERSION;
                 _CurrentProject.GameRegionID = 2;
             }
@@ -167,17 +167,34 @@ namespace Sm4shFileExplorer
             _RfManager.SkipTrashEntries = _CurrentProject.SkipJunkEntries;
             _RfManager.ForceOriginalFlags = _CurrentProject.KeepOriginalFlags;
 
+            List<string> rfFilesToIgnore = new List<string>();
+            foreach (string region in _CurrentProject.PartitionsToIgnore)
+                rfFilesToIgnore.Add(region.Replace("data", "resource"));
+            
             string[] rfFiles = null;
             PatchFileItem[] patchFiles = null;
             if (File.Exists(PathHelper.GetGameFolder(PathHelperEnum.FILE_PATCH_RESOURCE)))
             {
                 rfFiles = PathHelper.GetResourceFiles(PathHelper.GetGameFolder(PathHelperEnum.FOLDER_PATCH));
+                List<string> rfFilesList = rfFiles.ToList();
+                foreach (string s in rfFilesToIgnore)
+                {
+                    for (int i = 0; i < rfFilesList.Count; i++)
+                    {
+                        if (Path.GetFileName(rfFilesList[i]) == s)
+                        {
+                            rfFilesList.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+                rfFiles = rfFilesList.ToArray();
                 patchFiles = _RfManager.LoadPatchFile(PathHelper.GetGameFolder(PathHelperEnum.FILE_PATCH_PATCHLIST));
             }
             else
             {
                 //LS, todo
-                LogHelper.Error(string.Format("Loading the game from LS is not supported yet, sm4shexplorer couldn't find the resource file from the patch: '{0}'", PathHelper.GetGameFolder(PathHelperEnum.FILE_PATCH_RESOURCE)));
+                LogHelper.Error(string.Format("Could not find the resource file from the patch: '{0}'. Loading the game from LS is not supported yet.", PathHelper.GetGameFolder(PathHelperEnum.FILE_PATCH_RESOURCE)));
                 return;
             }
 
@@ -488,7 +505,7 @@ namespace Sm4shFileExplorer
             {
                 if (!dataCol.Resources.ContainsKey(uItem.RelativePath))
                 {
-                    LogHelper.Warning(string.Format("The resource '{0}' does not exist in the data partition! Skipping it but it might cause an issue.", uItem.RelativePath));
+                    LogHelper.Warning(string.Format("The resource '{0}' does not exist in the data partition. This resource will be skipped, but this may cause issues.", uItem.RelativePath));
                     continue;
                 }
 
@@ -620,7 +637,7 @@ namespace Sm4shFileExplorer
             if (resCol == null)
                 return false;
 
-            LogHelper.Info(string.Format("Set flag to pack folder '{0}'. Make sure there is no packed subfolder. This folder will now be packed during rebuild.", relativePath));
+            LogHelper.Info(string.Format("The folder '{0}' has now been set to be packed during building. Please ensure there is no packed sub-folder.", relativePath));
             _CurrentProject.PackResource(resCol.PartitionName, relativePath);
 
             SaveProject();
@@ -644,7 +661,7 @@ namespace Sm4shFileExplorer
             if (resCol == null)
                 return false;
 
-            LogHelper.Info(string.Format("Unset flag to pack folder '{0}'.", relativePath));
+            LogHelper.Info(string.Format("The folder '{0}' is no longer set to be packed during building.", relativePath));
 
             CurrentProject.RemovePackResource(resCol.PartitionName, relativePath);
 
@@ -696,7 +713,7 @@ namespace Sm4shFileExplorer
         internal string RebuildRFAndPatchlist(bool packing)
         {
             LogHelper.Info("----------------------------------------------------------------");
-            LogHelper.Info(string.Format("Starting compilation of the mod ({0})", (packing ? "release" : "debug")));
+            LogHelper.Info(string.Format("Commencing build ({0})...", (packing ? "release" : "debug")));
 
             string exportFolder = PathHelper.FolderExport + (packing ? "release" : "debug") + Path.DirectorySeparatorChar + (_CurrentProject.ExportWithDateFolder ? string.Format("{0:yyyyMMdd-HHmmss}", DateTime.Now) + Path.DirectorySeparatorChar : string.Empty);
 
@@ -713,7 +730,7 @@ namespace Sm4shFileExplorer
 
             if (!deleted)
             {
-                LogHelper.Error(string.Format("Error deleting '{0}', please delete it manually before attempting to build the mod again.", exportFolder));
+                LogHelper.Error(string.Format("Error deleting '{0}', please delete it manually before attempting to build again.", exportFolder));
                 return string.Empty;
             }
 
@@ -775,7 +792,7 @@ namespace Sm4shFileExplorer
             }
             catch(Exception e)
             {
-                LogHelper.Error(string.Format("Error while building the mod: {0}", e.Message));
+                LogHelper.Error(string.Format("Error while building: {0}", e.Message));
                 return string.Empty;
             }
 
@@ -783,7 +800,7 @@ namespace Sm4shFileExplorer
             foreach (Sm4shBasePlugin plugin in _Plugins)
                 plugin.InternalNewModBuilt(exportFolder);
 
-            LogHelper.Info(string.Format("Completed compilation of the mod ({0})", (packing ? "release" : "debug")));
+            LogHelper.Info(string.Format("Build completed ({0})", (packing ? "release" : "debug")));
             LogHelper.Info("----------------------------------------------------------------");
 
             return exportFolder;
@@ -855,7 +872,7 @@ namespace Sm4shFileExplorer
                 Array.Sort(filesToProcess, new CustomStringComparer());
                 if (filesToProcess.Length > 0)
                 {
-                    LogHelper.Info(string.Format("Packaging '{0}'... to '{1}'", resCol.PartitionName, exportFolder));
+                    LogHelper.Info(string.Format("Packaging '{0}' to '{1}'...", resCol.PartitionName, exportFolder));
                     BuildNewResources(resCol, filesToProcess, exportFolder, packing);
                 }
             }
@@ -915,7 +932,7 @@ namespace Sm4shFileExplorer
             {
                 string relativePath = file.Replace(baseToExclude, string.Empty).Replace(Path.DirectorySeparatorChar, '/');
 
-                //This ensure that we are dealing with a folder or a file.
+                //This ensures that we are dealing with a folder or a file.
                 FileAttributes pathAttrs = File.GetAttributes(file);
                 bool isFolder = false;
                 if (pathAttrs.HasFlag(FileAttributes.Directory))
@@ -928,21 +945,25 @@ namespace Sm4shFileExplorer
 
                 //Force packed
                 if (_CurrentProject.IsResourceToBePacked(resCol.PartitionName, relativePath))
+                {
                     nItem.IsAPackage = true;
+                }
                 else if (_CurrentProject.IsResourceInPackage(resCol.PartitionName, relativePath))
                 {
                     nItem.OffInPack = 1;
-                     nItem.IsAPackage = false;
+                    nItem.IsAPackage = false;
                 }
 
                 //Checking if part of a pack to repack, if yes, lets process it after with PackageProcessor
                 ResourceItem resPacked = GetPackedPath(resCol, relativePath);
-                if (resPacked != null && packNeedsRepacking.Find(p => p.PackedRelativePath == resPacked.RelativePath) == null)
-                    packNeedsRepacking.Add(new PackageProcessor() { TopResource = resPacked, PackedRelativePath = resPacked.RelativePath, ExportFolder = exportFolder });
                 if (resPacked != null)
                 {
+                    if (packNeedsRepacking.Find(p => p.PackedRelativePath == resPacked.RelativePath) == null)
+                        packNeedsRepacking.Add(new PackageProcessor() { TopResource = resPacked, PackedRelativePath = resPacked.RelativePath, ExportFolder = exportFolder });
                     packNeedsRepacking.Find(p => p.PackedRelativePath == resPacked.RelativePath).FilesToAdd.Add(file);
-                    continue;
+                    //If it's externally-patched, we want to both package it and include it externally
+                    if (!resCol.Resources[relativePath].OverridePackedFile)
+                        continue;
                 }
 
                 if (!isFolder)
@@ -1363,11 +1384,11 @@ namespace Sm4shFileExplorer
         internal void SendToSD(SDMode sdMode, string exportFolder, string sdFolder)
         {
             LogHelper.Info("----------------------------------------------------------------");
-            LogHelper.Info(string.Format("{0}: Copying '{1}' to SD/USB ('{2}')", sdMode, exportFolder, sdFolder));
+            LogHelper.Info(string.Format("{0}: Copying '{1}' to SD card/USB ('{2}')", sdMode, exportFolder, sdFolder));
 
             try
             {
-                LogHelper.Info(string.Format("{0}: Calculating CRC32 values. If this is the first time with this SD/USB, this operation can take up to 3-8 minutes...", sdMode));
+                LogHelper.Info(string.Format("{0}: Calculating CRC32 values. If this is the first time with this SD card/USB, this operation can take 3-8 minutes.", sdMode));
 
                 string[] filters = new string[] { "patch", "sound" };
 
@@ -1375,7 +1396,7 @@ namespace Sm4shFileExplorer
                 string modContentFolder = exportFolder + "content" + Path.DirectorySeparatorChar;
                 if (!Directory.Exists(modContentFolder))
                 {
-                    LogHelper.Info("No mod found, please select a directory that has an exported mod.");
+                    LogHelper.Info("No build found. Please select a directory that has an exported build.");
                     return;
                 }
                 HashCollection modContentHT = new HashCollection("ht_mod_content", modContentFolder, filters);
@@ -1392,7 +1413,7 @@ namespace Sm4shFileExplorer
                 if (sdMode == SDMode.Loadiine)
                 {
                     //Cleanup - If a file isnt on the sd, or is on the SD BUT isnt official AND isnt part of the upcoming mod, it needs to be replace
-                    LogHelper.Info(string.Format("{0}: Adding patch files or replacing previously modded patch files to SD...", sdMode));
+                    LogHelper.Info(string.Format("{0}: Adding patch files or replacing previously modded patch files on the SD card...", sdMode));
                     int i = 0;
                     foreach (HashEntity hEntity in gameContentHT)
                     {
@@ -1402,12 +1423,12 @@ namespace Sm4shFileExplorer
                             i++;
                         }
                     }
-                    LogHelper.Info(string.Format("{0}: {1} file(s) were not official patch files and needed to be replaced in SD", sdMode, i));
+                    LogHelper.Info(string.Format("{0}: {1} file(s) were not official patch files and were replaced on the SD card.", sdMode, i));
                 }
                 else if (sdMode == SDMode.SDCafiine)
                 {
                     //Cleanup: All non mod files need to be deleted from the SD to not override the original patch files
-                    LogHelper.Info(string.Format("{0}: Removing previously modded patch files from SD/USB...", sdMode));
+                    LogHelper.Info(string.Format("{0}: Removing previously modded patch files from the SD card/USB...", sdMode));
                     int i = 0;
                     foreach (HashEntity hEntity in gameContentHT)
                     {
@@ -1417,11 +1438,11 @@ namespace Sm4shFileExplorer
                             i++;
                         }
                     }
-                    LogHelper.Info(string.Format("{0}: {1} file(s) were not official patch files and needed to be removed from SD/USB", sdMode, i));
+                    LogHelper.Info(string.Format("{0}: {1} file(s) were not official patch files and were removed from the SD card/USB.", sdMode, i));
                 }
 
                 //Copy mod files if needed
-                LogHelper.Info(string.Format("{0}: Adding mod files to SD/USB...", sdMode));
+                LogHelper.Info(string.Format("{0}: Adding mod files to the SD card/USB...", sdMode));
                 int j = 0;
                 foreach (HashEntity hEntity in modContentHT)
                 {
@@ -1431,16 +1452,16 @@ namespace Sm4shFileExplorer
                         j++;
                     }
                 }
-                LogHelper.Info(string.Format("{0}: {1} mod file(s) were added to SD/USB.", sdMode, j));
+                LogHelper.Info(string.Format("{0}: {1} mod file(s) were added to the SD card/USB.", sdMode, j));
             }
             catch (Exception e)
             {
-                LogHelper.Error(string.Format("Error while sending files to SD/USB: {0}", e.Message));
+                LogHelper.Error(string.Format("Error while sending files to the SD card/USB: {0}", e.Message));
                 return;
             }
             //No need to delete non related files
 
-            LogHelper.Info(string.Format("{0}: Operation completed. Please check the io.txt logs if you encountered any issue.", sdMode));
+            LogHelper.Info(string.Format("{0}: Operation completed. Please check the log file 'io.txt' if any issues have occurred.", sdMode));
             LogHelper.Info("----------------------------------------------------------------");
         }
         #endregion
@@ -1496,7 +1517,7 @@ namespace Sm4shFileExplorer
             }
             catch(Exception e)
             {
-                LogHelper.Error(string.Format("Error while loading the plugins: {0}", e.Message));
+                LogHelper.Error(string.Format("Error while loading plugins: {0}", e.Message));
             }
 }
         #endregion

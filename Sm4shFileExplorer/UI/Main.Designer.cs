@@ -134,7 +134,7 @@
             this.menuBuild.Name = "menuBuild";
             this.menuBuild.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
             this.menuBuild.Size = new System.Drawing.Size(299, 22);
-            this.menuBuild.Text = "Build Modpack";
+            this.menuBuild.Text = "Build";
             this.menuBuild.Click += new System.EventHandler(this.menuBuild_Click);
             // 
             // menuBuildDebug
@@ -143,14 +143,14 @@
             this.menuBuildDebug.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.B)));
             this.menuBuildDebug.Size = new System.Drawing.Size(299, 22);
-            this.menuBuildDebug.Text = "Build Modpack (No Packing)";
+            this.menuBuildDebug.Text = "Build (no packaging)";
             this.menuBuildDebug.Click += new System.EventHandler(this.menuBuildDebug_Click);
             // 
             // sendToSDToolStripMenuItem
             // 
             this.sendToSDToolStripMenuItem.Name = "sendToSDToolStripMenuItem";
             this.sendToSDToolStripMenuItem.Size = new System.Drawing.Size(299, 22);
-            this.sendToSDToolStripMenuItem.Text = "Send to SD/USB";
+            this.sendToSDToolStripMenuItem.Text = "Send to SD Card/USB";
             // 
             // toolStripSeparator3
             // 

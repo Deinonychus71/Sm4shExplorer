@@ -7,7 +7,7 @@ namespace Sm4shFileExplorer.Globals
 {
     internal class GlobalConstants
     {
-        public const string VERSION = "0.07.31";
+        public const string VERSION = "0.07.4";
 
         public const string CONFIG_FILE = "sm4shmod.xml";
 
