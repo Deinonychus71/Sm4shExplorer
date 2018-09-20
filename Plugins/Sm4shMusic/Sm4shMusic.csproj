@@ -167,6 +167,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\BGMManagement.resx">
       <DependentUpon>BGMManagement.cs</DependentUpon>
@@ -213,7 +214,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(SolutionDir)Plugins\Sm4shMusic\bin\$(ConfigurationName)\sm4shplugin_music.dll" "$(SolutionDir)Sm4shFileExplorer\$(OutDir)plugins"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(SolutionDir)Plugins\Sm4shMusic\bin\$(ConfigurationName)\sm4shplugin_music.dll" "$(SolutionDir)Sm4shFileExplorer\$(OutDir)plugins\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
