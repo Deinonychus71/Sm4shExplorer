@@ -86,6 +86,7 @@
             this.treeView = new System.Windows.Forms.TreeView();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.helpDiscordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.contextMenuTreeView.SuspendLayout();
             this.oPanelLeft.SuspendLayout();
@@ -133,7 +134,7 @@
             // 
             this.menuBuild.Name = "menuBuild";
             this.menuBuild.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.menuBuild.Size = new System.Drawing.Size(299, 22);
+            this.menuBuild.Size = new System.Drawing.Size(257, 22);
             this.menuBuild.Text = "Build";
             this.menuBuild.Click += new System.EventHandler(this.menuBuild_Click);
             // 
@@ -142,26 +143,26 @@
             this.menuBuildDebug.Name = "menuBuildDebug";
             this.menuBuildDebug.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.B)));
-            this.menuBuildDebug.Size = new System.Drawing.Size(299, 22);
+            this.menuBuildDebug.Size = new System.Drawing.Size(257, 22);
             this.menuBuildDebug.Text = "Build (no packaging)";
             this.menuBuildDebug.Click += new System.EventHandler(this.menuBuildDebug_Click);
             // 
             // sendToSDToolStripMenuItem
             // 
             this.sendToSDToolStripMenuItem.Name = "sendToSDToolStripMenuItem";
-            this.sendToSDToolStripMenuItem.Size = new System.Drawing.Size(299, 22);
+            this.sendToSDToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
             this.sendToSDToolStripMenuItem.Text = "Send to SD Card/USB";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(296, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(254, 6);
             // 
             // refreshTreeviewToolStripMenuItem
             // 
             this.refreshTreeviewToolStripMenuItem.Name = "refreshTreeviewToolStripMenuItem";
             this.refreshTreeviewToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshTreeviewToolStripMenuItem.Size = new System.Drawing.Size(299, 22);
+            this.refreshTreeviewToolStripMenuItem.Size = new System.Drawing.Size(257, 22);
             this.refreshTreeviewToolStripMenuItem.Text = "Refresh Treeview";
             this.refreshTreeviewToolStripMenuItem.Click += new System.EventHandler(this.refreshTreeviewToolStripMenuItem_Click);
             // 
@@ -169,21 +170,21 @@
             // 
             this.menuOptions.Name = "menuOptions";
             this.menuOptions.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.menuOptions.Size = new System.Drawing.Size(299, 22);
+            this.menuOptions.Size = new System.Drawing.Size(257, 22);
             this.menuOptions.Text = "Options";
             this.menuOptions.Click += new System.EventHandler(this.menuOptions_Click);
             // 
             // oMenuFileSeparator
             // 
             this.oMenuFileSeparator.Name = "oMenuFileSeparator";
-            this.oMenuFileSeparator.Size = new System.Drawing.Size(296, 6);
+            this.oMenuFileSeparator.Size = new System.Drawing.Size(254, 6);
             // 
             // menuExit
             // 
             this.menuExit.Name = "menuExit";
             this.menuExit.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
             | System.Windows.Forms.Keys.Q)));
-            this.menuExit.Size = new System.Drawing.Size(299, 22);
+            this.menuExit.Size = new System.Drawing.Size(257, 22);
             this.menuExit.Text = "Exit";
             this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
             // 
@@ -290,7 +291,8 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutSm4shExplorerToolStripMenuItem});
+            this.aboutSm4shExplorerToolStripMenuItem,
+            this.helpDiscordToolStripMenuItem});
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
             this.aboutToolStripMenuItem.Text = "About";
@@ -585,6 +587,13 @@
             this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
             this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
             // 
+            // helpDiscordToolStripMenuItem
+            // 
+            this.helpDiscordToolStripMenuItem.Name = "helpDiscordToolStripMenuItem";
+            this.helpDiscordToolStripMenuItem.Size = new System.Drawing.Size(187, 22);
+            this.helpDiscordToolStripMenuItem.Text = "Help (Discord)";
+            this.helpDiscordToolStripMenuItem.Click += new System.EventHandler(this.helpDiscordToolStripMenuItem_Click);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -676,6 +685,7 @@
         private System.Windows.Forms.ToolStripMenuItem sendToSDToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openSdDirectoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem doNotPackThisFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpDiscordToolStripMenuItem;
     }
 }
 

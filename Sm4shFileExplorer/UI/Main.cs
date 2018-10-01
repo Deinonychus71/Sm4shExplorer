@@ -1,4 +1,5 @@
-﻿using Sm4shFileExplorer.Globals;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Sm4shFileExplorer.Globals;
 using Sm4shFileExplorer.Objects;
 using Sm4shFileExplorer.UI.Objects;
 using System;
@@ -497,6 +498,11 @@ namespace Sm4shFileExplorer.UI
                 }
             }
         }
+
+        private void helpDiscordToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://discord.gg/EUZJhUJ");
+        }
         #endregion
 
         #region loading project
@@ -873,10 +879,11 @@ namespace Sm4shFileExplorer.UI
             MessageBox.Show(this, UIStrings.CREATE_PROJECT_FIND_FOLDER, UIStrings.CAPTION_CREATE_PROJECT);
             while (true)
             {
-                DialogResult result = folderBrowserDialog.ShowDialog(this);
-                if (result == System.Windows.Forms.DialogResult.OK)
+                CommonOpenFileDialog folderDialog = new CommonOpenFileDialog();
+                folderDialog.IsFolderPicker = true;
+                if (folderDialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
-                    string gameFolder = folderBrowserDialog.SelectedPath + Path.DirectorySeparatorChar;
+                    string gameFolder = folderDialog.FileName + Path.DirectorySeparatorChar;
                     if (!PathHelper.IsItSmashFolder(gameFolder))
                     {
                         MessageBox.Show(this, UIStrings.ERROR_LOADING_GAME_FOLDER, UIStrings.CAPTION_ERROR_LOADING_GAME_FOLDER);
@@ -974,6 +981,8 @@ namespace Sm4shFileExplorer.UI
             return workspaceName;
         }
         #endregion
+
         #endregion
+        
     }
 }
