@@ -5,11 +5,21 @@ using Sm4shFileExplorer.Objects;
 using System;
 using System.IO;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace Sm4shFileExplorer
 {
     static class Program
     {
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        const int SW_HIDE = 0;
+        const int SW_SHOW = 5;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -18,6 +28,8 @@ namespace Sm4shFileExplorer
         {
             if (Args.Length == 0)
             {
+                var handle = GetConsoleWindow();
+                ShowWindow(handle, SW_HIDE);
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Main main = new Main(Args);
@@ -26,19 +38,22 @@ namespace Sm4shFileExplorer
             }
             else
             {
+                
                 Sm4shProject _ProjectManager = new Sm4shProject();
                 switch (Args[0])
                 {
                     case "help":
-                        System.Console.WriteLine("Possible arguments:");
-                        System.Console.WriteLine("To setup configuration: \'gamedump [path/to/gameDump]\'");
-                        System.Console.WriteLine("To build with packing: \'build\'");
+                    case "--help":
+                        Console.WriteLine("Possible arguments:");
+                        Console.WriteLine("To setup configuration: \'gamedump [path/to/gameDump]\'");
+                        Console.WriteLine("To build with packing: \'build\'");
                         break;
 
                     case "gamedump":
+                    case "--gamedump":
                         if (Args.Length != 2)
                         {
-                            System.Console.WriteLine("Expected arguments: \'gamedump [path/to/gameDump]\'");
+                            Console.WriteLine("Expected arguments: \'gamedump [path/to/gameDump]\'");
                             return;
                         }
 
@@ -48,24 +63,25 @@ namespace Sm4shFileExplorer
 
                         if (!PathHelper.IsItSmashFolder(gameFolder))
                         {
-                            System.Console.WriteLine(UIStrings.ERROR_LOADING_GAME_FOLDER);
+                            Console.WriteLine(UIStrings.ERROR_LOADING_GAME_FOLDER);
                             return;
                         }
                         if (!PathHelper.DoesItHavePatchFolder(gameFolder))
                         {
-                            System.Console.WriteLine(UIStrings.ERROR_LOADING_GAME_PATCH_FOLDER);
+                            Console.WriteLine(UIStrings.ERROR_LOADING_GAME_PATCH_FOLDER);
                             return;
                         }
 
                         LogHelper.Info("Creating configuration file...");
                         Sm4shMod newProject = _ProjectManager.CreateNewProject(GlobalConstants.CONFIG_FILE, gameFolder);
-                        System.Console.WriteLine(UIStrings.CREATE_PROJECT_SUCCESS);
+                        Console.WriteLine(UIStrings.CREATE_PROJECT_SUCCESS);
                         break;
 
                     case "build":
+                    case "--build":
                         if (!File.Exists(GlobalConstants.CONFIG_FILE))
                         {
-                            System.Console.WriteLine("No configuration exists. Run \'sm4shexplorer.exe gamedump [path/to/gameDump]\'");
+                            Console.WriteLine("No configuration exists. Run \'sm4shexplorer.exe gamedump [path/to/gameDump]\'");
                             return;
                         }
                         _ProjectManager.LoadProject(GlobalConstants.CONFIG_FILE);
@@ -79,7 +95,7 @@ namespace Sm4shFileExplorer
                         break;
 
                     default:
-                        System.Console.WriteLine("Unsupported argument. Supported arguments include: help, gamedump, build");
+                        Console.WriteLine("Unsupported argument. Supported arguments include: help, gamedump, build");
                         break;
                 }
             }
