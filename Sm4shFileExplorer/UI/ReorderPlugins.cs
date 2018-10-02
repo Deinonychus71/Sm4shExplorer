@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Sm4shFileExplorer
+namespace Sm4shFileExplorer.UI
 {
     internal partial class ReorderPlugins : Form
     {

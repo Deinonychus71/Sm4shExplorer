@@ -39,7 +39,7 @@
             this.helpUnk9 = new System.Windows.Forms.PictureBox();
             this.helpUnk7 = new System.Windows.Forms.PictureBox();
             this.helpPlayDelay = new System.Windows.Forms.PictureBox();
-            this.helpUnk3 = new System.Windows.Forms.PictureBox();
+            this.helpSaveMyMusic = new System.Windows.Forms.PictureBox();
             this.helpUnk8 = new System.Windows.Forms.PictureBox();
             this.helpUnk6 = new System.Windows.Forms.PictureBox();
             this.helpUnk4 = new System.Windows.Forms.PictureBox();
@@ -52,7 +52,7 @@
             this.txtUnk6 = new System.Windows.Forms.TextBox();
             this.txtPlayDelay = new System.Windows.Forms.TextBox();
             this.txtUnk4 = new System.Windows.Forms.TextBox();
-            this.txtUnk3 = new System.Windows.Forms.TextBox();
+            this.txtSaveMyMusic = new System.Windows.Forms.TextBox();
             this.txtRarity = new System.Windows.Forms.TextBox();
             this.lblUnk9 = new System.Windows.Forms.Label();
             this.lblUnk8 = new System.Windows.Forms.Label();
@@ -60,7 +60,7 @@
             this.lblUnk6 = new System.Windows.Forms.Label();
             this.lblPlayDelay = new System.Windows.Forms.Label();
             this.lblUnk4 = new System.Windows.Forms.Label();
-            this.lblUnk3 = new System.Windows.Forms.Label();
+            this.lblSaveMyMusic = new System.Windows.Forms.Label();
             this.lblRarity = new System.Windows.Forms.Label();
             this.txtBGMSubIndex = new System.Windows.Forms.TextBox();
             this.lblBGMSubIndex = new System.Windows.Forms.Label();
@@ -86,7 +86,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk9)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpPlayDelay)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.helpUnk3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.helpSaveMyMusic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk6)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk4)).BeginInit();
@@ -167,7 +167,7 @@
             this.groupMusicStageBGM.Controls.Add(this.helpUnk9);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk7);
             this.groupMusicStageBGM.Controls.Add(this.helpPlayDelay);
-            this.groupMusicStageBGM.Controls.Add(this.helpUnk3);
+            this.groupMusicStageBGM.Controls.Add(this.helpSaveMyMusic);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk8);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk6);
             this.groupMusicStageBGM.Controls.Add(this.helpUnk4);
@@ -180,7 +180,7 @@
             this.groupMusicStageBGM.Controls.Add(this.txtUnk6);
             this.groupMusicStageBGM.Controls.Add(this.txtPlayDelay);
             this.groupMusicStageBGM.Controls.Add(this.txtUnk4);
-            this.groupMusicStageBGM.Controls.Add(this.txtUnk3);
+            this.groupMusicStageBGM.Controls.Add(this.txtSaveMyMusic);
             this.groupMusicStageBGM.Controls.Add(this.txtRarity);
             this.groupMusicStageBGM.Controls.Add(this.lblUnk9);
             this.groupMusicStageBGM.Controls.Add(this.lblUnk8);
@@ -188,7 +188,7 @@
             this.groupMusicStageBGM.Controls.Add(this.lblUnk6);
             this.groupMusicStageBGM.Controls.Add(this.lblPlayDelay);
             this.groupMusicStageBGM.Controls.Add(this.lblUnk4);
-            this.groupMusicStageBGM.Controls.Add(this.lblUnk3);
+            this.groupMusicStageBGM.Controls.Add(this.lblSaveMyMusic);
             this.groupMusicStageBGM.Controls.Add(this.lblRarity);
             this.groupMusicStageBGM.Controls.Add(this.txtBGMSubIndex);
             this.groupMusicStageBGM.Controls.Add(this.lblBGMSubIndex);
@@ -246,15 +246,15 @@
             this.helpPlayDelay.TabStop = false;
             this.helpPlayDelay.Click += new System.EventHandler(this.help_Click);
             // 
-            // helpUnk3
+            // helpSaveMyMusic
             // 
-            this.helpUnk3.Image = global::Sm4shMusic.Properties.Resources.help;
-            this.helpUnk3.Location = new System.Drawing.Point(559, 84);
-            this.helpUnk3.Name = "helpUnk3";
-            this.helpUnk3.Size = new System.Drawing.Size(16, 16);
-            this.helpUnk3.TabIndex = 31;
-            this.helpUnk3.TabStop = false;
-            this.helpUnk3.Click += new System.EventHandler(this.help_Click);
+            this.helpSaveMyMusic.Image = global::Sm4shMusic.Properties.Resources.help;
+            this.helpSaveMyMusic.Location = new System.Drawing.Point(559, 84);
+            this.helpSaveMyMusic.Name = "helpSaveMyMusic";
+            this.helpSaveMyMusic.Size = new System.Drawing.Size(16, 16);
+            this.helpSaveMyMusic.TabIndex = 31;
+            this.helpSaveMyMusic.TabStop = false;
+            this.helpSaveMyMusic.Click += new System.EventHandler(this.help_Click);
             // 
             // helpUnk8
             // 
@@ -358,12 +358,12 @@
             this.txtUnk4.Size = new System.Drawing.Size(170, 20);
             this.txtUnk4.TabIndex = 18;
             // 
-            // txtUnk3
+            // txtSaveMyMusic
             // 
-            this.txtUnk3.Location = new System.Drawing.Point(383, 82);
-            this.txtUnk3.Name = "txtUnk3";
-            this.txtUnk3.Size = new System.Drawing.Size(170, 20);
-            this.txtUnk3.TabIndex = 17;
+            this.txtSaveMyMusic.Location = new System.Drawing.Point(383, 82);
+            this.txtSaveMyMusic.Name = "txtSaveMyMusic";
+            this.txtSaveMyMusic.Size = new System.Drawing.Size(170, 20);
+            this.txtSaveMyMusic.TabIndex = 17;
             // 
             // txtRarity
             // 
@@ -426,14 +426,14 @@
             this.lblUnk4.TabIndex = 10;
             this.lblUnk4.Text = "Unk4 :";
             // 
-            // lblUnk3
+            // lblSaveMyMusic
             // 
-            this.lblUnk3.AutoSize = true;
-            this.lblUnk3.Location = new System.Drawing.Point(295, 85);
-            this.lblUnk3.Name = "lblUnk3";
-            this.lblUnk3.Size = new System.Drawing.Size(39, 13);
-            this.lblUnk3.TabIndex = 9;
-            this.lblUnk3.Text = "Unk3 :";
+            this.lblSaveMyMusic.AutoSize = true;
+            this.lblSaveMyMusic.Location = new System.Drawing.Point(295, 85);
+            this.lblSaveMyMusic.Name = "lblSaveMyMusic";
+            this.lblSaveMyMusic.Size = new System.Drawing.Size(83, 13);
+            this.lblSaveMyMusic.TabIndex = 9;
+            this.lblSaveMyMusic.Text = "Save MyMusic :";
             // 
             // lblRarity
             // 
@@ -614,7 +614,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk9)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpPlayDelay)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.helpUnk3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.helpSaveMyMusic)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk6)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.helpUnk4)).EndInit();
@@ -657,7 +657,7 @@
         private System.Windows.Forms.TextBox txtUnk6;
         private System.Windows.Forms.TextBox txtPlayDelay;
         private System.Windows.Forms.TextBox txtUnk4;
-        private System.Windows.Forms.TextBox txtUnk3;
+        private System.Windows.Forms.TextBox txtSaveMyMusic;
         private System.Windows.Forms.TextBox txtRarity;
         private System.Windows.Forms.Label lblUnk9;
         private System.Windows.Forms.Label lblUnk8;
@@ -665,11 +665,11 @@
         private System.Windows.Forms.Label lblUnk6;
         private System.Windows.Forms.Label lblPlayDelay;
         private System.Windows.Forms.Label lblUnk4;
-        private System.Windows.Forms.Label lblUnk3;
+        private System.Windows.Forms.Label lblSaveMyMusic;
         private System.Windows.Forms.PictureBox helpUnk9;
         private System.Windows.Forms.PictureBox helpUnk7;
         private System.Windows.Forms.PictureBox helpPlayDelay;
-        private System.Windows.Forms.PictureBox helpUnk3;
+        private System.Windows.Forms.PictureBox helpSaveMyMusic;
         private System.Windows.Forms.PictureBox helpUnk8;
         private System.Windows.Forms.PictureBox helpUnk6;
         private System.Windows.Forms.PictureBox helpUnk4;

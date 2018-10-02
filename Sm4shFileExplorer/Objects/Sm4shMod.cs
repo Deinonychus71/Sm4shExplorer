@@ -23,6 +23,8 @@ namespace Sm4shFileExplorer.Objects
 
         public List<Sm4shModItem> UnlocalizationItems { get; set; }
         public List<Sm4shModItem> ResourcesToRemove { get; set; }
+        public List<Sm4shModItem> ResourcesToPack { get; set; }
+        public List<string> PartitionsToIgnore { get; set; }
         public List<string> PluginsOrder { get; set; }
 
         public bool Is3DS { get; set; } //TODO SUPPORT
@@ -33,6 +35,8 @@ namespace Sm4shFileExplorer.Objects
         public string GameRegion { get { return GetRegionName(); } }
         [XmlIgnore]
         public string GameID { get { return GetGameID(); } }
+        [XmlIgnore]
+        public string GameFullID { get { return GetGameFullID(); } }
         [XmlIgnore]
         public bool DTFilesFound { get; internal set; }
 
@@ -70,6 +74,38 @@ namespace Sm4shFileExplorer.Objects
         internal bool IsResourceRemoved(string partition, string relativePath)
         {
             return IsSm4shModItem(ResourcesToRemove, partition, relativePath);
+        }
+        #endregion
+
+        #region Resource Pack
+        internal void PackResource(string partition, string relativePath)
+        {
+            AddSm4shModItem(ResourcesToPack, partition, relativePath);
+        }
+
+        internal void RemovePackResource(string partition, string relativePath)
+        {
+            RemoveSm4shModItem(ResourcesToPack, partition, relativePath);
+        }
+
+        internal bool IsResourceToBePacked(string partition, string relativePath)
+        {
+            return IsSm4shModItem(ResourcesToPack, partition, relativePath);
+        }
+
+        internal bool IsResourceInPackage(string partition, string relativePath)
+        {
+            if (ResourcesToPack == null)
+                ResourcesToPack = new List<Sm4shModItem>();
+
+            Sm4shModItem resCol = ResourcesToPack.Find(p => p.Partition == partition);
+            if (resCol == null)
+                return false;
+
+            string pathFound = resCol.Paths.Find(p => relativePath.StartsWith(p));
+            if (!string.IsNullOrEmpty(pathFound))
+                return true;
+            return false;
         }
         #endregion
 
@@ -150,6 +186,22 @@ namespace Sm4shFileExplorer.Objects
                     return "????01";
                 case 4:
                     return "AXFP01";
+            }
+            return "???";
+        }
+
+        private string GetGameFullID()
+        {
+            switch (GameRegionID)
+            {
+                case 1:
+                    return "0005000010110E00";
+                case 2:
+                    return "0005000010144F00";
+                case 3:
+                    return "?????";
+                case 4:
+                    return "0005000010145000";
             }
             return "???";
         }

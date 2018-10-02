@@ -15,7 +15,7 @@ namespace Sm4shMusic
 {
     public class Sm4shPlugin : Sm4shBasePlugin
     {
-        public const string VERSION = "0.6";
+        public const string VERSION = "0.7";
 
         #region Members
         private SoundEntryCollection _SoundEntryCollection;
@@ -198,7 +198,10 @@ namespace Sm4shMusic
                 string exportPathSoundBGM = exportFolder + "content" + Path.DirectorySeparatorChar + "sound" + Path.DirectorySeparatorChar + "bgm" + Path.DirectorySeparatorChar;
                 Directory.CreateDirectory(exportPathSoundBGM);
                 foreach (string file in Directory.GetFiles(PathHelper.GetWorkplaceFolder(PathHelperEnum.FOLDER_SOUND_BGM)))
-                    File.Copy(file, exportPathSoundBGM + Path.GetFileName(file), true);
+                {
+                    string destinationFile = exportPathSoundBGM + Path.GetFileName(file);
+                    IOHelper.CopyFile(file, destinationFile);
+                }
             }
         }
 

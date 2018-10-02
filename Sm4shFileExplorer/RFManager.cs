@@ -10,6 +10,9 @@ using System.Text;
 
 namespace Sm4shFileExplorer
 {
+    /// <summary>
+    /// GENERAL TODO: requires (much) better implementation of the new DTLS
+    /// </summary>
     internal class RFManager
     {
         #region Members
@@ -69,7 +72,7 @@ namespace Sm4shFileExplorer
 
             //Use temp folder instead of patch folder
             string tempRF = _TempFolder + Path.GetFileName(rfFilePath);
-            File.Copy(rfFilePath, tempRF, true);
+            IOHelper.CopyFile(rfFilePath, tempRF);
 
             //Load RF file
             RFFile rfFile = new RFFile(tempRF);
@@ -91,6 +94,8 @@ namespace Sm4shFileExplorer
 
                 //New ResourceItem object
                 ResourceItem rItem = new ResourceItem(resCol, rEntry.EntryString, rEntry.OffInPack, (uint)rEntry.CmpSize, (uint)rEntry.DecSize, rEntry.Packed, string.Join(string.Empty, pathParts));
+                rItem.OriginalFlags = rEntry.Flags;
+                rItem.OverridePackedFile = (rItem.OriginalFlags & 0x4000) == 0x4000;
 
                 //For Treeview
                 pathPartsRes[rEntry.FolderDepth - 1] = rItem;
@@ -130,9 +135,16 @@ namespace Sm4shFileExplorer
 
                 //Check if part of the patch/mod
                 if (currentPackedPatchFile != null && rItem.AbsolutePath.StartsWith(currentPackedPatchFile.AbsolutePath))
+                {
                     rItem.Source = FileSource.Patch;
+                    rItem.PatchItem = currentPackedPatchFile;
+                }
                 else if (patchItem != null)
+                {
                     rItem.Source = FileSource.Patch;
+                    rItem.PatchItem = patchItem;
+                }
+
                 //Part of LS
                 else
                 {
@@ -150,7 +162,14 @@ namespace Sm4shFileExplorer
                     }
                 }
 
-                rItem.PatchItem = currentPackedPatchFile;
+                //Case of patch but not in packed
+                if (rItem.OverridePackedFile && rItem.Source != FileSource.NotFound)
+                {
+                    rItem.Source = FileSource.Patch;
+                    rItem.PatchItem = _PatchFileList.GetPatchFileItem(rItem.AbsolutePath);
+                    if(rItem.PatchItem == null)
+                        rItem.PatchItem = _PatchFileList.GetPatchFileItem("data/" + rItem.RelativePath);
+                }
 
                 if (rItem.Source != FileSource.NotFound)
                 {
@@ -169,17 +188,13 @@ namespace Sm4shFileExplorer
                     }
                 }
 
-                rItem.OriginalFlags = rEntry.Flags;
-
                 resCol.Resources.Add(rItem.RelativePath, rItem);
             }
 
             rfFile.WorkingSource.Close();
             rfFile.CompressedSource.Close();
-            if (File.Exists(tempRF))
-                File.Delete(tempRF);
-            if (File.Exists(tempRF + ".dec"))
-            File.Delete(tempRF + ".dec");
+            IOHelper.DeleteFile(tempRF);
+            IOHelper.DeleteFile(tempRF + ".dec");
 
             LogHelper.Info(string.Format("{0} entries: {1}", resCol.ResourceName, resCol.Resources.Count));
             return resCol;
@@ -205,8 +220,6 @@ namespace Sm4shFileExplorer
 
             if ((rEntry.Flags & 0x2000) == 0x2000) //Empty folders, probably used for debug
                 return true;
-            //if ((rEntry.Flags & 0x200) == 0 && !rEntry.EntryString.Contains(".")) //Trash files
-            //    return true;
             return false;
         }
         #endregion
@@ -221,8 +234,13 @@ namespace Sm4shFileExplorer
                     LogHelper.Error(string.Format("The LS information for {0} could not be found, can't extract the file.", rItem.AbsolutePath));
                     return false;
                 }
-                byte[] fileSize = GetFileDataDecompressed(rItem.LSEntryInfo.DTOffset + rItem.OffInPack, rItem.CmpSize, rItem.LSEntryInfo.DTIndex);
                 Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
+                if (rItem.CmpSize == 0)
+                {
+                    File.Create(outputFile).Dispose();
+                    return true;
+                }
+                byte[] fileSize = GetFileDataDecompressed(rItem.LSEntryInfo.DTOffset + rItem.OffInPack, rItem.CmpSize, rItem.LSEntryInfo.DTIndex);
                 File.WriteAllBytes(outputFile, fileSize);
                 return true;
             }
@@ -238,15 +256,29 @@ namespace Sm4shFileExplorer
             try
             {
                 //Simple file
-                string gameFile = PathHelper.GetGameFolder(PathHelperEnum.FOLDER_PATCH) + rItem.AbsolutePath.Replace('/', Path.DirectorySeparatorChar);
+                string gameFile = PathHelper.GetGameFolder(PathHelperEnum.FOLDER_PATCH) + rItem.PatchItem.AbsolutePath.Replace('/', Path.DirectorySeparatorChar);
                 if (File.Exists(gameFile))
                 {
-                    Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
-                    File.Copy(gameFile, outputFile, true);
-                    return true;
+                    //If the file is an externally-patched file, we want to decompress it
+                    if (rItem.OverridePackedFile)
+                    {
+                        byte[] fileBinary = File.ReadAllBytes(gameFile);
+                        if (Utils.IsCompressed(fileBinary))
+                            fileBinary = Utils.DeCompress(fileBinary);
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
+                        File.WriteAllBytes(outputFile, fileBinary);
+                        return true;
+                    }
+                    else
+                    {
+                        IOHelper.CopyFile(gameFile, outputFile);
+                        return true;
+                    }
                 }
 
                 string mainfolder = "";
+                string gamePackedFile = PathHelper.GetGameFolder(PathHelperEnum.FOLDER_PATCH) + rItem.AbsolutePath.Replace('/', Path.DirectorySeparatorChar);
                 if (!rItem.AbsolutePath.EndsWith("/"))
                 {
                     DataSource packedSource;
@@ -255,7 +287,7 @@ namespace Sm4shFileExplorer
                     string packed = rItem.PatchItem.AbsolutePath;
                     if (!_CachedDataSources.TryGetValue(packed, out packedSource))
                     {
-                        string path = gameFile.Substring(0, gameFile.LastIndexOf("\\data")) + Path.DirectorySeparatorChar + packed.Replace("/", "\\") + "packed";
+                        string path = gamePackedFile.Substring(0, gamePackedFile.LastIndexOf("\\data")) + Path.DirectorySeparatorChar + packed.Replace("/", "\\") + "packed";
                         if (File.Exists(path))
                         {
                             packedSource = new DataSource(FileMap.FromFile(path));
@@ -407,11 +439,29 @@ namespace Sm4shFileExplorer
             List<string> files = new List<string>();
             foreach (PatchFileItem pItem in _PatchFileList.Files)
             {
-                string formatedPath = pItem.AbsolutePath + (pItem.Packed ? "packed" : string.Empty);
-                if (Array.Exists(filesToRemove, p => p == formatedPath))
+                string formattedPath = pItem.AbsolutePath + (pItem.Packed ? "packed" : string.Empty);
+
+                //If remove resource, don't add the pItem
+                if (Array.Exists(filesToRemove, p => p == formattedPath))
                     continue;
-                files.Add(formatedPath);
+
+                //We don't want to remove externally-patched files from the patchlist, so leave this commented out
+                /*foreach (string fileToAdd in filesToAdd)
+                {
+                    //If the pItem is found in a packed file, but not in the export folder, don't add the pItem
+                    if (!fileToAdd.EndsWith("packed"))
+                        continue;
+                    if (pItem.AbsolutePath.StartsWith(fileToAdd.Replace("packed", string.Empty)))
+                    {
+                        addFile = false;
+                        break;
+                    }
+                }*/
+
+                files.Add(formattedPath);
             }
+
+            //Add every file that's in the export folder
             foreach (string fileToAdd in filesToAdd)
                 if (!files.Contains(fileToAdd))
                     files.Add(fileToAdd);

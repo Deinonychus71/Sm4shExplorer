@@ -9,6 +9,7 @@ namespace Sm4shFileExplorer.Objects
         private bool _IsPackage;
 
         public uint OriginalFlags { get; set; }
+        public bool OverridePackedFile { get; set; }
 
         public ResourceCollection ResourceCollection { get; set; }
         public ResourceItem OriginalResourceItem { get; set; }
@@ -79,7 +80,7 @@ namespace Sm4shFileExplorer.Objects
                 //    flag |= 0x800;
             }*/
 
-            if((this.OriginalFlags & 0x4000) == 0x4000)
+            if(OverridePackedFile)
                 flag |= 0x4000;
 
             if (this.IsFolder)

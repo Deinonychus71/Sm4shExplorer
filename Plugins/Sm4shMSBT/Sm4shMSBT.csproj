@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0456C2C2-3C1C-4524-BA56-23D2133E1443}</ProjectGuid>
+    <ProjectGuid>{92E4B668-F191-4644-A5AE-E891580E84A9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sm4shParamEditor</RootNamespace>
-    <AssemblyName>sm4shplugin_parameditor</AssemblyName>
+    <RootNamespace>Sm4shMSBT</RootNamespace>
+    <AssemblyName>sm4shplugin_msbt</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -62,11 +62,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\icon_parameditor.png" />
+    <None Include="Resources\icon_msbt.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(SolutionDir)Plugins\Sm4shParamEditor\bin\$(ConfigurationName)\sm4shplugin_parameditor.dll" "$(SolutionDir)Sm4shFileExplorer\$(OutDir)plugins\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(SolutionDir)Plugins\Sm4shMSBT\bin\$(ConfigurationName)\sm4shplugin_msbt.dll" "$(SolutionDir)Sm4shFileExplorer\$(OutDir)plugins\"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

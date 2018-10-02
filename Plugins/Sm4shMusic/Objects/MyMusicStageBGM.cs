@@ -16,9 +16,9 @@ namespace Sm4shMusic.Objects
         private short _Index;
         private short _SubIndex;
         private int _Rarity;
-        private short _Unk3;
+        private short _SaveMyMusic;
         private short _Unk4;
-        private int _Unk5;
+        private int _PlayDelay;
         private int _Unk6;
         private int _Unk7;
         private int _Unk8;
@@ -36,11 +36,11 @@ namespace Sm4shMusic.Objects
         [XmlElement("ra")] 
         public int Rarity { get { return _Rarity; } set { _Rarity = value; InvokePropertyChanged(new PropertyChangedEventArgs("Rarity")); } }
         [XmlElement("sh1")] 
-        public short Unk3 { get { return _Unk3; } set { _Unk3 = value; InvokePropertyChanged(new PropertyChangedEventArgs("Unk3")); } }
+        public short SaveMyMusic { get { return _SaveMyMusic; } set { _SaveMyMusic = value; InvokePropertyChanged(new PropertyChangedEventArgs("SaveMyMusic")); } }
         [XmlElement("sh2")] 
         public short Unk4 { get { return _Unk4; } set { _Unk4 = value; InvokePropertyChanged(new PropertyChangedEventArgs("Unk4")); } }
         [XmlElement("i1")] 
-        public int PlayDelay { get { return _Unk5; } set { _Unk5 = value; InvokePropertyChanged(new PropertyChangedEventArgs("Unk5")); } }
+        public int PlayDelay { get { return _PlayDelay; } set { _PlayDelay = value; InvokePropertyChanged(new PropertyChangedEventArgs("PlayDelay")); } }
         [XmlElement("i2")] 
         public int Unk6 { get { return _Unk6; } set { _Unk6 = value; InvokePropertyChanged(new PropertyChangedEventArgs("Unk6")); } }
         [XmlElement("i3")] 

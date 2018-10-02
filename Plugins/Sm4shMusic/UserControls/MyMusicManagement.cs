@@ -113,7 +113,7 @@ namespace Sm4shMusic.UserControls
             txtBGMIndex.DataBindings.Add("Text", myMusicStageBGM, "Index");
             txtBGMSubIndex.DataBindings.Add("Text", myMusicStageBGM, "SubIndex");
             txtRarity.DataBindings.Add("Text", myMusicStageBGM, "Rarity");
-            txtUnk3.DataBindings.Add("Text", myMusicStageBGM, "Unk3");
+            txtSaveMyMusic.DataBindings.Add("Text", myMusicStageBGM, "SaveMyMusic");
             txtUnk4.DataBindings.Add("Text", myMusicStageBGM, "Unk4");
             txtPlayDelay.DataBindings.Add("Text", myMusicStageBGM, "PlayDelay");
             txtUnk6.DataBindings.Add("Text", myMusicStageBGM, "Unk6");
@@ -195,7 +195,7 @@ namespace Sm4shMusic.UserControls
                 _CurrentMyMusicStageBGM.Index = _CurrentMyMusicStageBGMOriginal.Index;
                 _CurrentMyMusicStageBGM.SubIndex = _CurrentMyMusicStageBGMOriginal.SubIndex;
                 _CurrentMyMusicStageBGM.Rarity = _CurrentMyMusicStageBGMOriginal.Rarity;
-                _CurrentMyMusicStageBGM.Unk3 = _CurrentMyMusicStageBGMOriginal.Unk3;
+                _CurrentMyMusicStageBGM.SaveMyMusic = _CurrentMyMusicStageBGMOriginal.SaveMyMusic;
                 _CurrentMyMusicStageBGM.Unk4 = _CurrentMyMusicStageBGMOriginal.Unk4;
                 _CurrentMyMusicStageBGM.PlayDelay = _CurrentMyMusicStageBGMOriginal.PlayDelay;
                 _CurrentMyMusicStageBGM.Unk6 = _CurrentMyMusicStageBGMOriginal.Unk6;
@@ -368,7 +368,9 @@ namespace Sm4shMusic.UserControls
                 case "helpPlayDelay":
                     MessageBox.Show(Strings.HELP_MUSIC_STAGE_PLAY_DELAY, Strings.CAPTION_HELP);
                     break;
-                case "helpUnk3":
+                case "helpSaveMyMusic":
+                    MessageBox.Show(Strings.HELP_MUSIC_STAGE_SAVE_MYMUSIC, Strings.CAPTION_HELP);
+                    break;
                 case "helpUnk4":
                 case "helpUnk6":
                 case "helpUnk7":

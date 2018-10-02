@@ -3,7 +3,7 @@ using Sm4shFileExplorer.Objects;
 using System;
 using System.Windows.Forms;
 
-namespace Sm4shFileExplorer
+namespace Sm4shFileExplorer.UI
 {
     internal partial class Options : Form
     {

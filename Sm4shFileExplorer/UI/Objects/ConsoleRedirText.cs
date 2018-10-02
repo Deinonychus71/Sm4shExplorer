@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace Sm4shFileExplorer.Globals
+namespace Sm4shFileExplorer.UI.Objects
 {
     internal class ConsoleRedirText : TextWriter
     {

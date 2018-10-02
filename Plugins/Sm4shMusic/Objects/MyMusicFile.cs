@@ -114,7 +114,7 @@ namespace Sm4shMusic.Objects
             sMyMusicBGM.Index = b.ReadInt16();
             sMyMusicBGM.SubIndex = b.ReadInt16();
             sMyMusicBGM.Rarity = b.ReadInt32();
-            sMyMusicBGM.Unk3 = b.ReadInt16();
+            sMyMusicBGM.SaveMyMusic = b.ReadInt16();
             sMyMusicBGM.Unk4 = b.ReadInt16();
             sMyMusicBGM.PlayDelay = b.ReadInt32();
             sMyMusicBGM.Unk6 = b.ReadInt32();
@@ -131,7 +131,7 @@ namespace Sm4shMusic.Objects
             w.Write(myMusicStageBGM.Index);
             w.Write(myMusicStageBGM.SubIndex);
             w.Write(myMusicStageBGM.Rarity);
-            w.Write(myMusicStageBGM.Unk3);
+            w.Write(myMusicStageBGM.SaveMyMusic);
             w.Write(myMusicStageBGM.Unk4);
             w.Write(myMusicStageBGM.PlayDelay);
             w.Write(myMusicStageBGM.Unk6);

@@ -1,4 +1,4 @@
-﻿namespace Sm4shFileExplorer
+﻿namespace Sm4shFileExplorer.UI
 {
     partial class Options
     {

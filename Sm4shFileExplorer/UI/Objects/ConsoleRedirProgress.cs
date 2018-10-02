@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 
-namespace Sm4shFileExplorer.Globals
+namespace Sm4shFileExplorer.UI.Objects
 {
     internal class ConsoleRedirProgress : TextWriter
     {
