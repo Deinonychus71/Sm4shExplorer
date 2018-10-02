@@ -24,6 +24,7 @@ namespace Sm4shFileExplorer.Objects
         public List<Sm4shModItem> UnlocalizationItems { get; set; }
         public List<Sm4shModItem> ResourcesToRemove { get; set; }
         public List<Sm4shModItem> ResourcesToPack { get; set; }
+        public List<string> PartitionsToIgnore { get; set; }
         public List<string> PluginsOrder { get; set; }
 
         public bool Is3DS { get; set; } //TODO SUPPORT

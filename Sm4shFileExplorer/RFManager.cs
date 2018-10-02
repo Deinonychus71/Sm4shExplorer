@@ -259,8 +259,22 @@ namespace Sm4shFileExplorer
                 string gameFile = PathHelper.GetGameFolder(PathHelperEnum.FOLDER_PATCH) + rItem.PatchItem.AbsolutePath.Replace('/', Path.DirectorySeparatorChar);
                 if (File.Exists(gameFile))
                 {
-                    IOHelper.CopyFile(gameFile, outputFile);
-                    return true;
+                    //If the file is an externally-patched file, we want to decompress it
+                    if (rItem.OverridePackedFile)
+                    {
+                        byte[] fileBinary = File.ReadAllBytes(gameFile);
+                        if (Utils.IsCompressed(fileBinary))
+                            fileBinary = Utils.DeCompress(fileBinary);
+
+                        Directory.CreateDirectory(Path.GetDirectoryName(outputFile));
+                        File.WriteAllBytes(outputFile, fileBinary);
+                        return true;
+                    }
+                    else
+                    {
+                        IOHelper.CopyFile(gameFile, outputFile);
+                        return true;
+                    }
                 }
 
                 string mainfolder = "";
@@ -425,25 +439,29 @@ namespace Sm4shFileExplorer
             List<string> files = new List<string>();
             foreach (PatchFileItem pItem in _PatchFileList.Files)
             {
-                string formatedPath = pItem.AbsolutePath + (pItem.Packed ? "packed" : string.Empty);
-                if (Array.Exists(filesToRemove, p => p == formatedPath))
+                string formattedPath = pItem.AbsolutePath + (pItem.Packed ? "packed" : string.Empty);
+
+                //If remove resource, don't add the pItem
+                if (Array.Exists(filesToRemove, p => p == formattedPath))
                     continue;
 
-                //Make sure to remove 0x4000 flagged files that have been repacked. TODO: Need proper support
-                bool removeFlag0x4000 = false;
-                foreach (string fileToAdd in filesToAdd)
+                //We don't want to remove externally-patched files from the patchlist, so leave this commented out
+                /*foreach (string fileToAdd in filesToAdd)
                 {
+                    //If the pItem is found in a packed file, but not in the export folder, don't add the pItem
                     if (!fileToAdd.EndsWith("packed"))
                         continue;
                     if (pItem.AbsolutePath.StartsWith(fileToAdd.Replace("packed", string.Empty)))
                     {
-                        removeFlag0x4000 = true;
-                        continue;
+                        addFile = false;
+                        break;
                     }
-                }
-                if(!removeFlag0x4000)
-                    files.Add(formatedPath);
+                }*/
+
+                files.Add(formattedPath);
             }
+
+            //Add every file that's in the export folder
             foreach (string fileToAdd in filesToAdd)
                 if (!files.Contains(fileToAdd))
                     files.Add(fileToAdd);

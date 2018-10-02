@@ -50,9 +50,9 @@
             this.lblAuthor.ForeColor = System.Drawing.Color.Gray;
             this.lblAuthor.Location = new System.Drawing.Point(12, 38);
             this.lblAuthor.Name = "lblAuthor";
-            this.lblAuthor.Size = new System.Drawing.Size(93, 13);
+            this.lblAuthor.Size = new System.Drawing.Size(93, 26);
             this.lblAuthor.TabIndex = 1;
-            this.lblAuthor.Text = "by deinonychus71";
+            this.lblAuthor.Text = "by deinonychus71\r\nforked by fungus";
             // 
             // lblThanks
             // 
