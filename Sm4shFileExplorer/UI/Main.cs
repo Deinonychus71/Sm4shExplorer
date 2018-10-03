@@ -37,7 +37,7 @@ namespace Sm4shFileExplorer.UI
             InitializeComponent();
 
             //Version
-            this.Text += " v." + GlobalConstants.VERSION;
+            this.Text += " v" + GlobalConstants.VERSION;
 
             //Loading ProjectManager
             _ProjectManager = new Sm4shProject();

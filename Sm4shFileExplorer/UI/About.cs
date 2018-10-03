@@ -11,7 +11,7 @@ namespace Sm4shFileExplorer.UI
         {
             InitializeComponent();
 
-            this.lblTitle.Text += string.Format(" {0}", GlobalConstants.VERSION);
+            this.lblTitle.Text += " " + GlobalConstants.VERSION;
             this.lblThanks.Text += "\r\n" + UIStrings.INFO_THANKS;
             LinkLabel.Link link = new LinkLabel.Link();
             link.LinkData = this.lkRepo.Text;

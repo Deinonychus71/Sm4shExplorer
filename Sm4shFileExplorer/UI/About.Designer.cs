@@ -52,7 +52,7 @@
             this.lblAuthor.Name = "lblAuthor";
             this.lblAuthor.Size = new System.Drawing.Size(93, 26);
             this.lblAuthor.TabIndex = 1;
-            this.lblAuthor.Text = "by deinonychus71\r\nforked by fungus";
+            this.lblAuthor.Text = "by deinonychus71\r\nwith improvements by fungus, Dr-HyperCake, jugeeya and jam1garner";
             // 
             // lblThanks
             // 
@@ -61,16 +61,16 @@
             this.lblThanks.Name = "lblThanks";
             this.lblThanks.Size = new System.Drawing.Size(95, 13);
             this.lblThanks.TabIndex = 2;
-            this.lblThanks.Text = "Special thanks to :";
+            this.lblThanks.Text = "Special thanks to:";
             // 
             // lblRepo
             // 
             this.lblRepo.AutoSize = true;
-            this.lblRepo.Location = new System.Drawing.Point(12, 70);
+            this.lblRepo.Location = new System.Drawing.Point(12, 75);
             this.lblRepo.Name = "lblRepo";
             this.lblRepo.Size = new System.Drawing.Size(44, 13);
             this.lblRepo.TabIndex = 3;
-            this.lblRepo.Text = "Github :";
+            this.lblRepo.Text = "Github repository:";
             // 
             // lkRepo
             // 
